@@ -41,5 +41,5 @@ Filename: "{sys}\certutil.exe"; Parameters: "-addstore TrustedPublisher ""{app}\
 Filename: "{sys}\certutil.exe"; Parameters: "-addstore Root ""{app}\khairudinfahmi_cert.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "Menginstall sertifikat ke Trusted Root..."
 
 [UninstallRun]
-Filename: "{sys}\certutil.exe"; Parameters: "-delstore TrustedPublisher khairudinfahmi"; Flags: runhidden; RunOnceId: "DelTrustedPub"
-Filename: "{sys}\certutil.exe"; Parameters: "-delstore Root khairudinfahmi"; Flags: runhidden; RunOnceId: "DelRoot"
+Filename: "{sys}\certutil.exe"; Parameters: "-delstore TrustedPublisher ""khairudinfahmi"""; Flags: runhidden; RunOnceId: "DelTrustedPub"
+Filename: "{sys}\certutil.exe"; Parameters: "-delstore Root ""khairudinfahmi"""; Flags: runhidden; RunOnceId: "DelRoot"

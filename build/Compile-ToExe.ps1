@@ -62,8 +62,33 @@ try {
     
     Write-Host "`nKompilasi Sukses!" -ForegroundColor Green
     Write-Host "File EXE ada di: $OutputFile" -ForegroundColor Cyan
+    
+    Write-Host "`nMemulai proses Code Signing..." -ForegroundColor Cyan
+    $certName = "khairudinfahmi"
+    $cert = Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert | Where-Object Subject -match $certName | Select-Object -First 1
+    
+    if (-not $cert) {
+        Write-Host "Sertifikat Code Signing '$certName' tidak ditemukan. Membuat sertifikat baru..." -ForegroundColor Yellow
+        $cert = New-SelfSignedCertificate -Subject "CN=$certName" -Type CodeSigningCert -CertStoreLocation "Cert:\CurrentUser\My"
+        Write-Host "Sertifikat baru berhasil dibuat." -ForegroundColor Green
+    }
+    
+    # Ekspor public key (.cer) agar selalu sinkron dengan installer Inno Setup
+    $cerExportPath = Join-Path $ProjectRoot "assets\khairudinfahmi_cert.cer"
+    Export-Certificate -Cert $cert -FilePath $cerExportPath -Force | Out-Null
+    Write-Host "File sertifikat diekstrak ke: $cerExportPath" -ForegroundColor Cyan
+    
+    Write-Host "Menyuntikkan tanda tangan ke $OutputFile..." -ForegroundColor Cyan
+    $sig = Set-AuthenticodeSignature -FilePath $OutputFile -Certificate $cert -TimestampServer "http://timestamp.digicert.com"
+    
+    if ($sig.Status -eq "Valid") {
+        Write-Host "Penandatanganan berhasil!" -ForegroundColor Green
+    } else {
+        Write-Host "Penandatanganan gagal: $($sig.StatusMessage)" -ForegroundColor Red
+    }
+
 } catch {
-    Write-Host "Kompilasi Gagal: $_" -ForegroundColor Red
+    Write-Host "Proses Gagal: $_" -ForegroundColor Red
 }
 
 Write-Host "`nTekan tombol apa saja untuk keluar..."
