@@ -1,0 +1,11 @@
+# Build output
+*.exe
+Output/
+
+# Folder backup lama
+old/
+new/
+
+# Log files
+*.log
+*.txt
