@@ -38,7 +38,7 @@ WinPrinterFix/
 ├── release/              # File EXE & Installer siap pakai
 ├── CHANGELOG.md          # Riwayat perubahan
 ├── CONTRIBUTING.md       # File ini
-├── LICENSE               # Lisensi MIT
+├── LICENSE               # Lisensi GPL-3.0
 └── README.md             # Dokumentasi utama
 ```
 
