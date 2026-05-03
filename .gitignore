@@ -1,11 +1,41 @@
-# Build output
-*.exe
+# ===========================
+# Build Output (intermediary)
+# ===========================
 Output/
 
-# Folder backup lama
-old/
-new/
+# Exclude loose EXE files, but allow release/ folder
+/*.exe
+!release/*.exe
 
-# Log files
+# ===========================
+# Security / Private Keys
+# ===========================
+*.pfx
+*.pvk
+*.p12
+
+# ===========================
+# Logs & Temp
+# ===========================
 *.log
 *.txt
+*.tmp
+
+# ===========================
+# Legacy / Backup Folders
+# ===========================
+old/
+new/
+backup/
+
+# ===========================
+# OS & Editor
+# ===========================
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

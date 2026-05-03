@@ -1,15 +1,16 @@
-# 🖨️ Windows Printer Sharing Fix
+# Windows Printer Sharing Fix
 
-![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011%20%7C%20Server-0078D6?logo=windows)
+![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011%20%7C%20Server-0078D6?logo=windows&logoColor=white)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?logo=powershell&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+![License](https://img.shields.io/badge/License-GPL_3.0-green)
 ![Features](https://img.shields.io/badge/Features-70-orange)
+![Version](https://img.shields.io/badge/Version-1.0.0-blue)
 
 Tool perbaikan otomatis untuk mengatasi **semua masalah sharing printer** di Windows. Mendukung Windows 10, Windows 11 (termasuk 24H2/25H2/26H2), ARM64 (Snapdragon), dan Windows Server 2025.
 
 ---
 
-## 🔥 Kenapa Butuh Tool Ini?
+## Kenapa Butuh Tool Ini?
 
 Setelah update Windows, printer sharing sering error dengan kode seperti:
 - `0x0000011b` — RPC Authentication gagal
@@ -23,7 +24,7 @@ Tool ini memperbaiki **semuanya secara otomatis** dalam satu klik.
 
 ---
 
-## ✨ Fitur (70 Opsi Perbaikan)
+## Fitur (70 Opsi Perbaikan)
 
 ### Error Code Fixes
 | # | Fitur |
@@ -96,13 +97,25 @@ Tool ini memperbaiki **semuanya secara otomatis** dalam satu klik.
 
 ---
 
-## 📋 Cara Pakai
+## Download
+
+File siap pakai tersedia di folder [`release/`](release/):
+
+| File | Keterangan |
+|---|---|
+| [`WinPrinterFix.exe`](release/WinPrinterFix.exe) | Portable — langsung jalankan sebagai Admin |
+| [`WindowsPrinterSharingFix_Installer.exe`](release/WindowsPrinterSharingFix_Installer.exe) | Installer lengkap (dengan shortcut & sertifikat) |
+
+---
+
+## Cara Pakai
 
 ### Langkah Cepat (Pemula)
-1. Download dan jalankan `WinPrinterFix.exe` sebagai **Administrator**
-2. Ketik `13` → Enter (Backup registry dulu)
-3. Ketik `25` → Enter (Jalankan AllFix - 42 langkah otomatis)
-4. Restart PC
+1. Download `WinPrinterFix.exe` atau jalankan installer dari folder `release/`
+2. Jalankan sebagai **Administrator**
+3. Ketik `13` → Enter (Backup registry dulu)
+4. Ketik `25` → Enter (Jalankan AllFix - 42 langkah otomatis)
+5. Restart PC
 
 ### Langkah Untuk Windows 11 24H2/25H2
 1. Ketik `13` → Backup registry
@@ -119,7 +132,7 @@ Tool ini memperbaiki **semuanya secara otomatis** dalam satu klik.
 
 ---
 
-## 🖥️ Menu Tampilan
+## Menu Tampilan
 
 ```
  USER: admin | COMPUTERNAME: PC-KANTOR | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix
@@ -142,19 +155,19 @@ Type option: _
 
 ---
 
-## ⚙️ Kompatibilitas
+## Kompatibilitas
 
 | OS | Status |
 |---|---|
-| Windows 10 (semua build) | ✅ Didukung |
-| Windows 11 21H2 - 23H2 | ✅ Didukung |
-| Windows 11 24H2 / 25H2 / 26H2 | ✅ Didukung (Jalur Extreme) |
-| Windows 11 ARM64 (Snapdragon) | ✅ Didukung |
-| Windows Server 2019 / 2022 / 2025 | ✅ Didukung |
+| Windows 10 (semua build) | Didukung |
+| Windows 11 21H2 - 23H2 | Didukung |
+| Windows 11 24H2 / 25H2 / 26H2 | Didukung (Jalur Extreme) |
+| Windows 11 ARM64 (Snapdragon) | Didukung |
+| Windows Server 2019 / 2022 / 2025 | Didukung |
 
 ---
 
-## 🔧 Build dari Source
+## Build dari Source
 
 ### Prasyarat
 - Windows 10/11
@@ -163,42 +176,59 @@ Type option: _
 - [Inno Setup 6](https://jrsoftware.org/isdl.php) (untuk build installer)
 
 ### Compile ke EXE
+
+```powershell
+# Dari root project, jalankan:
+.\build\Compile-ToExe.ps1
+```
+
+Atau compile manual:
 ```powershell
 # Install modul ps2exe (jika belum)
 Install-Module -Name ps2exe -Force -Scope CurrentUser
 
 # Compile
-Invoke-ps2exe -inputFile WinPrinterFix.ps1 -outputFile WinPrinterFix.exe -requireAdmin -title "Windows Printer Sharing Fix" -company "khairudinfahmi"
-```
-
-Atau jalankan script otomatis:
-```powershell
-.\Compile-ToExe.ps1
+Invoke-ps2exe -inputFile src\WinPrinterFix.ps1 -outputFile Output\WinPrinterFix.exe `
+    -iconFile assets\icon.ico -requireAdmin `
+    -title "Windows Printer Sharing Fix" -company "khairudinfahmi"
 ```
 
 ### Build Installer
-```
-"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss
+
+```powershell
+# Pastikan WinPrinterFix.exe sudah ada di Output/
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" build\installer.iss
 ```
 
 ---
 
-## 📁 Struktur Project
+## Struktur Project
 
 ```
 WinPrinterFix/
-├── WinPrinterFix.ps1          # Source code utama (70 fitur)
-├── dokumentasi.html           # Dokumentasi offline (HTML)
-├── installer.iss              # Script Inno Setup installer
-├── Compile-ToExe.ps1          # Script otomasi compile ke EXE
-├── khairudinfahmi.ico         # Icon aplikasi
-├── khairudinfahmi_cert.cer    # Sertifikat code signing
-└── README.md                  # Dokumentasi ini
+├── src/
+│   └── WinPrinterFix.ps1                      # Source code utama (70 fitur)
+├── assets/
+│   ├── icon.ico                                # Icon aplikasi
+│   └── khairudinfahmi_cert.cer                 # Sertifikat code signing
+├── docs/
+│   └── dokumentasi.html                        # Dokumentasi offline (HTML)
+├── build/
+│   ├── Compile-ToExe.ps1                       # Script otomasi compile ke EXE
+│   └── installer.iss                           # Script Inno Setup installer
+├── release/
+│   ├── WinPrinterFix.exe                       # Portable EXE siap pakai
+│   └── WindowsPrinterSharingFix_Installer.exe  # Installer Setup
+├── .gitignore
+├── CHANGELOG.md                                # Riwayat perubahan
+├── CONTRIBUTING.md                             # Panduan kontribusi
+├── LICENSE                                     # Lisensi GPL-3.0
+└── README.md                                   # Dokumentasi ini
 ```
 
 ---
 
-## 📝 Catatan Penting
+## Catatan Penting
 - Tool ini **harus dijalankan sebagai Administrator** karena perlu mengubah registry dan mengelola Windows services.
 - **Selalu backup registry** (opsi 13) sebelum menjalankan perbaikan.
 - Setelah perbaikan, **restart PC** agar perubahan registry aktif.
@@ -206,14 +236,20 @@ WinPrinterFix/
 
 ---
 
-## 📄 License
+## Kontribusi
 
-This project is open-source and free to use under the [MIT License](LICENSE).
+Kontribusi sangat diterima! Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk panduan lengkap.
+
+---
+
+## License
+
+This project is open-source and free to use under the [GPL-3.0 License](LICENSE).
 Feel free to modify and distribute, but please give credit to the original author.
 
 ---
 
-## 👤 Author
+## Author
 
 **@khairudinfahmi** — 2026
 
