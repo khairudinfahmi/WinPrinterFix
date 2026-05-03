@@ -99,20 +99,20 @@ Tool ini memperbaiki **semuanya secara otomatis** dalam satu klik.
 
 ## Download
 
-File siap pakai tersedia di folder [`release/`](release/):
+File siap pakai tersedia di tab **[Releases](../../releases)** pada repository ini:
 
 | File | Keterangan |
 |---|---|
-| [`WinPrinterFix.exe`](release/WinPrinterFix.exe) | Portable — langsung jalankan sebagai Admin |
-| [`WindowsPrinterSharingFix_Installer.exe`](release/WindowsPrinterSharingFix_Installer.exe) | Installer lengkap (dengan shortcut & sertifikat) |
+| `WinPrinterFix.exe` | Portable — langsung jalankan sebagai Admin |
+| `WindowsPrinterSharingFix_Installer.exe` | Installer lengkap (dengan shortcut & sertifikat) |
 
 ---
 
 ## Cara Pakai
 
 ### Langkah Cepat (Pemula)
-1. Download `WinPrinterFix.exe` atau jalankan installer dari folder `release/`
-2. Jalankan sebagai **Administrator**
+1. Buka tab **[Releases](../../releases)** dan download file instalernya.
+2. Jalankan aplikasinya sebagai **Administrator**
 3. Ketik `13` → Enter (Backup registry dulu)
 4. Ketik `25` → Enter (Jalankan AllFix - 42 langkah otomatis)
 5. Restart PC
@@ -216,9 +216,6 @@ WinPrinterFix/
 ├── build/
 │   ├── Compile-ToExe.ps1                       # Script otomasi compile ke EXE
 │   └── installer.iss                           # Script Inno Setup installer
-├── release/
-│   ├── WinPrinterFix.exe                       # Portable EXE siap pakai
-│   └── WindowsPrinterSharingFix_Installer.exe  # Installer Setup
 ├── .gitignore
 ├── CHANGELOG.md                                # Riwayat perubahan
 ├── CONTRIBUTING.md                             # Panduan kontribusi

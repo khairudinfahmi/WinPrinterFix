@@ -35,7 +35,6 @@ WinPrinterFix/
 ├── assets/               # Icon dan sertifikat
 ├── docs/                 # Dokumentasi HTML
 ├── build/                # Script compile & installer
-├── release/              # File EXE & Installer siap pakai
 ├── CHANGELOG.md          # Riwayat perubahan
 ├── CONTRIBUTING.md       # File ini
 ├── LICENSE               # Lisensi GPL-3.0
