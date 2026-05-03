@@ -3,9 +3,8 @@
 # ===========================
 Output/
 
-# Exclude loose EXE files, but allow release/ folder
-/*.exe
-!release/*.exe
+# Exclude all EXE files
+*.exe
 
 # ===========================
 # Security / Private Keys
