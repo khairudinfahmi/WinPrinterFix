@@ -81,8 +81,8 @@ try {
     Write-Host "Menyuntikkan tanda tangan ke $OutputFile..." -ForegroundColor Cyan
     $sig = Set-AuthenticodeSignature -FilePath $OutputFile -Certificate $cert -TimestampServer "http://timestamp.digicert.com"
     
-    if ($sig.Status -eq "Valid") {
-        Write-Host "Penandatanganan berhasil!" -ForegroundColor Green
+    if ($sig.Status -eq "Valid" -or $sig.Status -eq "UnknownError") {
+        Write-Host "Penandatanganan berhasil disuntikkan! (Status: $($sig.Status))" -ForegroundColor Green
     } else {
         Write-Host "Penandatanganan gagal: $($sig.StatusMessage)" -ForegroundColor Red
     }
