@@ -1,17 +1,17 @@
 <#
 .SYNOPSIS
-Script untuk mengkonversi WinPrinterFix.ps1 menjadi .exe
+Script to convert WinPrinterFix.ps1 into a standalone .exe
 
 .DESCRIPTION
-Menggunakan modul PS2EXE yang ada di galeri PowerShell untuk membungkus .ps1
-lengkap dengan manifest Administrator sehingga siap deploy dimana saja.
+Uses the PS2EXE module from the PowerShell Gallery to wrap the .ps1
+complete with an Administrator execution manifest for seamless deployment.
 
 .NOTES
-Jalankan script ini dari folder build/ atau dari root project.
-Output akan disimpan di folder Output/ pada root project.
+Execute this script from the build/ directory or the project root.
+Output will be generated in the Output/ directory at the project root.
 #>
 
-# Tentukan root project secara otomatis (parent dari folder build/)
+# Automatically determine project root (parent of build/ directory)
 $ProjectRoot = Split-Path $PSScriptRoot -Parent
 
 $SourceFile = Join-Path $ProjectRoot "src\WinPrinterFix.ps1"
@@ -19,27 +19,27 @@ $OutputDir  = Join-Path $ProjectRoot "Output"
 $OutputFile = Join-Path $OutputDir "WinPrinterFix.exe"
 $IconFile   = Join-Path $ProjectRoot "assets\icon.ico"
 
-# Buat folder Output jika belum ada
+# Create Output directory if it does not exist
 if (-not (Test-Path $OutputDir)) {
     New-Item -ItemType Directory -Path $OutputDir -Force | Out-Null
 }
 
-# Validasi source file
+# Validate source file existence
 if (-not (Test-Path $SourceFile)) {
-    Write-Host "[ERROR] Source file tidak ditemukan: $SourceFile" -ForegroundColor Red
-    Write-Host "Pastikan menjalankan script dari dalam folder project WinPrinterFix." -ForegroundColor Yellow
+    Write-Host "[ERROR] Source file not found: $SourceFile" -ForegroundColor Red
+    Write-Host "Ensure the script is executed from within the WinPrinterFix project directory." -ForegroundColor Yellow
     exit 1
 }
 
-Write-Host "Memeriksa modul PS2EXE..." -ForegroundColor Cyan
+Write-Host "Verifying PS2EXE module..." -ForegroundColor Cyan
 if (-not (Get-Module -ListAvailable -Name ps2exe)) {
-    Write-Host "Modul PS2EXE belum terinstal. Menginstal sekarang..." -ForegroundColor Yellow
+    Write-Host "PS2EXE module not installed. Initiating installation..." -ForegroundColor Yellow
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Install-Module -Name ps2exe -Force -Scope CurrentUser -AllowClobber
 }
 
-Write-Host "Modul PS2EXE ditemukan." -ForegroundColor Green
-Write-Host "Memulai kompilasi $SourceFile menjadi $OutputFile..." -ForegroundColor Cyan
+Write-Host "PS2EXE module found." -ForegroundColor Green
+Write-Host "Initiating compilation of $SourceFile to $OutputFile..." -ForegroundColor Cyan
 
 $ps2exeParams = @{
     inputFile   = $SourceFile
@@ -52,7 +52,7 @@ $ps2exeParams = @{
     copyright   = "2026 khairudinfahmi"
 }
 
-# Tambahkan icon jika ada
+# Inject icon if present
 if (Test-Path $IconFile) {
     $ps2exeParams.iconFile = $IconFile
 }
@@ -60,36 +60,36 @@ if (Test-Path $IconFile) {
 try {
     Invoke-ps2exe @ps2exeParams
     
-    Write-Host "`nKompilasi Sukses!" -ForegroundColor Green
-    Write-Host "File EXE ada di: $OutputFile" -ForegroundColor Cyan
+    Write-Host "`nCompilation Successful!" -ForegroundColor Green
+    Write-Host "EXE file generated at: $OutputFile" -ForegroundColor Cyan
     
-    Write-Host "`nMemulai proses Code Signing..." -ForegroundColor Cyan
+    Write-Host "`nInitiating Code Signing process..." -ForegroundColor Cyan
     $certName = "khairudinfahmi"
     $cert = Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert | Where-Object Subject -match $certName | Select-Object -First 1
     
     if (-not $cert) {
-        Write-Host "Sertifikat Code Signing '$certName' tidak ditemukan. Membuat sertifikat baru..." -ForegroundColor Yellow
+        Write-Host "Code Signing certificate '$certName' not found. Generating new certificate..." -ForegroundColor Yellow
         $cert = New-SelfSignedCertificate -Subject "CN=$certName" -Type CodeSigningCert -CertStoreLocation "Cert:\CurrentUser\My"
-        Write-Host "Sertifikat baru berhasil dibuat." -ForegroundColor Green
+        Write-Host "New certificate successfully generated." -ForegroundColor Green
     }
     
-    # Ekspor public key (.cer) agar selalu sinkron dengan installer Inno Setup
+    # Export public key (.cer) to synchronize with Inno Setup installer
     $cerExportPath = Join-Path $ProjectRoot "assets\khairudinfahmi_cert.cer"
     Export-Certificate -Cert $cert -FilePath $cerExportPath -Force | Out-Null
-    Write-Host "File sertifikat diekstrak ke: $cerExportPath" -ForegroundColor Cyan
+    Write-Host "Certificate file exported to: $cerExportPath" -ForegroundColor Cyan
     
-    Write-Host "Menyuntikkan tanda tangan ke $OutputFile..." -ForegroundColor Cyan
+    Write-Host "Injecting digital signature into $OutputFile..." -ForegroundColor Cyan
     $sig = Set-AuthenticodeSignature -FilePath $OutputFile -Certificate $cert -TimestampServer "http://timestamp.digicert.com"
     
     if ($sig.Status -eq "Valid" -or $sig.Status -eq "UnknownError") {
-        Write-Host "Penandatanganan berhasil disuntikkan! (Status: $($sig.Status))" -ForegroundColor Green
+        Write-Host "Signature successfully injected! (Status: $($sig.Status))" -ForegroundColor Green
     } else {
-        Write-Host "Penandatanganan gagal: $($sig.StatusMessage)" -ForegroundColor Red
+        Write-Host "Signing failed: $($sig.StatusMessage)" -ForegroundColor Red
     }
 
 } catch {
-    Write-Host "Proses Gagal: $_" -ForegroundColor Red
+    Write-Host "Process Failed: $_" -ForegroundColor Red
 }
 
-Write-Host "`nTekan tombol apa saja untuk keluar..."
+Write-Host "`nPress any key to exit..."
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

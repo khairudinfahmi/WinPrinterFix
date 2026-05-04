@@ -6,185 +6,186 @@
 ![Features](https://img.shields.io/badge/Features-70-orange)
 ![Version](https://img.shields.io/badge/Version-1.0.0-blue)
 
-Tool perbaikan otomatis untuk mengatasi **semua masalah sharing printer** di Windows. Mendukung Windows 10, Windows 11 (termasuk 24H2/25H2/26H2), ARM64 (Snapdragon), dan Windows Server 2025.
+An automated diagnostic and repair utility designed to resolve **all Windows printer sharing issues**. Features native support for Windows 10, Windows 11 (including 24H2/25H2/26H2 builds), ARM64 (Snapdragon) architectures, and Windows Server 2025.
 
 ---
 
-## Kenapa Butuh Tool Ini?
+## The Problem
 
-Setelah update Windows, printer sharing sering error dengan kode seperti:
-- `0x0000011b` — RPC Authentication gagal
-- `0x00000709` — Gagal set default printer / Point and Print diblokir
-- `0x00000bc4` — Printer tidak ditemukan
-- `0x80070035` — Network path not found
-- `0x0000007e` — RPC gagal (beda arsitektur 32/64 bit)
-- Dan banyak lagi...
+Following routine Windows updates, network printer sharing frequently breaks, throwing critical system errors such as:
+- `0x0000011b` — RPC Authentication Failure
+- `0x00000709` — Point and Print Restriction / Failure to set default printer
+- `0x00000bc4` — No printers were found
+- `0x80070035` — The network path was not found
+- `0x0000007e` — RPC Bitness Mismatch (32/64-bit architecture conflict)
+- And many more...
 
-Tool ini memperbaiki **semuanya secara otomatis** dalam satu klik.
+This tool resolves **all of these issues automatically** via a centralized interactive console.
 
 ---
 
-## Fitur (70 Opsi Perbaikan)
+## Features (70 Repair Options)
 
 ### Error Code Fixes
-| # | Fitur |
+| # | Feature |
 |---|---|
-| 01 | Fix Error 0x0000011b (RpcAuthnLevelPrivacy) |
-| 02 | Bypass Error 0x00000709 / 0x7c (Point and Print) |
+| 01 | Patch Error 0x0000011b (RpcAuthnLevelPrivacy) |
+| 02 | Bypass Error 0x00000709 / 0x7c (Point and Print Restrictions) |
 | 03 | Bypass Error 0x00000bc4 (No Printers Found) |
-| 04 | Fix Error 0x80070035 (Network Services) |
-| 05 | Matikan Client-Side Rendering (Error 0x6d1) |
+| 04 | Fix Error 0x80070035 (Network Services Automation) |
+| 05 | Disable Client-Side Rendering (Error 0x6d1) |
 | 55 | Fix Error 0x00000040 (Network Unavailable) |
-| 56 | Fix Error 0x00000002 (CopyFilesPolicy) |
+| 56 | Fix Error 0x00000002 (CopyFilesPolicy Violation) |
 | 57 | Fix Error 0x0000007e (RPC Bitness Mismatch) |
 
-### Perbaikan Jaringan & Sharing
-| # | Fitur |
+### Network & Sharing Configuration
+| # | Feature |
 |---|---|
-| 06 | Hard Reset Print Spooler |
-| 07 | Buka Akses SMB Guest |
-| 08 | Reset Total Network (DNS, Winsock, NetBIOS) |
-| 09 | Set Jaringan ke Private |
-| 10 | Matikan Password Protected Sharing |
-| 11 | Aktifkan RPC via Named Pipes & TCP |
-| 12 | Buka Windows Firewall File & Printer Sharing |
+| 06 | Hard Reset Print Spooler Architecture |
+| 07 | Enable SMB Guest Authentication |
+| 08 | Complete Network Reset (DNS, Winsock, NetBIOS) |
+| 09 | Force Network Profile to Private |
+| 10 | Disable Password Protected Sharing |
+| 11 | Force RPC over Named Pipes & TCP |
+| 12 | Configure Windows Firewall for File & Printer Sharing |
 
-### Tools Sistem
-| # | Fitur |
+### System Utilities
+| # | Feature |
 |---|---|
-| 13 | Backup Registry Sebelum Oprek |
-| 14 | Pancing Ulang RPC & DCOM Services |
-| 15 | SFC Scannow & DISM |
-| 16 | Manajemen Driver (Print Server Properties) |
-| 17 | Reset Hak Akses Folder Spooler |
+| 13 | Pre-execution Registry Backup |
+| 14 | Re-initialize RPC & DCOM Services |
+| 15 | System File Checker & DISM Restoration |
+| 16 | Driver Management (Print Server Properties) |
+| 17 | Reset Spooler Directory ACL Permissions |
 
-### Kredensial & Manajemen
-| # | Fitur |
+### Credential & Protocol Management
+| # | Feature |
 |---|---|
-| 18 | Manajemen Protokol SMB 1.0 (ON/OFF) |
-| 19 | Suntik Kredensial Windows ke Vault |
-| 20 | Hapus Kredensial dari Windows Vault |
-| 21 | Windows Troubleshooter |
-| 22 | Paksa Printer Jadi Online |
-| 23 | Buka Services.msc |
+| 18 | SMB 1.0 Legacy Protocol Management (ON/OFF) |
+| 19 | Inject Windows Credentials into Vault |
+| 20 | Purge Windows Vault Credentials |
+| 21 | Launch Native Windows Troubleshooter |
+| 22 | Force Printer Online Status |
+| 23 | Launch Services.msc |
 
-### Eksekusi & Kontrol
-| # | Fitur |
+### Execution & Control Paths
+| # | Feature |
 |---|---|
-| 24 | Jalur Extreme (Win 11 24H2/25H2 & ARM64) |
-| **25** | **ALLFIX - 42 Langkah Perbaikan Otomatis** |
-| 26 | Deteksi Versi & Build Windows |
-| 27 | Rollback Registry dari Backup |
-| 28 | Matikan IPv6 |
-| 29 | Generate Laporan Diagnostik HTML |
-| 30 | Restart PC |
-| 37 | Silent Nuke & AllFix (Tanpa Interaksi) |
+| 24 | Extreme Path (Aggressive Win 11 24H2/25H2 & ARM64 fixes) |
+| **25** | **ALLFIX - 42 Automated Repair Sequences** |
+| 26 | Detect OS Version & Build Architecture |
+| 27 | Rollback Registry from Backup |
+| 28 | Disable IPv6 Stack |
+| 29 | Generate HTML Diagnostic Report |
+| 30 | Reboot System |
+| 37 | Silent Nuke & AllFix (Zero-Interaction Mode) |
 
-### Remote & Diagnostik
-| # | Fitur |
+### Remote Diagnostics
+| # | Feature |
 |---|---|
-| 32 | Test Ping & Port 445/135 |
-| 33 | Scan Printer Jarak Jauh |
-| 34 | Restart Spooler PC Target |
-| 35 | Buka Log Perbaikan |
-| 36 | PrintBRM (Backup/Restore Printer) |
+| 32 | Ping & Port 445/135 Network Diagnostics |
+| 33 | Remote Network Printer Discovery |
+| 34 | Remote Target Spooler Restart |
+| 35 | View Execution Logs |
+| 36 | PrintBRM (Printer Migration Utility) |
 
-### Advanced Tweaks
-| # | Fitur |
+### Advanced System Tweaks
+| # | Feature |
 |---|---|
-| 39-54 | SMB Signing, WSD, LSA, SAC, IPP, UAC, NTLMv2, dll |
-| 58-70 | WPP, RDP Printer, Hyper-V Fix, LPR/LPD, Print to PDF, Credential Guard, BITS, Restore Point, Diagnostik |
+| 39-54 | SMB Signing, WSD, LSA, SAC, IPP, UAC, NTLMv2 Enforcement, etc. |
+| 58-70 | WPP, RDP Printer Redirection, Hyper-V Network Fix, LPR/LPD, Print to PDF Restoration, Credential Guard Bypass, BITS Restart |
 
 ---
 
-## Download
+## Download & Installation
 
-File siap pakai tersedia di tab **[Releases](../../releases)** pada repository ini:
+Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 
-| File | Keterangan |
+| File | Description |
 |---|---|
-| `WinPrinterFix.exe` | Portable — langsung jalankan sebagai Admin |
-| `WindowsPrinterSharingFix_Installer.exe` | Installer lengkap (dengan shortcut & sertifikat) |
+| `WinPrinterFix.exe` | Portable Executable — Run directly as Administrator |
+| `WindowsPrinterSharingFix_Installer.exe` | Full Installer (includes start menu shortcuts & code signing) |
 
 ---
 
-## Cara Pakai
+## Usage Instructions
 
-### Langkah Cepat (Pemula)
-1. Buka tab **[Releases](../../releases)** dan download file instalernya.
-2. Jalankan aplikasinya sebagai **Administrator**
-3. Ketik `13` → Enter (Backup registry dulu)
-4. Ketik `25` → Enter (Jalankan AllFix - 42 langkah otomatis)
-5. Restart PC
+### Quick Start (Recommended for Beginners)
+1. Download the installer from the **[Releases](../../releases)** tab.
+2. Run the application as an **Administrator**.
+3. Type `13` → Enter (Execute registry backup).
+4. Type `25` → Enter (Execute ALLFIX - 42 automated repair steps).
+5. Reboot your system.
 
-### Langkah Untuk Windows 11 24H2/25H2
-1. Ketik `13` → Backup registry
-2. Ketik `24` → Jalur Extreme
-3. Restart PC
+### Specific Workflow for Windows 11 24H2/25H2
+1. Type `13` → Enter (Execute registry backup).
+2. Type `24` → Enter (Execute Extreme Path fixes).
+3. Reboot your system.
 
-### Darurat (Tanpa Interaksi)
-- Ketik `37` → Silent Nuke (PC akan otomatis restart!)
+### Emergency Mode (Unattended)
+- Type `37` → Enter (Silent Nuke: Executes all fixes and forcibly reboots the system without user prompts).
 
-### Bantuan
-- Ketik `?` → Tampilkan panduan
-- Ketik `? 7` → Penjelasan detail fitur nomor 7
-- Ketik `? all` → Buka dokumentasi HTML lengkap
+### Help & Documentation
+- Type `?` → Display the help guide.
+- Type `? 7` → Display detailed documentation for feature 7.
+- Type `? all` → Open the complete HTML offline manual.
 
 ---
 
-## Menu Tampilan
+## Interactive Console Interface
 
-```
- USER: admin | COMPUTERNAME: PC-KANTOR | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix
+```text
+ USER: admin | COMPUTERNAME: OFFICE-PC | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix
  ------------------------------------------------------------------------------------------------------------------------
 
  ERROR CODES & FIXES                                         NETWORK & ADVANCED TWEAKS
 
- [01] Fix Error 0x0000011b (RpcAuthnLevelPrivacy)            [36] PrintBRM (Backup/Restore)
+ [01] Patch Error 0x0000011b (RpcAuthnLevelPrivacy)          [36] PrintBRM (Backup/Restore)
  [02] Bypass Error 0x00000709 / 0x7c (Point and Print)       [37] SILENT NUKE & ALLFIX (NO PROMPT)
- [03] Bypass Error 0x00000bc4 (No Printers Found)            [38] Hapus Paksa Printer Bermasalah
+ [03] Bypass Error 0x00000bc4 (No Printers Found)            [38] Force Remove Ghost Printers
  ...                                                         ...
- [25] EKSEKUSI ALLFIX (42 LANGKAH SEKALIGUS)                 [70] Diagnostik Sistem
+ [25] EXECUTE ALLFIX (42 AUTOMATED REPAIR SEQUENCES)         [70] System Diagnostics
 
  :   NOTE:                                                                            :
- :   Rekomen Pilih: [25] EKSEKUSI ALLFIX (42 LANGKAH SEKALIGUS - Obat Manjur!)        :
- :   Ketik [?] untuk HELP | [? 7] detail fitur 7 | [? all] buka dokumentasi          :
+ :   Recommended: [25] EXECUTE ALLFIX (42 AUTOMATED REPAIR SEQUENCES)                 :
+ :   Type [?] for HELP | [? 7] feature details | [? all] open HTML manual             :
 
 Type option: _
 ```
 
 ---
 
-## Kompatibilitas
+## System Compatibility
 
-| OS | Status |
+| OS | Support Status |
 |---|---|
-| Windows 10 (semua build) | Didukung |
-| Windows 11 21H2 - 23H2 | Didukung |
-| Windows 11 24H2 / 25H2 / 26H2 | Didukung (Jalur Extreme) |
-| Windows 11 ARM64 (Snapdragon) | Didukung |
-| Windows Server 2019 / 2022 / 2025 | Didukung |
+| Windows 10 (All Builds) | Fully Supported |
+| Windows 11 21H2 - 23H2 | Fully Supported |
+| Windows 11 24H2 / 25H2 / 26H2 | Supported (Requires Extreme Path) |
+| Windows 11 ARM64 (Snapdragon) | Supported |
+| Windows Server 2019 / 2022 / 2025 | Fully Supported |
 
 ---
 
-## Build dari Source
+## Building from Source
 
-### Prasyarat
-- Windows 10/11
+### Prerequisites
+- **Primary Support**: Windows 10/11
+- **Legacy Support**: Windows 7, 8, 8.1 (Partial/Registry Support only)
 - PowerShell 5.1+
-- Modul [ps2exe](https://www.powershellgallery.com/packages/ps2exe) (otomatis diinstall)
-- [Inno Setup 6](https://jrsoftware.org/isdl.php) (untuk build installer)
+- [ps2exe](https://www.powershellgallery.com/packages/ps2exe) module (installed automatically by the build script)
+- [Inno Setup 6](https://jrsoftware.org/isdl.php) (for compiling the installer)
 
-### Compile ke EXE
+### Compile Portable EXE
 
 ```powershell
-# Dari root project, jalankan:
+# From the project root, execute:
 .\build\Compile-ToExe.ps1
 ```
 
-Atau compile manual:
+Or compile manually:
 ```powershell
-# Install modul ps2exe (jika belum)
+# Install the ps2exe module (if not present)
 Install-Module -Name ps2exe -Force -Scope CurrentUser
 
 # Compile
@@ -193,56 +194,56 @@ Invoke-ps2exe -inputFile src\WinPrinterFix.ps1 -outputFile Output\WinPrinterFix.
     -title "Windows Printer Sharing Fix" -company "khairudinfahmi"
 ```
 
-### Build Installer
+### Compile Installer
 
 ```powershell
-# Pastikan WinPrinterFix.exe sudah ada di Output/
+# Ensure WinPrinterFix.exe exists in the Output/ directory
 & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" build\installer.iss
 ```
 
 ---
 
-## Struktur Project
+## Repository Structure
 
-```
+```text
 WinPrinterFix/
 ├── src/
-│   └── WinPrinterFix.ps1                      # Source code utama (70 fitur)
+│   └── WinPrinterFix.ps1                      # Core PowerShell source code (70 features)
 ├── assets/
-│   ├── icon.ico                                # Icon aplikasi
-│   └── khairudinfahmi_cert.cer                 # Sertifikat code signing
+│   ├── icon.ico                                # Application icon
+│   └── khairudinfahmi_cert.cer                 # Code signing certificate
 ├── docs/
-│   └── dokumentasi.html                        # Dokumentasi offline (HTML)
+│   └── dokumentasi.html                        # Offline HTML manual
 ├── build/
-│   ├── Compile-ToExe.ps1                       # Script otomasi compile ke EXE
-│   └── installer.iss                           # Script Inno Setup installer
+│   ├── Compile-ToExe.ps1                       # Build automation script
+│   └── installer.iss                           # Inno Setup installer script
 ├── .gitignore
-├── CHANGELOG.md                                # Riwayat perubahan
-├── CONTRIBUTING.md                             # Panduan kontribusi
-├── LICENSE                                     # Lisensi GPL-3.0
-└── README.md                                   # Dokumentasi ini
+├── CHANGELOG.md                                # Version history
+├── CONTRIBUTING.md                             # Contribution guidelines
+├── LICENSE                                     # GPL-3.0 License
+└── README.md                                   # Primary documentation
 ```
 
 ---
 
-## Catatan Penting
-- Tool ini **harus dijalankan sebagai Administrator** karena perlu mengubah registry dan mengelola Windows services.
-- **Selalu backup registry** (opsi 13) sebelum menjalankan perbaikan.
-- Setelah perbaikan, **restart PC** agar perubahan registry aktif.
-- Tool ini bekerja **100% offline**, tidak ada koneksi internet yang diperlukan.
+## Important Notes
+- **Elevation Required**: This utility **must be executed as an Administrator** to modify registry keys and manage Windows subsystem services.
+- **Backup Mandatory**: Always execute a **Registry Backup (Option 13)** before running any automated repair sequences.
+- **Reboot Required**: A system reboot is strictly necessary to commit registry changes and restart network stacks.
+- **Air-Gapped Support**: This tool operates **100% offline**, requiring zero internet connectivity.
 
 ---
 
-## Kontribusi
+## Contributing
 
-Kontribusi sangat diterima! Silakan baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk panduan lengkap.
+Contributions, issues, and feature requests are welcome! Please review [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
 
 ---
 
 ## License
 
 This project is open-source and free to use under the [GPL-3.0 License](LICENSE).
-Feel free to modify and distribute, but please give credit to the original author.
+Feel free to modify and distribute, but please ensure credit is attributed to the original author.
 
 ---
 
@@ -250,4 +251,4 @@ Feel free to modify and distribute, but please give credit to the original autho
 
 **@khairudinfahmi** — 2026
 
-> Tool ini dibuat untuk membantu teknisi IT dan pengguna biasa yang frustrasi dengan masalah sharing printer di Windows.
+> Engineered to assist IT administrators and end-users frustrated by persistent Windows printer sharing deployment failures.

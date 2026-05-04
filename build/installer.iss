@@ -30,15 +30,15 @@ Source: "..\assets\khairudinfahmi_cert.cer"; DestDir: "{app}"; Flags: ignorevers
 
 [Icons]
 Name: "{group}\Windows Printer Sharing Fix"; Filename: "{app}\WinPrinterFix.exe"; IconFilename: "{app}\icon.ico"
-Name: "{group}\Dokumentasi Windows Printer Sharing Fix"; Filename: "{app}\dokumentasi.html"
+Name: "{group}\Windows Printer Sharing Fix Documentation"; Filename: "{app}\dokumentasi.html"
 Name: "{autodesktop}\Windows Printer Sharing Fix"; Filename: "{app}\WinPrinterFix.exe"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Run]
-Filename: "{sys}\certutil.exe"; Parameters: "-addstore TrustedPublisher ""{app}\khairudinfahmi_cert.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "Menginstall sertifikat publisher..."
-Filename: "{sys}\certutil.exe"; Parameters: "-addstore Root ""{app}\khairudinfahmi_cert.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "Menginstall sertifikat ke Trusted Root..."
+Filename: "{sys}\certutil.exe"; Parameters: "-addstore TrustedPublisher ""{app}\khairudinfahmi_cert.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "Installing publisher certificate..."
+Filename: "{sys}\certutil.exe"; Parameters: "-addstore Root ""{app}\khairudinfahmi_cert.cer"""; Flags: runhidden waituntilterminated; StatusMsg: "Installing certificate to Trusted Root..."
 
 [UninstallRun]
 Filename: "{sys}\certutil.exe"; Parameters: "-delstore TrustedPublisher ""khairudinfahmi"""; Flags: runhidden; RunOnceId: "DelTrustedPub"
