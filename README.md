@@ -164,14 +164,13 @@ Type option: _
 | Windows 11 24H2 / 25H2 / 26H2 | Supported (Requires Extreme Path) |
 | Windows 11 ARM64 (Snapdragon) | Supported |
 | Windows Server 2019 / 2022 / 2025 | Fully Supported |
+| Windows 7, 8, 8.1 | Partial / Registry Support Only |
 
 ---
 
 ## Building from Source
 
 ### Prerequisites
-- **Primary Support**: Windows 10/11
-- **Legacy Support**: Windows 7, 8, 8.1 (Partial/Registry Support only)
 - PowerShell 5.1+
 - [ps2exe](https://www.powershellgallery.com/packages/ps2exe) module (installed automatically by the build script)
 - [Inno Setup 6](https://jrsoftware.org/isdl.php) (for compiling the installer)
