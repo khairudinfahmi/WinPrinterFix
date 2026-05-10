@@ -318,6 +318,113 @@
                             </ul>
                         </div>
                     </div>
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Error 0x0000011b (RpcAuthnLevelPrivacyEnabled) keeps returning?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is a common Windows Update enforcement. Execute <strong>[01] Bypass Error 0x0000011b</strong> to disable RPC Auth Level Privacy. If it reverts after a reboot, use <strong>[81] Detect GPO Intervention</strong> to check if your IT administrator is forcing it via domain policy.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 reports 'No printers were found' (Error 0x00000bc4)?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[03] Bypass Error 0x00000bc4</strong>. Windows 11 defaults to RPC over TCP for printer discovery. This fix forces the system to use Named Pipes, restoring compatibility with older print servers.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Cannot delete printer because "Driver is currently in use"?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                First, execute <strong>[44] Bypass 'Driver is currently in use'</strong> to force-kill the spooler handle. Then execute <strong>[43] Orphaned Driver Sweeper</strong> to completely purge the stubborn driver from the Windows Driver Store using pnputil.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Wi-Fi/LAN printer randomly drops connection or changes IP?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is usually caused by unstable WSD (Web Services for Devices) ports. Execute <strong>[26] WSD to Standard TCP/IP Port Converter</strong> to automatically convert the dynamic WSD port into a rock-solid, static TCP/IP port.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Print Spooler service crashes constantly or fails to start?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[31] Hard Reset Print Spooler</strong> to clear any corrupt <code>.shd</code>/<code>.spl</code> files stuck in the queue. Follow up with <strong>[38] Spooler Dependency Registry Reset</strong> to repair broken service dependencies that might be preventing it from starting.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 blocks my third-party printer drivers?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[56] Bypass Smart App Control (SAC)</strong> or <strong>[60] Manage Windows Protected Print (WPP)</strong>. These are strict Windows 11 security features that often block perfectly fine legacy or unsigned third-party drivers.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -371,6 +478,113 @@
                             </li>
                         </ul>
                     </div>
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Error 0x0000011b (RpcAuthnLevelPrivacyEnabled) keeps returning?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is a common Windows Update enforcement. Execute <strong>[01] Bypass Error 0x0000011b</strong> to disable RPC Auth Level Privacy. If it reverts after a reboot, use <strong>[81] Detect GPO Intervention</strong> to check if your IT administrator is forcing it via domain policy.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 reports 'No printers were found' (Error 0x00000bc4)?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[03] Bypass Error 0x00000bc4</strong>. Windows 11 defaults to RPC over TCP for printer discovery. This fix forces the system to use Named Pipes, restoring compatibility with older print servers.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Cannot delete printer because "Driver is currently in use"?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                First, execute <strong>[44] Bypass 'Driver is currently in use'</strong> to force-kill the spooler handle. Then execute <strong>[43] Orphaned Driver Sweeper</strong> to completely purge the stubborn driver from the Windows Driver Store using pnputil.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Wi-Fi/LAN printer randomly drops connection or changes IP?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is usually caused by unstable WSD (Web Services for Devices) ports. Execute <strong>[26] WSD to Standard TCP/IP Port Converter</strong> to automatically convert the dynamic WSD port into a rock-solid, static TCP/IP port.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Print Spooler service crashes constantly or fails to start?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[31] Hard Reset Print Spooler</strong> to clear any corrupt <code>.shd</code>/<code>.spl</code> files stuck in the queue. Follow up with <strong>[38] Spooler Dependency Registry Reset</strong> to repair broken service dependencies that might be preventing it from starting.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 blocks my third-party printer drivers?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[56] Bypass Smart App Control (SAC)</strong> or <strong>[60] Manage Windows Protected Print (WPP)</strong>. These are strict Windows 11 security features that often block perfectly fine legacy or unsigned third-party drivers.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -400,6 +614,113 @@
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">No features found</h3>
                     <p class="text-slate-500 dark:text-slate-400 text-sm">Try alternative keywords such as "Error",
                         "Spooler", or "Network".</p>
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Error 0x0000011b (RpcAuthnLevelPrivacyEnabled) keeps returning?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is a common Windows Update enforcement. Execute <strong>[01] Bypass Error 0x0000011b</strong> to disable RPC Auth Level Privacy. If it reverts after a reboot, use <strong>[81] Detect GPO Intervention</strong> to check if your IT administrator is forcing it via domain policy.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 reports 'No printers were found' (Error 0x00000bc4)?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[03] Bypass Error 0x00000bc4</strong>. Windows 11 defaults to RPC over TCP for printer discovery. This fix forces the system to use Named Pipes, restoring compatibility with older print servers.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Cannot delete printer because "Driver is currently in use"?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                First, execute <strong>[44] Bypass 'Driver is currently in use'</strong> to force-kill the spooler handle. Then execute <strong>[43] Orphaned Driver Sweeper</strong> to completely purge the stubborn driver from the Windows Driver Store using pnputil.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Wi-Fi/LAN printer randomly drops connection or changes IP?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is usually caused by unstable WSD (Web Services for Devices) ports. Execute <strong>[26] WSD to Standard TCP/IP Port Converter</strong> to automatically convert the dynamic WSD port into a rock-solid, static TCP/IP port.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Print Spooler service crashes constantly or fails to start?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[31] Hard Reset Print Spooler</strong> to clear any corrupt <code>.shd</code>/<code>.spl</code> files stuck in the queue. Follow up with <strong>[38] Spooler Dependency Registry Reset</strong> to repair broken service dependencies that might be preventing it from starting.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 blocks my third-party printer drivers?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[56] Bypass Smart App Control (SAC)</strong> or <strong>[60] Manage Windows Protected Print (WPP)</strong>. These are strict Windows 11 security features that often block perfectly fine legacy or unsigned third-party drivers.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -454,6 +775,113 @@
                         <li class="flex gap-2"><span class="text-brand-400 shrink-0">•</span> If errors persist, audit execution logs via [76] or [77].</li>
                         <li class="flex gap-2"><span class="text-brand-400 shrink-0">•</span> use [75] to verify pure ICMP reachability before diagnosing the spooler layer.</li>
                     </ul>
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Error 0x0000011b (RpcAuthnLevelPrivacyEnabled) keeps returning?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is a common Windows Update enforcement. Execute <strong>[01] Bypass Error 0x0000011b</strong> to disable RPC Auth Level Privacy. If it reverts after a reboot, use <strong>[81] Detect GPO Intervention</strong> to check if your IT administrator is forcing it via domain policy.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 reports 'No printers were found' (Error 0x00000bc4)?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[03] Bypass Error 0x00000bc4</strong>. Windows 11 defaults to RPC over TCP for printer discovery. This fix forces the system to use Named Pipes, restoring compatibility with older print servers.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Cannot delete printer because "Driver is currently in use"?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                First, execute <strong>[44] Bypass 'Driver is currently in use'</strong> to force-kill the spooler handle. Then execute <strong>[43] Orphaned Driver Sweeper</strong> to completely purge the stubborn driver from the Windows Driver Store using pnputil.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Wi-Fi/LAN printer randomly drops connection or changes IP?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is usually caused by unstable WSD (Web Services for Devices) ports. Execute <strong>[26] WSD to Standard TCP/IP Port Converter</strong> to automatically convert the dynamic WSD port into a rock-solid, static TCP/IP port.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Print Spooler service crashes constantly or fails to start?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[31] Hard Reset Print Spooler</strong> to clear any corrupt <code>.shd</code>/<code>.spl</code> files stuck in the queue. Follow up with <strong>[38] Spooler Dependency Registry Reset</strong> to repair broken service dependencies that might be preventing it from starting.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 blocks my third-party printer drivers?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[56] Bypass Smart App Control (SAC)</strong> or <strong>[60] Manage Windows Protected Print (WPP)</strong>. These are strict Windows 11 security features that often block perfectly fine legacy or unsigned third-party drivers.
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -588,6 +1016,113 @@
                             <div
                                 class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
                                 <strong>Yes.</strong> All execution scripts strictly target registry hives and services associated with the Printing and Networking subsystems. Core OS stability is preserved. Always use option <strong>[65]</strong> or <strong>[67] System Restore</strong> before execution.
+                            </div>
+                        </div>
+                    </div>
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Error 0x0000011b (RpcAuthnLevelPrivacyEnabled) keeps returning?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is a common Windows Update enforcement. Execute <strong>[01] Bypass Error 0x0000011b</strong> to disable RPC Auth Level Privacy. If it reverts after a reboot, use <strong>[81] Detect GPO Intervention</strong> to check if your IT administrator is forcing it via domain policy.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 reports 'No printers were found' (Error 0x00000bc4)?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[03] Bypass Error 0x00000bc4</strong>. Windows 11 defaults to RPC over TCP for printer discovery. This fix forces the system to use Named Pipes, restoring compatibility with older print servers.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Cannot delete printer because "Driver is currently in use"?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                First, execute <strong>[44] Bypass 'Driver is currently in use'</strong> to force-kill the spooler handle. Then execute <strong>[43] Orphaned Driver Sweeper</strong> to completely purge the stubborn driver from the Windows Driver Store using pnputil.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Wi-Fi/LAN printer randomly drops connection or changes IP?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                This is usually caused by unstable WSD (Web Services for Devices) ports. Execute <strong>[26] WSD to Standard TCP/IP Port Converter</strong> to automatically convert the dynamic WSD port into a rock-solid, static TCP/IP port.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Print Spooler service crashes constantly or fails to start?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[31] Hard Reset Print Spooler</strong> to clear any corrupt <code>.shd</code>/<code>.spl</code> files stuck in the queue. Follow up with <strong>[38] Spooler Dependency Registry Reset</strong> to repair broken service dependencies that might be preventing it from starting.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-data="{ open: false }"
+                        class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden transition-all duration-200"
+                        :class="{ 'ring-2 ring-brand-500 border-transparent': open }">
+                        <button @click="open = !open"
+                            class="w-full px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/50 focus:outline-none">
+                            <span class="font-bold text-slate-900 dark:text-white text-left">Windows 11 blocks my third-party printer drivers?</span>
+                            <i data-lucide="chevron-down"
+                                class="w-5 h-5 text-slate-400 transition-transform duration-200"
+                                :class="{ 'rotate-180': open }"></i>
+                        </button>
+                        <div x-show="open" x-collapse x-cloak>
+                            <div
+                                class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
+                                Execute <strong>[56] Bypass Smart App Control (SAC)</strong> or <strong>[60] Manage Windows Protected Print (WPP)</strong>. These are strict Windows 11 security features that often block perfectly fine legacy or unsigned third-party drivers.
                             </div>
                         </div>
                     </div>
