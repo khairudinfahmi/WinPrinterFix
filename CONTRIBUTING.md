@@ -45,7 +45,7 @@ WinPrinterFix/
 
 - **UI Language**: English (User-facing prompts and execution logs).
 - **Code Language**: English (Function names, variables, and structural logic).
-- **Logging**: Utilize the native `Write-Log` function for all critical operational logging.
+- **Logging**: use the native `Write-Log` function for all critical operational logging.
 - **Error Handling**: Always wrap registry mutations and service state changes within `try/catch` blocks to prevent fatal crashes.
 - **Comments**: Maintain clean, descriptive comments for complex logic blocks.
 

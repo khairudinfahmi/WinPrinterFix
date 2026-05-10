@@ -6,7 +6,7 @@
 ![Features](https://img.shields.io/badge/Features-88-orange)
 ![Version](https://img.shields.io/badge/Version-2.1.0-blue)
 
-An automated diagnostic and repair utility designed to resolve **all Windows printer sharing issues**. Features native support for Windows 10, Windows 11 (including 24H2/25H2/26H2 builds), ARM64 (Snapdragon) architectures, and Windows Server 2025.
+an automated troubleshooting and repair tool designed to resolve **all Windows printer sharing issues**. Features native support for Windows 10, Windows 11 (including 24H2/25H2/26H2 builds), ARM64 (Snapdragon) architectures, and Windows Server 2025.
 
 ---
 
@@ -162,7 +162,7 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 ### Help & Documentation
 - Type `?` → Display the help guide.
 - Type `? 7` → Display detailed documentation for feature 7.
-- Type `? all` → Open the complete HTML offline manual.
+- Type `? all` → Open the complete offline HTML.
 
 ---
 
@@ -247,12 +247,13 @@ WinPrinterFix/
 │   ├── icon.ico                                # Application icon
 │   └── khairudinfahmi_cert.cer                 # Code signing certificate
 ├── docs/
-│   └── dokumentasi.html                        # Offline HTML manual
+│   └── dokumentasi.html                        # Offline HTML
 ├── build/
 │   ├── Compile-ToExe.ps1                       # Build automation script
 │   └── installer.iss                           # Inno Setup installer script
 ├── release/
-│   └── WinPrinterFix.exe                       # Compiled portable executable
+│   ├── WinPrinterFix.exe                       # Compiled portable executable
+│   └── WindowsPrinterSharingFix_Installer.exe  # Full setup installer
 ├── .gitignore
 ├── CHANGELOG.md                                # Version history
 ├── CONTRIBUTING.md                             # Contribution guidelines

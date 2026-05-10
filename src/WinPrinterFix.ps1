@@ -4,7 +4,7 @@ Windows Printer Sharing Fix Tool (88 OPTIONS)
 @khairudinfahmi
 
 .DESCRIPTION
-This script repairs various Windows printer sharing anomalies.
+This script repairs various Windows printer sharing issues.
 Native support for Windows 11 ARM64 & Windows Server 2025.
 #>
 
@@ -529,7 +529,7 @@ function Disable-IPv6 {
     Write-Log "Disabling IPv6 Stack..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" -Name DisabledComponents -Value 0xffffffff -Type DWord -Force -ErrorAction Stop
-        Write-Log "IPv6 disabled via registry mutation." -Type "SUCCESS"
+        Write-Log "IPv6 disabled via registry change." -Type "SUCCESS"
         Write-Host "  [+] IPv6 disabled to prevent routing conflicts. System reboot required." -ForegroundColor Green
     }
     catch {
@@ -1953,7 +1953,7 @@ function Extreme-25H2 {
     catch {}
 
     Write-Log "Extreme Path concluded!" -Type "SUCCESS"
-    Write-Host "  [+] Extreme security mutations complete. System reboot highly recommended." -ForegroundColor Green
+    Write-Host "  [+] Extreme security configuration changes complete. System reboot highly recommended." -ForegroundColor Green
     
     $extremerestart = Read-Host "`n   [?] Execute immediate system reboot now? (Y/N)"
     if ($extremerestart -eq 'Y') { Restart-Computer -Force }
@@ -1994,8 +1994,8 @@ function Show-Help {
     $helpData = @{
         '1'  = @("Patch Error 0x0000011b (RpcAuthnLevelPrivacy)", "Disables the RpcAuthnLevelPrivacyEnabled registry key so RPC authentication does not block sharing connections.", "Most common error following Windows 10/11 cumulative updates.")
         '2'  = @("Bypass Error 0x00000709 / 0x7c (Point and Print)", "Disables RestrictDriverInstallationToAdministrators to allow automated driver injection.", "Occurs after Microsoft security patches blocking driver injection.")
-        '3'  = @("Bypass Error 0x00000bc4 (No Printers Found)", "Forces RPC to utilize Named Pipe Protocol so printers can be discovered.", "Windows reports 'No printers were found' despite network availability.")
-        '4'  = @("Fix Error 0x80070035 (Automate Network Services)", "Automates startup for fdPHost, FDResPub, SSDPSRV, upnphost services.", "Target host is invisible in network; 'The network path was not found'.")
+        '3'  = @("Bypass Error 0x00000bc4 (No Printers Found)", "Forces RPC to use Named Pipe Protocol so printers can be discovered.", "Windows reports 'No printers were found' despite network availability.")
+        '4'  = @("Fix Error 0x80070035 (Automate Network Services)", "Automates startup for fdPHost, FDResPub, SSDPSRV, upnphost services.", "Target PC is not showing up on the network; 'The network path was not found'.")
         '5'  = @("Disable Client-Side Rendering (Error 0x6d1)", "Enables DisableClientSideRendering in the registry.", "Print job fails due to client-side driver rendering issues.")
         '6'  = @("Fix Error 0x80070005 (Reset Spooler ACL)", "Resets Spool\Printers directory ACL to default using icacls.", "'Access Denied' (0x80070005) error during print operations.")
         '7'  = @("Fix Error 0x00000040 (Network Unavailable)", "Repairs PrintProcessor and Ports registry nodes.", "Error 'Network is unavailable' during printer access.")
@@ -2006,21 +2006,21 @@ function Show-Help {
         '12' = @("Force Disable Password Protected Sharing", "Modifies LSA registry: limitblankpassworduse=0, everyoneincludesanonymous=1.", "Credential prompt appears despite no password being configured.")
         '13' = @("Enable RPC via Named Pipes & TCP", "Forces RPC communication through Named Pipes and TCP protocols.", "Printer connection error due to RPC endpoint blocking.")
         '14' = @("Configure Firewall File & Printer Sharing", "Enables 'File and Printer Sharing' and 'Network Discovery' rules in Firewall.", "Host invisible on network, sharing heavily blocked.")
-        '15' = @("SMB 1.0 Legacy Protocol Management (ON/OFF)", "Enables or disables SMB 1.0 protocol based on user input.", "Requirement to connect to legacy hosts (Win XP/7). WARNING: Ransomware risk!")
+        '15' = @("SMB 1.0 Legacy Protocol Management (ON/OFF)", "Enables or disables SMB 1.0 protocol based on user input.", "Need to connect to legacy hardware (Win XP/7). WARNING: Ransomware risk!")
         '16' = @("Disable SMB Signing (Fix Win 11 NAS Access)", "Disables RequireSecuritySignature for SMB client and server.", "Unable to access NAS or legacy hosts from Win 11 24H2+.")
         '17' = @("Force Modern SMB2/SMB3 Topology", "Ensures SMB2/SMB3 are active, explicitly disables SMB1.", "Transitioning to modern secure protocols.")
         '18' = @("Prioritize SMB in Network Provider Order", "Prioritizes LanmanWorkstation in the provider list.", "SMB connections suffering extreme latency.")
-        '19' = @("Disable IPv6 Stack", "Disables IPv6 via registry and netsh interfaces.", "IPv6 inducing routing conflicts in pure IPv4 networks.")
+        '19' = @("Disable IPv6 Stack", "Disables IPv6 via registry and netsh interfaces.", "IPv6 causing network routing issues in pure IPv4 networks.")
         '20' = @("Enable mDNS & LLMNR (Discovery Protocols)", "Enables Multicast DNS and LLMNR protocols.", "Printers undetectable via hostname resolution.")
         '21' = @("Configure WSD Firewall Rules (Port 3702)", "Opens UDP port 3702 for WSD discovery in firewall.", "Web Services Discovery blocked by firewall.")
         '22' = @("Enable IPP & Mopria Sharing Foundation", "Enables Windows IPP and Mopria Foundation features.", "Modern printers utilizing IPP protocols.")
         '23' = @("Resolve Hyper-V/WSL Virtual Network Conflicts", "Disables printer bindings on virtual adapters.", "Hyper-V/WSL virtual switches disrupting LAN topology.")
-        '24' = @("Install Legacy LPR/LPD Protocols", "Enables Windows LPR Port Monitor & LPD Service features.", "Requirement to connect via LPR (Line Printer Remote).")
+        '24' = @("Install Legacy LPR/LPD Protocols", "Enables Windows LPR Port Monitor & LPD Service features.", "Need to connect via legacy LPR (Line Printer Remote).")
         '25' = @("Remote Network Printer Discovery", "Scans and enumerates all shared printers on the target.", "Unknown shared printers on target host.")
         '26' = @("WSD to Standard TCP/IP Port Converter", "Detects WSD ports and migrates printers to stable Standard TCP/IP ports.", "Intermittent printer disappearance or offline status due to WSD discovery failure.")
         '27' = @("Network Socket Re-init (Selective Purge)", "Restarts SMB Client/Server services and clears stuck port 445/135 connections.", "Stale network connections blocking printer access after IP changes or VPN.")
         '28' = @("Rescue Network Profile (Auto Watchdog)", "Forces all Public network profiles to Private and optionally deploys a watchdog task.", "Network profile resetting to Public after reboot, blocking printer sharing.")
-        '29' = @("Manually Inject Standard TCP/IP Port", "Injects TCP/IP port via WMI scripting.", "Requirement to inject an IP printer port manually.")
+        '29' = @("Manually Inject Standard TCP/IP Port", "Injects TCP/IP port via WMI scripting.", "Need to manually add an IP printer port.")
         '30' = @("Force Initialize WSD Print Device", "Initializes WSDPrintDevice service for Web Services Discovery.", "WSD network printers remain undetected.")
         '31' = @("Hard Reset Print Spooler (Purge Queue)", "Stops spooler, forcefully deletes queue files in Spool\Printers, restarts spooler.", "Print queue is completely frozen, spooler hangs.")
         '32' = @("Re-initialize RPC & DCOM Services", "Verifies and restarts RpcSs and DcomLaunch services.", "RPC or DCOM services terminated/crashed; 'RPC server unavailable'.")
@@ -2056,30 +2056,30 @@ function Show-Help {
         '62' = @("Purge Stale Credentials from Vault", "Purges invalid or outdated credentials from the vault.", "Cached legacy logins causing authentication conflicts.")
         '63' = @("Bypass Credential Guard (Strict NTLM)", "Disables LsaCfgFlags Credential Guard registry node.", "Credential Guard actively blocking NTLM authentication.")
         '64' = @("Cross-User Credential Mapping", "Injects network credentials into all user profiles for shared printer access.", "Multiple user accounts need credentials for the same network printer.")
-        '65' = @("Pre-execution Registry Backup (Spooler)", "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\WinPrinterFixBackup.", "MANDATORY prior to executing other fixes (safety net).")
-        '66' = @("Rollback Registry from Backup", "Imports .reg files from the backup directory.", "Post-fix anomalies introduced. SYNERGY: Requires [65] Backup execution first.")
-        '67' = @("Generate System Restore Point (Security)", "Generates a System Restore Point for full OS rollback.", "Requirement for a system-level safety net prior to mutation.")
+        '65' = @("Pre-execution Registry Backup (Spooler)", "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\WinPrinterFixBackup.", "Highly recommended before applying other fixes.")
+        '66' = @("Rollback Registry from Backup", "Imports .reg files from the backup directory.", "If things get worse after applying fixes. SYNERGY: Requires [65] Backup execution first.")
+        '67' = @("Generate System Restore Point (Security)", "Generates a System Restore Point for full OS rollback.", "Need to create a restore point before making system changes.")
         '68' = @("System File Checker & DISM Restoration", "Executes SFC /scannow and DISM /RestoreHealth.", "Corrupted or damaged Windows system files. NOTE: Takes 10-30 minutes.")
         '69' = @("Restart BITS (Background Transfer)", "Restarts Background Intelligent Transfer Service.", "Driver downloads failing via Windows Update.")
         '70' = @("Uninstall & Pause Specific KB Update", "Removes a specific Windows Update KB and optionally pauses updates for 35 days.", "A specific KB update has broken printer sharing functionality.")
         '71' = @("Launch Native Windows Troubleshooter", "Executes native Windows Printer Troubleshooter (msdt).", "Initial diagnostic step before manual intervention.")
         '72' = @("Force Printer Online Status", "Transmits online enforcement command via printui /yl.", "Printer status stuck on 'Offline' or grayed out.")
-        '73' = @("Launch Services.msc", "Launches the Services.msc MMC snap-in.", "Manual verification of Windows service states.")
-        '74' = @("Detect OS Version & Build Architecture", "Displays OS version, build number, and specific recommendations.", "Prior to selecting a repair pathway.")
-        '75' = @("Ping & Port 445/135 Diagnostics", "ICMP Ping + port scanning for SMB (445) and RPC (135).", "Initial phase of network connectivity diagnostics.")
-        '76' = @("View Execution Logs", "Launches log management interface.", "Requirement to audit historical repair operations.")
-        '77' = @("Audit Last 20 Print Service Error Logs", "Parses the last 20 error events from the System Event Log.", "Requirement to audit specific print service fault origins.")
-        '78' = @("System Diagnostics Audit", "Audits Spooler state, SMB, Firewall, and network topologies.", "Requirement for a rapid health summary of the printing subsystem.")
+        '73' = @("Launch Services.msc", "Launches the Services.msc MMC snap-in.", "Manually check Windows services.")
+        '74' = @("Detect OS Version & Build Architecture", "Displays OS version, build number, and specific recommendations.", "before choosing a specific fix.")
+        '75' = @("Ping & Port 445/135 Diagnostics", "ICMP Ping + port scanning for SMB (445) and RPC (135).", "First step in testing network connection.")
+        '76' = @("View Execution Logs", "Launches log management interface.", "Need to view the history of past repair logs.")
+        '77' = @("Audit Last 20 Print Service Error Logs", "Parses the last 20 error events from the System Event Log.", "Need to check specific print service error logs.")
+        '78' = @("System Diagnostics Audit", "Audits Spooler state, SMB, Firewall, and network topologies.", "Need a quick health summary of the printing subsystem.")
         '79' = @("PrintService Event Log Parser (Top 5)", "Parses the 5 most recent Error/Warning events with resolution suggestions.", "Need to identify root cause from Windows Event Log print errors.")
         '80' = @("Generate HTML Diagnostic Report", "Compiles execution logs into an HTML file.", "For IT documentation or administrative reporting.")
         '81' = @("Detect GPO Intervention (Policy Scan)", "Scans registry and gpresult for Group Policy overrides affecting printers.", "Local registry fixes keep reverting due to domain GPO enforcement.")
         '82' = @("PrintBRM (Backup/Restore Migration)", "Executes full backup or restoration of printer topologies via PrintBrm.exe.", "Deploying printers to multiple workstations or migrating to new hardware.")
         '83' = @("Enable SMB Guest Access & Drop Anon Blocks", "Enables AllowInsecureGuestAuth in LanmanWorkstation registry.", "Continuous prompt for credentials when accessing shares.")
         '84' = @("EXTREME PATH (WIN 11 24H2/25H2 & ARM64)", "Aggressive fix combination: DnsOnWire, StrictNameChecking, NTLM level, SMB Signing, Kerberos purge, etc.", "Standard fixes ineffective on latest Windows 11 builds.")
-        '85' = @("ALLFIX (50 AUTOMATED REPAIR SEQUENCES)", "Executes 50 automated repair steps sequentially.", "PRIMARY RECOMMENDATION - optimal for all general cases. Reboot required.")
-        '86' = @("SILENT NUKE & ALLFIX (ZERO-PROMPT)", "Executes all 50 steps + automated reboot WITHOUT interaction.", "EMERGENCY: Rapid unattended resolution. WARNING: AUTO REBOOTS!")
-        '87' = @("Reboot System", "Executes an immediate system reboot.", "Following the execution of any major repair sequence.")
-        '88' = @("EXIT SCRIPT", "Terminates the Windows Printer Sharing Fix utility.", "")
+        '85' = @("ALLFIX (50 AUTOMATED REPAIR SEQUENCES)", "Executes 50 automated repair steps sequentially.", "PRIMARY RECOMMENDATION - the recommended fix for most general cases. Reboot required.")
+        '86' = @("SILENT NUKE & ALLFIX (ZERO-PROMPT)", "Executes all 50 steps + automated reboot WITHOUT interaction.", "EMERGENCY: Quick Automated resolution. WARNING: AUTO REBOOTS!")
+        '87' = @("Reboot System", "Executes an immediate system reboot.", "After running any major fixes.")
+        '88' = @("EXIT SCRIPT", "Exits the tool.", "")
     }
 
     if ($Topic -eq "" -or $Topic -eq "menu") {
@@ -2107,7 +2107,7 @@ function Show-Help {
         Write-Host "    2. Execute [84] Extreme Path" -ForegroundColor White
         Write-Host "    3. Reboot System" -ForegroundColor White
         Write-Host ""
-        Write-Host "  EMERGENCY PROTOCOL (Rapid Unattended):" -ForegroundColor Yellow
+        Write-Host "  EMERGENCY PROTOCOL (Quick Automated):" -ForegroundColor Yellow
         Write-Host "    - Execute [86] Silent Nuke (WARNING: Auto-reboots!)" -ForegroundColor White
         Write-Host ""
         Write-Host "  FEATURE CATEGORIES:" -ForegroundColor Yellow
@@ -2169,7 +2169,7 @@ function Show-Help {
         }
         else {
             Write-Host "  [-] File dokumentasi.html not detected in installation directory." -ForegroundColor Red
-            Write-Host "  [!] Utilize '?' for quick guide or '? <number>' for feature details." -ForegroundColor Yellow
+            Write-Host "  [!] use '?' for quick guide or '? <number>' for feature details." -ForegroundColor Yellow
         }
     }
     else {
