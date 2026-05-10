@@ -69,91 +69,102 @@
 
     <script>
         window.__FEATURES_DATA__ = [
-            {
-                category: "PART 1: ERROR CODES & FIXES (General Repair)", items: [
-                    { id: "01", title: "Patch Error 0x0000011b (RpcAuthnLevelPrivacy)", problem: "Failed to connect to shared printer, throwing error 0x11b.", solution: "Disables the RpcAuthnLevelPrivacyEnabled registry key.", whenToUse: "Most common error following Windows 10/11 cumulative updates." },
-                    { id: "02", title: "Bypass Error 0x00000709 / 0x7c (Point and Print)", problem: "Unable to set default printer or install shared driver.", solution: "Disables RestrictDriverInstallationToAdministrators policy.", whenToUse: "Occurs after Microsoft security patches blocking driver injection." },
-                    { id: "03", title: "Bypass Error 0x00000bc4 (No Printers Found)", problem: "Windows reports 'No printers were found' despite network availability.", solution: "Forces RPC to utilize Named Pipe Protocol.", whenToUse: "Prevalent in recent Windows 11 builds." },
-                    { id: "04", title: "Fix Error 0x80070035 (Automate Network Services)", problem: "'The network path was not found' error.", solution: "Automates startup for fdPHost, FDResPub, SSDPSRV, upnphost services.", whenToUse: "Target host is invisible in Network Discovery." },
-                    { id: "05", title: "Disable Client-Side Rendering (Error 0x6d1)", problem: "Print job fails due to client-side driver rendering issues.", solution: "Enables DisableClientSideRendering in the registry.", whenToUse: "Print jobs are stuck or failing to transmit to the spooler." },
-                    { id: "06", title: "Hard Reset Print Spooler (Purge Stuck Queue)", problem: "Print queue is completely frozen, spooler hangs.", solution: "Stops spooler, forcefully deletes queue files, restarts spooler.", whenToUse: "Documents stuck in queue that cannot be cancelled manually." },
-                    { id: "07", title: "Enable SMB Guest Access & Drop Anonymous Blocks", problem: "Continuous prompt for credentials when accessing shares.", solution: "Enables AllowInsecureGuestAuth in registry.", whenToUse: "For password-less sharing in local networks." },
-                    { id: "08", title: "Complete Network Reset (Flush DNS, Winsock, NetBIOS)", problem: "Unstable network connection, RTO, or severe latency.", solution: "Flushes DNS, releases/renews IP, resets Winsock & NetBIOS.", whenToUse: "After IP changes, network migration, or anomalous connectivity." },
-                    { id: "09", title: "Force Network Profile to Private (Ignore Public/Domain)", problem: "Sharing blocked because network profile is set to Public.", solution: "Overrides all connection profiles to Private state.", whenToUse: "Recently connected to a new network or corporate WiFi." },
-                    { id: "10", title: "Force Disable Password Protected Sharing", problem: "Credential prompt appears despite no password being configured.", solution: "Modifies LSA registry to prevent password enforcement.", whenToUse: "File/printer sharing in LAN without active directory domain." },
-                    { id: "11", title: "Enable RPC via Named Pipes & TCP", problem: "Printer connection error due to RPC endpoint blocking.", solution: "Forces RPC communication through Named Pipes and TCP protocols.", whenToUse: "Error 0xbcf4db3 or RPC connection timeouts." },
-                    { id: "12", title: "Configure Windows Firewall File & Printer Sharing", problem: "Host invisible on network, sharing heavily blocked.", solution: "Enables File & Printer Sharing rules natively in Firewall.", whenToUse: "After clean OS install or firewall reset." },
-                    { id: "13", title: "Pre-execution Registry Backup (Spooler & Network)", problem: "Requirement to backup state before mutating registry.", solution: "Exports Print, Printers Policy, and LanmanWorkstation registry trees.", whenToUse: "MANDATORY prior to executing other fixes (safety net).", note: "Highly recommended!" },
-                    { id: "14", title: "Re-initialize RPC & DCOM Services", problem: "RPC or DCOM services terminated/crashed.", solution: "Verifies and restarts RpcSs and DcomLaunch services.", whenToUse: "'RPC server is unavailable' error." },
-                    { id: "15", title: "System File Checker & DISM Restoration", problem: "Corrupted or damaged Windows system files.", solution: "Executes SFC /scannow and DISM RestoreHealth.", whenToUse: "Frequent BSODs, anomalous errors, or post-malware cleanup.", note: "This process may take 10-30 minutes!" },
-                    { id: "16", title: "Driver Management (Print Server Properties)", problem: "Corrupted or duplicate printer drivers.", solution: "Launches Print Server Properties to manage installed drivers.", whenToUse: "Printer utilizing incorrect driver or duplicate driver instances." },
-                    { id: "17", title: "Fix Error 0x80070005 (Reset Spooler ACL Permissions)", problem: "'Access Denied' (0x80070005) error during print operations.", solution: "Resets Spool\\Printers directory ACL to default.", whenToUse: "Post domain migration or user permission alterations." },
-                    { id: "18", title: "SMB 1.0 Legacy Protocol Management (ON/OFF)", problem: "Requirement to connect to legacy hosts (Win XP/7).", solution: "Enables or disables SMB 1.0 protocol based on user input.", whenToUse: "Connecting to legacy hardware.", warning: "SMB 1.0 is highly vulnerable to ransomware! Enable only if strictly necessary!" },
-                    { id: "19", title: "Inject Windows Credentials into Vault Permanently", problem: "Continuous prompt for password during share access.", solution: "Injects username/password into Windows Credential Manager.", whenToUse: "To bypass manual authentication upon each access." },
-                    { id: "20", title: "Purge Stale Credentials from Windows Vault", problem: "Cached legacy logins causing authentication conflicts.", solution: "Purges invalid or outdated credentials from the vault.", whenToUse: "Host password was changed but local machine retains stale cache." },
-                    { id: "21", title: "Launch Native Windows Troubleshooter", problem: "Requirement for automated OS diagnostic.", solution: "Executes native Windows Printer Troubleshooter.", whenToUse: "Initial diagnostic step before manual intervention." },
-                    { id: "22", title: "Force Printer Online Status", problem: "Printer displays 'Offline' status despite being powered on.", solution: "Transmits online enforcement command via printui.", whenToUse: "Printer status stuck on 'Offline' or grayed out." },
-                    { id: "23", title: "Launch Services.msc", problem: "Manual verification of Windows service states.", solution: "Launches the Services.msc MMC snap-in.", whenToUse: "Manual verification of Print Spooler operational status." },
-                    { id: "24", title: "EXTREME PATH (WIN 11 24H2/25H2 & ARM64 SPECIFIC)", problem: "Standard fixes ineffective on latest Windows 11 builds.", solution: "Aggressive fix combination: DnsOnWire, StrictNameChecking, NTLM level, SMB Signing, Kerberos purge, etc.", whenToUse: "Standard fixes exhausted but failure persists on latest Win 11.", note: "Specifically tailored for Build 26000 and above." },
-                    { id: "25", title: "EXECUTE ALLFIX (42 AUTOMATED REPAIR SEQUENCES)", problem: "Unknown error origin, requiring holistic repair.", solution: "Executes 42 automated repair steps sequentially.", whenToUse: "PRIMARY RECOMMENDATION - optimal for all general cases.", note: "REBOOT SYSTEM upon completion for maximum efficacy." },
-                    { id: "26", title: "Detect OS Version & Build Architecture", problem: "Requirement to identify OS parameters for tailored fixes.", solution: "Displays OS version, build number, and specific recommendations.", whenToUse: "Prior to selecting a repair pathway." },
-                    { id: "27", title: "Rollback Registry from Backup", problem: "Requirement to revert system state prior to fixes.", solution: "Imports .reg files from the backup directory.", whenToUse: "Post-fix anomalies introduced.", note: "Only functional if [13] Backup was previously executed." },
-                    { id: "28", title: "Disable IPv6 Stack", problem: "IPv6 inducing routing conflicts in local networks.", solution: "Disables IPv6 via registry and netsh interfaces.", whenToUse: "Pure IPv4 networks experiencing severe routing conflicts." },
-                    { id: "29", title: "Generate HTML Diagnostic Report", problem: "Requirement for printable or distributable logs.", solution: "Compiles execution logs into an HTML file.", whenToUse: "For IT documentation or administrative reporting." },
-                    { id: "30", title: "Reboot System", problem: "Requirement to commit registry mutations to active state.", solution: "Executes an immediate system reboot.", whenToUse: "Following the execution of any major repair sequence." },
-                    { id: "31", title: "EXIT SCRIPT", problem: "Execution complete.", solution: "Terminates the Windows Printer Sharing Fix utility.", whenToUse: "Operations concluded." }
-                ]
-            },
-            {
-                category: "PART 2: NETWORK TOOLS & DIAGNOSTICS", items: [
-                    { id: "32", title: "Ping & Port 445/135 Diagnostics", problem: "Uncertain target host reachability.", solution: "ICMP Ping + port scanning for SMB (445) and RPC (135).", whenToUse: "Initial phase of network connectivity diagnostics." },
-                    { id: "33", title: "Remote Network Printer Discovery", problem: "Unknown shared printers on target host.", solution: "Scans and enumerates all shared printers on the target.", whenToUse: "Prior to driver installation." },
-                    { id: "34", title: "Remote Target Spooler Restart", problem: "Remote spooler frozen without physical access.", solution: "Executes remote spooler reset via PowerShell WinRM/DCOM.", whenToUse: "Host/Server spooler frozen requiring remote intervention.", note: "Requires Administrative privileges on target host." },
-                    { id: "35", title: "View Execution Logs", problem: "Requirement to audit historical repair operations.", solution: "Launches log management interface.", whenToUse: "Post-repair auditing and verification." }
-                ]
-            },
-            {
-                category: "PART 3: ADVANCED TOOLS", items: [
-                    { id: "36", title: "PrintBRM (Printer Backup/Restore Migration)", problem: "Requirement to migrate/clone printer configurations across hosts.", solution: "Executes full backup or restoration of printer topologies.", whenToUse: "Deploying printers to multiple workstations or migrating to new hardware." },
-                    { id: "37", title: "SILENT NUKE & ALLFIX (ZERO-PROMPT)", problem: "Requirement to execute all fixes without interaction.", solution: "Executes all 42 steps + automated reboot.", whenToUse: "Emergency situations requiring rapid unattended resolution.", warning: "SYSTEM WILL AUTOMATICALLY REBOOT! Save all critical work prior!" },
-                    { id: "38", title: "Force Remove Ghost Printers", problem: "Printer uninstallation fails via standard GUI.", solution: "Forces printer removal via command line (printui).", whenToUse: "Ghost or corrupted printers refusing standard uninstallation." },
-                    { id: "39", title: "Disable SMB Signing (Fix Win 11 NAS Access)", problem: "Unable to access NAS or legacy hosts from Win 11 24H2+.", solution: "Disables RequireSecuritySignature for SMB.", whenToUse: "Latest Win 11 builds failing to connect to NAS/legacy Win 10." },
-                    { id: "40", title: "Disable Print Driver Isolation", problem: "Printer driver crash forces spooler termination.", solution: "Disables IsolationPolicy in the registry.", whenToUse: "Spooler crashing concurrently with specific drivers." },
-                    { id: "41", title: "Force Initialize WSD Print Device", problem: "WSD (Web Services for Devices) printers remain undetected.", solution: "Initializes WSDPrintDevice service.", whenToUse: "Network printers missing from auto-discovery." },
-                    { id: "42", title: "Fix Microsoft Edge / UWP Printing", problem: "Unable to print from Microsoft Store/Edge applications.", solution: "Re-registers UWP printing components.", whenToUse: "Printing fails from Edge/UWP apps but succeeds from Notepad." },
-                    { id: "43", title: "Enable mDNS & LLMNR (Discovery Protocols)", problem: "Printers undetectable via hostname resolution.", solution: "Enables Multicast DNS and LLMNR protocols.", whenToUse: "Bonjour/mDNS discovery failing." },
-                    { id: "44", title: "Configure WSD Firewall Rules (Port 3702)", problem: "Web Services Discovery blocked by firewall.", solution: "Opens UDP port 3702 for WSD discovery.", whenToUse: "Network printers absent from search queries." },
-                    { id: "45", title: "Downgrade LSA Protection (Legacy Auth)", problem: "Authentication rejected due to aggressive LSA Protection.", solution: "Disables RunAsPPL in LSA registry.", whenToUse: "Share login failures due to strict Win 11 LSA protection." },
-                    { id: "46", title: "Bypass Smart App Control (SAC)", problem: "Smart App Control blocking driver installation.", solution: "Sets VerifiedAndReputablePolicyState to Off.", whenToUse: "Windows 11 SAC actively blocking driver installers." },
-                    { id: "47", title: "Enable IPP & Mopria Sharing Foundation", problem: "IPP (Internet Printing Protocol) printers non-functional.", solution: "Enables Windows IPP and Mopria Foundation features.", whenToUse: "Modern printers utilizing IPP protocols." },
-                    { id: "48", title: "Bypass Advanced ServerList Point & Print", problem: "Point and Print policies obstructing driver installation.", solution: "Injects ServerList wildcard (*) into registry.", whenToUse: "'Only install from approved servers' policy blocking installation." },
-                    { id: "49", title: "Force Modern SMB2/SMB3 Topology", problem: "SMB connections inefficient or insecure.", solution: "Ensures SMB2/SMB3 are active, explicitly disables SMB1.", whenToUse: "Transitioning to modern secure protocols." },
-                    { id: "50", title: "Configure Spooler Auto-Restart on Crash", problem: "Print Spooler crashes and remains inactive.", solution: "Configures recovery action: auto-restart upon crash.", whenToUse: "Spooler highly unstable, requiring self-healing mechanisms." },
-                    { id: "51", title: "Bypass UAC Admin Network TokenFilter", problem: "Admin share access denied despite administrative credentials.", solution: "Configures LocalAccountTokenFilterPolicy = 1.", whenToUse: "Remote administration to workgroup hosts failing due to UAC filtering." },
-                    { id: "52", title: "Purge Stale Spooler Dependencies", problem: "Spooler fails to start due to invalid service dependencies.", solution: "Resets DependOnService spooler parameters to default (RPCSS, http).", whenToUse: "Spooler inactive despite operational RPC services." },
-                    { id: "53", title: "Prioritize SMB in Network Provider Order", problem: "SMB connections suffering extreme latency.", solution: "Prioritizes LanmanWorkstation in the provider list.", whenToUse: "Share access is sluggish or timing out." },
-                    { id: "54", title: "Force NTLMv2 Response Compliance", problem: "Authentication fails due to NTLM version mismatch.", solution: "Configures LmCompatibilityLevel strictly to NTLMv2.", whenToUse: "'Access Denied' when authenticating against varying OS versions." },
-                    { id: "55", title: "Fix Error 0x00000040 (Network Unavailable)", problem: "'Network is unavailable' error during printer access.", solution: "Repairs PrintProcessor and Ports registry nodes.", whenToUse: "Network printer error 0x40 despite stable network." },
-                    { id: "56", title: "Fix Error 0x00000002 (CopyFilesPolicy Violation)", problem: "Error cloning printer driver from host server.", solution: "Configures CopyFilesPolicy allowing driver ingestion.", whenToUse: "Failing to install driver from print server." },
-                    { id: "57", title: "Fix Error 0x0000007e (RPC Bitness Mismatch)", problem: "32-bit vs 64-bit architecture mismatch.", solution: "Forces registry compliance for cross-architecture drivers.", whenToUse: "64-bit host failing to connect to 32-bit print server (or vice versa)." },
-                    { id: "58", title: "Manage Windows Protected Print (WPP)", problem: "WPP in Windows 11 obstructing legacy driver usage.", solution: "Disables Windows Protected Print feature.", whenToUse: "Printer driver incompatible with WPP isolation." },
-                    { id: "59", title: "Audit Last 20 Print Service Error Logs", problem: "Requirement to audit specific print service fault origins.", solution: "Parses the last 20 error events from the System Event Log.", whenToUse: "Investigating root causes of print anomalies." },
-                    { id: "60", title: "Manually Inject Standard TCP/IP Port", problem: "Requirement to inject an IP printer port manually.", solution: "Injects TCP/IP port via WMI scripting.", whenToUse: "Installing network printers via direct IP addressing." },
-                    { id: "61", title: "Force Permanent Default Printer", problem: "Default printer spontaneously reassigns.", solution: "Disables auto-manage and forcibly sets default.", whenToUse: "Windows dynamically mutating default printer based on network location." },
-                    { id: "62", title: "Deploy Spooler Watchdog (5-Minute Audit)", problem: "Spooler silently terminates without notification.", solution: "Deploys a scheduled task auditing the spooler every 5 minutes.", whenToUse: "High-uptime print server environments requiring constant availability." },
-                    { id: "63", title: "Fix RDP Printer Terminal Services", problem: "Redirected printers absent in Remote Desktop sessions.", solution: "Enables printer redirection in RDP registry.", whenToUse: "Authenticating via RDP but local printers fail to map." },
-                    { id: "64", title: "Resolve Hyper-V/WSL Virtual Network Conflicts", problem: "Hyper-V/WSL virtual switches disrupting LAN topology.", solution: "Disables printer bindings on virtual adapters.", whenToUse: "Sharing failures emerging post Hyper-V/WSL installation." },
-                    { id: "65", title: "Install Legacy LPR/LPD Protocols", problem: "Requirement to connect via LPR (Line Printer Remote).", solution: "Enables Windows LPR Port Monitor & LPD Service features.", whenToUse: "Connecting to Unix/Linux hosts or legacy print servers." },
-                    { id: "66", title: "Reinstall Microsoft Print to PDF/XPS", problem: "'Print to PDF' or 'XPS Document Writer' missing.", solution: "Re-initializes native Windows PDF & XPS printing features.", whenToUse: "Native virtual printers missing or generating errors." },
-                    { id: "67", title: "Bypass Credential Guard (Strict NTLM Block)", problem: "Credential Guard actively blocking NTLM authentication to shares.", solution: "Disables LsaCfgFlags Credential Guard registry node.", whenToUse: "Enterprise/Pro environments with Credential Guard enabled." },
-                    { id: "68", title: "Restart BITS (Background Transfer Service)", problem: "Driver downloads failing via Windows Update.", solution: "Restarts Background Intelligent Transfer Service.", whenToUse: "Drivers failing to download automatically." },
-                    { id: "69", title: "Generate System Restore Point (Security)", problem: "Requirement for a system-level safety net prior to mutation.", solution: "Generates a System Restore Point for full OS rollback.", whenToUse: "Prior to executing major system-level architectural changes." },
-                    { id: "70", title: "System Diagnostics Audit", problem: "Requirement for a rapid health summary of the printing subsystem.", solution: "Audits Spooler state, SMB, Firewall, and network topologies.", whenToUse: "Gaining situational awareness of the system's operational status." }
-                ]
-            }
+            { category: "PART 1: CORE FIXES & NETWORK SERVICES", items: [
+                { id: "77", title: "Audit Last 20 Print Service Error Logs", problem: "Requirement to audit specific print service fault origins.", solution: "Parses the last 20 error events from the System Event Log.", whenToUse: "Investigating root causes of print anomalies." },
+                { id: "29", title: "Manually Inject Standard TCP/IP Port", problem: "Requirement to inject an IP printer port manually.", solution: "Injects TCP/IP port via WMI scripting.", whenToUse: "Installing network printers via direct IP addressing." },
+                { id: "60", title: "Manage Windows Protected Print (WPP)", problem: "WPP in Windows 11 obstructing legacy driver usage.", solution: "Disables Windows Protected Print feature.", whenToUse: "Printer driver incompatible with WPP isolation." },
+                { id: "08", title: "Fix Error 0x00000002 (CopyFilesPolicy Violation)", problem: "Error cloning printer driver from host server.", solution: "Configures CopyFilesPolicy allowing driver ingestion.", whenToUse: "Failing to install driver from print server." },
+                { id: "09", title: "Fix Error 0x0000007e (RPC Bitness Mismatch)", problem: "32-bit vs 64-bit architecture mismatch.", solution: "Forces registry compliance for cross-architecture drivers.", whenToUse: "64-bit host failing to connect to 32-bit print server (or vice versa)." },
+                { id: "51", title: "Force Permanent Default Printer", problem: "Default printer spontaneously reassigns.", solution: "Disables auto-manage and forcibly sets default.", whenToUse: "Windows dynamically mutating default printer based on network location." },
+                { id: "24", title: "Install Legacy LPR/LPD Protocols", problem: "Requirement to connect via LPR (Line Printer Remote).", solution: "Enables Windows LPR Port Monitor & LPD Service features.", whenToUse: "Connecting to Unix/Linux hosts or legacy print servers." },
+                { id: "48", title: "Reinstall Microsoft Print to PDF/XPS", problem: "'Print to PDF' or 'XPS Document Writer' missing.", solution: "Re-initializes native Windows PDF & XPS printing features.", whenToUse: "Native virtual printers missing or generating errors." },
+                { id: "23", title: "Resolve Hyper-V/WSL Virtual Network Conflicts", problem: "Hyper-V/WSL virtual switches disrupting LAN topology.", solution: "Disables printer bindings on virtual adapters.", whenToUse: "Sharing failures emerging post Hyper-V/WSL installation." },
+                { id: "36", title: "Deploy Spooler Watchdog (5-Minute Audit)", problem: "Spooler silently terminates without notification.", solution: "Deploys a scheduled task auditing the spooler every 5 minutes.", whenToUse: "High-uptime print server environments requiring constant availability." },
+                { id: "53", title: "Fix RDP Printer Terminal Services", problem: "Redirected printers absent in Remote Desktop sessions.", solution: "Enables printer redirection in RDP registry.", whenToUse: "Authenticating via RDP but local printers fail to map." },
+                { id: "57", title: "Bypass Advanced ServerList Point & Print", problem: "Point and Print policies obstructing driver installation.", solution: "Injects ServerList wildcard (*) into registry.", whenToUse: "'Only install from approved servers' policy blocking installation." },
+                { id: "17", title: "Force Modern SMB2/SMB3 Topology", problem: "SMB connections inefficient or insecure.", solution: "Ensures SMB2/SMB3 are active, explicitly disables SMB1.", whenToUse: "Transitioning to modern secure protocols." },
+                { id: "22", title: "Enable IPP & Mopria Sharing Foundation", problem: "IPP (Internet Printing Protocol) printers non-functional.", solution: "Enables Windows IPP and Mopria Foundation features.", whenToUse: "Modern printers utilizing IPP protocols." },
+                { id: "55", title: "Downgrade LSA Protection (Legacy Auth)", problem: "Authentication rejected due to aggressive LSA Protection.", solution: "Disables RunAsPPL in LSA registry.", whenToUse: "Share login failures due to strict Win 11 LSA protection." },
+                { id: "56", title: "Bypass Smart App Control (SAC)", problem: "Smart App Control blocking driver installation.", solution: "Sets VerifiedAndReputablePolicyState to Off.", whenToUse: "Windows 11 SAC actively blocking driver installers." },
+                { id: "34", title: "Configure Spooler Auto-Restart on Crash", problem: "Print Spooler crashes and remains inactive.", solution: "Configures recovery action: auto-restart upon crash.", whenToUse: "Spooler highly unstable, requiring self-healing mechanisms." },
+                { id: "59", title: "Force NTLMv2 Response Compliance", problem: "Authentication fails due to NTLM version mismatch.", solution: "Configures LmCompatibilityLevel strictly to NTLMv2.", whenToUse: "'Access Denied' when authenticating against varying OS versions." },
+                { id: "07", title: "Fix Error 0x00000040 (Network Unavailable)", problem: "'Network is unavailable' error during printer access.", solution: "Repairs PrintProcessor and Ports registry nodes.", whenToUse: "Network printer error 0x40 despite stable network." },
+                { id: "18", title: "Prioritize SMB in Network Provider Order", problem: "SMB connections suffering extreme latency.", solution: "Prioritizes LanmanWorkstation in the provider list.", whenToUse: "Share access is sluggish or timing out." },
+                { id: "58", title: "Bypass UAC Admin Network TokenFilter", problem: "Admin share access denied despite administrative credentials.", solution: "Configures LocalAccountTokenFilterPolicy = 1.", whenToUse: "Remote administration to workgroup hosts failing due to UAC filtering." },
+                { id: "35", title: "Purge Stale Spooler Dependencies", problem: "Spooler fails to start due to invalid service dependencies.", solution: "Resets DependOnService spooler parameters to default (RPCSS, http).", whenToUse: "Spooler inactive despite operational RPC services." },
+                { id: "38", title: "Spooler Dependency Registry Reset", problem: "Spooler fails to start due to corrupted or missing service dependencies.", solution: "Resets Spooler's DependOnService registry to factory defaults (RPCSS, http).", whenToUse: "Spooler won't start even after a reboot." },
+                { id: "64", title: "Cross-User Credential Mapping", problem: "Multiple user accounts need credentials for the same network printer.", solution: "Injects network credentials into all user profiles for shared printer access.", whenToUse: "Setting up a shared PC with multiple local accounts." },
+                { id: "37", title: "Hard-Nuke Print Queue (.shd/.spl)", problem: "Print queue permanently stuck with undeletable jobs.", solution: "Terminates all print processes and purges corrupt .shd/.spl spool files.", whenToUse: "Standard cancellation methods fail to clear the queue." },
+                { id: "28", title: "Rescue Network Profile (Auto Watchdog)", problem: "Network profile resetting to Public after reboot, blocking printer sharing.", solution: "Forces all Public network profiles to Private and optionally deploys a watchdog task.", whenToUse: "Windows keeps forgetting your network is a Private trusted network." },
+                { id: "45", title: "Ghost USB Port & Copy Eliminator", problem: "Multiple 'Copy 1/2/3' printer entries cluttering the printer list.", solution: "Detects and removes duplicate/ghost printer copies and dead USB ports.", whenToUse: "You plugged the printer into a different USB port and it created a copy." },
+                { id: "52", title: "Force-Set Default Printer (Registry Bypass)", problem: "Error 0x709 or default printer keeps changing after reboot.", solution: "Bypasses Windows auto-manage and sets default printer via direct registry write.", whenToUse: "Cannot set default printer through normal settings app." },
+                { id: "81", title: "Detect GPO Intervention (Policy Scan)", problem: "Local registry fixes keep reverting due to domain GPO enforcement.", solution: "Scans registry and gpresult for Group Policy overrides affecting printers.", whenToUse: "Fixes work temporarily but break again after gpupdate or reboot." },
+                { id: "79", title: "PrintService Event Log Parser (Top 5)", problem: "Need to identify root cause from Windows Event Log print errors.", solution: "Parses the 5 most recent Error/Warning events with resolution suggestions.", whenToUse: "Mystery printing issues with no obvious error code." }
+            ] },
+            { category: "PART 2: ADVANCED TWEAKS & POLICIES", items: [
+                { id: "50", title: "Auto-Inject F4/Folio Paper Size", problem: "F4/Folio paper size missing from paper size selection dropdown.", solution: "Registers F4 (8.5x13 in) paper size into Print Server properties.", whenToUse: "Need to print on F4 paper but option is missing." },
+                { id: "54", title: "Auto-Sanitize Printer Share Name", problem: "Printer sharing fails due to special characters or spaces in share name.", solution: "Scans shared printers and replaces illegal characters in share names.", whenToUse: "Clients cannot connect to a printer shared with a long or complex name." },
+                { id: "49", title: "Browser Print Sandbox Fix (Chromium)", problem: "Chrome/Edge shows blank print preview or fails to detect printers.", solution: "Clears browser print cache and fixes loopback exemptions for print dialogs.", whenToUse: "Can print from Word but not from Chrome." },
+                { id: "78", title: "System Diagnostics Audit", problem: "Requirement for a rapid health summary of the printing subsystem.", solution: "Audits Spooler state, SMB, Firewall, and network topologies.", whenToUse: "Gaining situational awareness of the system's operational status." },
+                { id: "41", title: "Universal Print Class Driver V4 Fix", problem: "Post-Windows Update V4 driver corruption causing blank/garbled output.", solution: "Scans V4 drivers for corrupted PrintConfig.dll and triggers DriverStore re-registration.", whenToUse: "V4 printers suddenly stop working or print gibberish." },
+                { id: "67", title: "Generate System Restore Point (Security)", problem: "Requirement for a system-level safety net prior to mutation.", solution: "Generates a System Restore Point for full OS rollback.", whenToUse: "Prior to executing major system-level architectural changes." },
+                { id: "63", title: "Bypass Credential Guard (Strict NTLM Block)", problem: "Credential Guard actively blocking NTLM authentication to shares.", solution: "Disables LsaCfgFlags Credential Guard registry node.", whenToUse: "Enterprise/Pro environments with Credential Guard enabled." },
+                { id: "69", title: "Restart BITS (Background Transfer Service)", problem: "Driver downloads failing via Windows Update.", solution: "Restarts Background Intelligent Transfer Service.", whenToUse: "Drivers failing to download automatically." },
+                { id: "42", title: "Toggle PCL vs. PostScript Driver Mode", problem: "Garbled text or formatting issues caused by incompatible driver mode.", solution: "Switches a printer's driver between PCL and PostScript rendering modes.", whenToUse: "Printer spits out pages of random characters." },
+                { id: "26", title: "WSD to Standard TCP/IP Port Converter", problem: "Intermittent printer disappearance or offline status due to WSD discovery failure.", solution: "Detects WSD ports and migrates printers to stable Standard TCP/IP ports.", whenToUse: "Printer works occasionally but often shows offline." },
+                { id: "27", title: "Network Socket Re-init (Selective Purge)", problem: "Stale network connections blocking printer access after IP changes or VPN.", solution: "Restarts SMB Client/Server services and clears stuck port 445/135 connections.", whenToUse: "After changing IP or connecting/disconnecting VPNs." },
+                { id: "44", title: "Bypass 'Driver is currently in use'", problem: "Cannot uninstall or update a printer driver due to 'in use' lock.", solution: "Force-kills PrintIsolationHost, splwow64, and pipeline processes to release driver handles.", whenToUse: "Windows refuses to let you delete a driver." },
+                { id: "70", title: "Uninstall & Pause Specific KB Update", problem: "A specific KB update has broken printer sharing functionality.", solution: "Removes a specific Windows Update KB and optionally pauses updates for 35 days.", whenToUse: "Immediately after a known bad Windows Update." },
+                { id: "43", title: "Orphaned Driver Sweeper (pnputil)", problem: "Phantom driver conflicts or bloated DriverStore after multiple driver installs.", solution: "Scans DriverStore for orphaned printer OEM INF packages and force-deletes them.", whenToUse: "Unable to install new driver due to conflicts with old invisible drivers." },
+                { id: "68", title: "System File Checker & DISM Restoration", problem: "Corrupted or damaged Windows system files.", solution: "Executes SFC /scannow and DISM RestoreHealth.", whenToUse: "Frequent BSODs, anomalous errors, or post-malware cleanup.", note: "This process may take 10-30 minutes!" },
+                { id: "39", title: "Driver Management (Print Server Properties)", problem: "Corrupted or duplicate printer drivers.", solution: "Launches Print Server Properties to manage installed drivers.", whenToUse: "Printer utilizing incorrect driver or duplicate driver instances." },
+                { id: "32", title: "Re-initialize RPC & DCOM Services", problem: "RPC or DCOM services terminated/crashed.", solution: "Verifies and restarts RpcSs and DcomLaunch services.", whenToUse: "'RPC server is unavailable' error." },
+                { id: "14", title: "Configure Windows Firewall File & Printer Sharing", problem: "Host invisible on network, sharing heavily blocked.", solution: "Enables File & Printer Sharing rules natively in Firewall.", whenToUse: "After clean OS install or firewall reset." },
+                { id: "65", title: "Pre-execution Registry Backup (Spooler & Network)", problem: "Requirement to backup state before mutating registry.", solution: "Exports Print, Printers Policy, and LanmanWorkstation registry trees.", whenToUse: "MANDATORY prior to executing other fixes (safety net).", note: "Highly recommended!" },
+                { id: "06", title: "Fix Error 0x80070005 (Reset Spooler ACL Permissions)", problem: "'Access Denied' (0x80070005) error during print operations.", solution: "Resets Spool\\Printers directory ACL to default.", whenToUse: "Post domain migration or user permission alterations." },
+                { id: "71", title: "Launch Native Windows Troubleshooter", problem: "Requirement for automated OS diagnostic.", solution: "Executes native Windows Printer Troubleshooter.", whenToUse: "Initial diagnostic step before manual intervention." },
+                { id: "72", title: "Force Printer Online Status", problem: "Printer displays 'Offline' status despite being powered on.", solution: "Transmits online enforcement command via printui.", whenToUse: "Printer status stuck on 'Offline' or grayed out." },
+                { id: "62", title: "Purge Stale Credentials from Windows Vault", problem: "Cached legacy logins causing authentication conflicts.", solution: "Purges invalid or outdated credentials from the vault.", whenToUse: "Host password was changed but local machine retains stale cache." },
+                { id: "15", title: "SMB 1.0 Legacy Protocol Management (ON/OFF)", problem: "Requirement to connect to legacy hosts (Win XP/7).", solution: "Enables or disables SMB 1.0 protocol based on user input.", whenToUse: "Connecting to legacy hardware.", warning: "SMB 1.0 is highly vulnerable to ransomware! Enable only if strictly necessary!" },
+                { id: "61", title: "Inject Windows Credentials into Vault Permanently", problem: "Continuous prompt for password during share access.", solution: "Injects username/password into Windows Credential Manager.", whenToUse: "To bypass manual authentication upon each access." },
+                { id: "04", title: "Fix Error 0x80070035 (Automate Network Services)", problem: "'The network path was not found' error.", solution: "Automates startup for fdPHost, FDResPub, SSDPSRV, upnphost services.", whenToUse: "Target host is invisible in Network Discovery." },
+                { id: "05", title: "Disable Client-Side Rendering (Error 0x6d1)", problem: "Print job fails due to client-side driver rendering issues.", solution: "Enables DisableClientSideRendering in the registry.", whenToUse: "Print jobs are stuck or failing to transmit to the spooler." },
+                { id: "03", title: "Bypass Error 0x00000bc4 (No Printers Found)", problem: "Windows reports 'No printers were found' despite network availability.", solution: "Forces RPC to utilize Named Pipe Protocol.", whenToUse: "Prevalent in recent Windows 11 builds." },
+                { id: "01", title: "Patch Error 0x0000011b (RpcAuthnLevelPrivacy)", problem: "Failed to connect to shared printer, throwing error 0x11b.", solution: "Disables the RpcAuthnLevelPrivacyEnabled registry key.", whenToUse: "Most common error following Windows 10/11 cumulative updates." },
+                { id: "02", title: "Bypass Error 0x00000709 / 0x7c (Point and Print)", problem: "Unable to set default printer or install shared driver.", solution: "Disables RestrictDriverInstallationToAdministrators policy.", whenToUse: "Occurs after Microsoft security patches blocking driver injection." }
+            ] },
+            { category: "PART 3: DIAGNOSTICS & EXTENDED MODULES", items: [
+                { id: "31", title: "Hard Reset Print Spooler (Purge Stuck Queue)", problem: "Print queue is completely frozen, spooler hangs.", solution: "Stops spooler, forcefully deletes queue files, restarts spooler.", whenToUse: "Documents stuck in queue that cannot be cancelled manually." },
+                { id: "12", title: "Force Disable Password Protected Sharing", problem: "Credential prompt appears despite no password being configured.", solution: "Modifies LSA registry to prevent password enforcement.", whenToUse: "File/printer sharing in LAN without active directory domain." },
+                { id: "13", title: "Enable RPC via Named Pipes & TCP", problem: "Printer connection error due to RPC endpoint blocking.", solution: "Forces RPC communication through Named Pipes and TCP protocols.", whenToUse: "Error 0xbcf4db3 or RPC connection timeouts." },
+                { id: "11", title: "Force Network Profile to Private (Ignore Public/Domain)", problem: "Sharing blocked because network profile is set to Public.", solution: "Overrides all connection profiles to Private state.", whenToUse: "Recently connected to a new network or corporate WiFi." },
+                { id: "83", title: "Enable SMB Guest Access & Drop Anonymous Blocks", problem: "Continuous prompt for credentials when accessing shares.", solution: "Enables AllowInsecureGuestAuth in registry.", whenToUse: "For password-less sharing in local networks." },
+                { id: "10", title: "Complete Network Reset (Flush DNS, Winsock, NetBIOS)", problem: "Unstable network connection, RTO, or severe latency.", solution: "Flushes DNS, releases/renews IP, resets Winsock & NetBIOS.", whenToUse: "After IP changes, network migration, or anomalous connectivity." },
+                { id: "86", title: "SILENT NUKE & ALLFIX (ZERO-PROMPT)", problem: "Requirement to execute all fixes without interaction.", solution: "Executes all 50 steps + automated reboot.", whenToUse: "Emergency situations requiring rapid unattended resolution.", warning: "SYSTEM WILL AUTOMATICALLY REBOOT! Save all critical work prior!" },
+                { id: "46", title: "Force Remove Ghost Printers", problem: "Printer uninstallation fails via standard GUI.", solution: "Forces printer removal via command line (printui).", whenToUse: "Ghost or corrupted printers refusing standard uninstallation." },
+                { id: "82", title: "PrintBRM (Printer Backup/Restore Migration)", problem: "Requirement to migrate/clone printer configurations across hosts.", solution: "Executes full backup or restoration of printer topologies.", whenToUse: "Deploying printers to multiple workstations or migrating to new hardware." },
+                { id: "33", title: "Remote Target Spooler Restart", problem: "Remote spooler frozen without physical access.", solution: "Executes remote spooler reset via PowerShell WinRM/DCOM.", whenToUse: "Host/Server spooler frozen requiring remote intervention.", note: "Requires Administrative privileges on target host." },
+                { id: "76", title: "View Execution Logs", problem: "Requirement to audit historical repair operations.", solution: "Launches log management interface.", whenToUse: "Post-repair auditing and verification." },
+                { id: "16", title: "Disable SMB Signing (Fix Win 11 NAS Access)", problem: "Unable to access NAS or legacy hosts from Win 11 24H2+.", solution: "Disables RequireSecuritySignature for SMB.", whenToUse: "Latest Win 11 builds failing to connect to NAS/legacy Win 10." },
+                { id: "20", title: "Enable mDNS & LLMNR (Discovery Protocols)", problem: "Printers undetectable via hostname resolution.", solution: "Enables Multicast DNS and LLMNR protocols.", whenToUse: "Bonjour/mDNS discovery failing." },
+                { id: "21", title: "Configure WSD Firewall Rules (Port 3702)", problem: "Web Services Discovery blocked by firewall.", solution: "Opens UDP port 3702 for WSD discovery.", whenToUse: "Network printers absent from search queries." },
+                { id: "47", title: "Fix Microsoft Edge / UWP Printing", problem: "Unable to print from Microsoft Store/Edge applications.", solution: "Re-registers UWP printing components.", whenToUse: "Printing fails from Edge/UWP apps but succeeds from Notepad." },
+                { id: "40", title: "Disable Print Driver Isolation", problem: "Printer driver crash forces spooler termination.", solution: "Disables IsolationPolicy in the registry.", whenToUse: "Spooler crashing concurrently with specific drivers." },
+                { id: "30", title: "Force Initialize WSD Print Device", problem: "WSD (Web Services for Devices) printers remain undetected.", solution: "Initializes WSDPrintDevice service.", whenToUse: "Network printers missing from auto-discovery." },
+                { id: "74", title: "Detect OS Version & Build Architecture", problem: "Requirement to identify OS parameters for tailored fixes.", solution: "Displays OS version, build number, and specific recommendations.", whenToUse: "Prior to selecting a repair pathway." },
+                { id: "66", title: "Rollback Registry from Backup", problem: "Requirement to revert system state prior to fixes.", solution: "Imports .reg files from the backup directory.", whenToUse: "Post-fix anomalies introduced.", note: "Only functional if [65] Backup was previously executed." },
+                { id: "85", title: "EXECUTE ALLFIX (50 AUTOMATED REPAIR SEQUENCES)", problem: "Unknown error origin, requiring holistic repair.", solution: "Executes 50 automated repair steps sequentially.", whenToUse: "PRIMARY RECOMMENDATION - optimal for all general cases.", note: "REBOOT SYSTEM upon completion for maximum efficacy." },
+                { id: "73", title: "Launch Services.msc", problem: "Manual verification of Windows service states.", solution: "Launches the Services.msc MMC snap-in.", whenToUse: "Manual verification of Print Spooler operational status." },
+                { id: "84", title: "EXTREME PATH (WIN 11 24H2/25H2 & ARM64 SPECIFIC)", problem: "Standard fixes ineffective on latest Windows 11 builds.", solution: "Aggressive fix combination: DnsOnWire, StrictNameChecking, NTLM level, SMB Signing, Kerberos purge, etc.", whenToUse: "Standard fixes exhausted but failure persists on latest Win 11.", note: "Specifically tailored for Build 26000 and above." },
+                { id: "19", title: "Disable IPv6 Stack", problem: "IPv6 inducing routing conflicts in local networks.", solution: "Disables IPv6 via registry and netsh interfaces.", whenToUse: "Pure IPv4 networks experiencing severe routing conflicts." },
+                { id: "75", title: "Ping & Port 445/135 Diagnostics", problem: "Uncertain target host reachability.", solution: "ICMP Ping + port scanning for SMB (445) and RPC (135).", whenToUse: "Initial phase of network connectivity diagnostics." },
+                { id: "25", title: "Remote Network Printer Discovery", problem: "Unknown shared printers on target host.", solution: "Scans and enumerates all shared printers on the target.", whenToUse: "Prior to driver installation." },
+                { id: "88", title: "EXIT SCRIPT", problem: "Execution complete.", solution: "Terminates the Windows Printer Sharing Fix utility.", whenToUse: "Operations concluded." },
+                { id: "80", title: "Generate HTML Diagnostic Report", problem: "Requirement for printable or distributable logs.", solution: "Compiles execution logs into an HTML file.", whenToUse: "For IT documentation or administrative reporting." },
+                { id: "87", title: "Reboot System", problem: "Requirement to commit registry mutations to active state.", solution: "Executes an immediate system reboot.", whenToUse: "Following the execution of any major repair sequence." }
+            ]
         ];
-
-    </script>
+</script>
 </head>
 
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200 min-h-screen flex flex-col"
@@ -235,7 +246,7 @@
                     </a>
                     <a href="#fitur"
                         class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-white transition-colors">
-                        <i data-lucide="list-checks" class="w-4 h-4"></i> Feature Glossary (1-70)
+                        <i data-lucide="list-checks" class="w-4 h-4"></i> Feature Glossary (1-88)
                     </a>
                     <a href="#tips"
                         class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-brand-50 hover:text-brand-600 dark:hover:bg-slate-700 dark:hover:text-white transition-colors">
@@ -261,7 +272,7 @@
                 <div
                     class="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-700">
                     <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
-                        <strong>Windows Printer Sharing Fix</strong> is an automated diagnostic and repair utility designed to resolve persistent printer sharing anomalies across Windows environments. This utility is architected to operate seamlessly across the latest OS iterations.
+                        <strong>Windows Printer Sharing Fix</strong> is an automated diagnostic and repair utility designed to resolve persistent printer sharing anomalies across Windows environments. It is built to work reliably on all recent versions of Windows.
                     </p>
 
                     <div class="grid md:grid-cols-2 gap-6">
@@ -337,8 +348,8 @@
                             <span
                                 class="absolute flex items-center justify-center w-8 h-8 bg-brand-100 rounded-full -left-4 ring-4 ring-white dark:ring-slate-800 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 font-bold text-sm">3</span>
                             <h3 class="font-semibold text-slate-900 dark:text-white">Select Feature</h3>
-                            <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">The main console interface will display 70 execution options. Input the numerical identifier (e.g., <code>1</code>, <code>07</code>,
-                                <code>25</code>, <code>70</code>) and press <strong>ENTER</strong>.
+                            <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">The main console interface will display 88 execution options. Input the numerical identifier (e.g., <code>1</code>, <code>07</code>,
+                                <code>25</code>, <code>88</code>) and press <strong>ENTER</strong>.
                             </p>
                         </li>
                         <li class="pl-8">
@@ -354,9 +365,9 @@
                         <h4 class="font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2"><i data-lucide="lightbulb" class="w-5 h-5 text-yellow-500"></i> Quick Input Tips:</h4>
                         <ul class="space-y-2 text-sm text-slate-600 dark:text-slate-400">
                             <li>• Zero-padding is optional. You can input "7" or "07" equivalently.</li>
-                            <li>• For a holistic system repair, execute option <strong>[25] ALLFIX</strong>.
+                            <li>• For a holistic system repair, execute option <strong>[85] ALLFIX</strong>.
                             </li>
-                            <li>• For emergency unattended execution, utilize <strong>[37] SILENT NUKE</strong>.
+                            <li>• For emergency unattended execution, utilize <strong>[86] SILENT NUKE</strong>.
                             </li>
                         </ul>
                     </div>
@@ -369,11 +380,11 @@
                         <div class="bg-brand-100 dark:bg-brand-900/50 p-2 rounded-lg">
                             <i data-lucide="list-checks" class="w-6 h-6 text-brand-600 dark:text-brand-400"></i>
                         </div>
-                        <h2 class="text-3xl font-bold text-slate-900 dark:text-white">C. Feature Glossary (1-70)</h2>
+                        <h2 class="text-3xl font-bold text-slate-900 dark:text-white">C. Feature Glossary (1-88)</h2>
                     </div>
                     <div id="searchStats"
                         class="text-sm font-medium text-slate-500 bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700 hidden">
-                        Displaying <span id="visibleCount" class="text-brand-600 dark:text-brand-400">70</span> features
+                        Displaying <span id="visibleCount" class="text-brand-600 dark:text-brand-400">88</span> features
                     </div>
                 </div>
 
@@ -406,7 +417,7 @@
                         <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">(Standard execution path)</p>
                         <ol class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
                             <li>1. Execute <strong>[13] Registry Backup</strong> (Mandatory).</li>
-                            <li>2. Execute <strong>[25] ALLFIX</strong> (42 sequential repairs).</li>
+                            <li>2. Execute <strong>[85] ALLFIX</strong> (50 sequential repairs).</li>
                             <li>3. Reboot the system.</li>
                             <li>4. Verify printer sharing status.</li>
                         </ol>
@@ -417,7 +428,7 @@
                         <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">(Version 24H2/25H2 Build 26000+)</p>
                         <ol class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
                             <li>1. Execute <strong>[13] Registry Backup</strong>.</li>
-                            <li>2. Execute <strong>[24] Extreme Path</strong>.</li>
+                            <li>2. Execute <strong>[84] Extreme Path</strong>.</li>
                             <li>3. Reboot the system.</li>
                         </ol>
                     </div>
@@ -426,7 +437,7 @@
                         <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-3">Emergency Protocol</h3>
                         <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">(Rapid, unattended execution)</p>
                         <ol class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
-                            <li>1. Execute <strong>[37] Silent Nuke</strong>.</li>
+                            <li>1. Execute <strong>[86] SILENT NUKE</strong>.</li>
                             <li class="text-red-500 dark:text-red-400 font-medium mt-2 flex items-start gap-1"><i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5"></i> WARNING: System will forcefully reboot! Save all active work!</li>
                         </ol>
                     </div>
@@ -468,7 +479,7 @@
                         <div x-show="open" x-collapse x-cloak>
                             <div
                                 class="px-6 pb-5 text-slate-600 dark:text-slate-300 text-sm border-t border-slate-100 dark:border-slate-700 pt-4">
-                                Execute <strong>[24] Extreme Path</strong>, then reboot. If failure persists, execute <strong>[15] SFC & DISM</strong> to restore potentially corrupted system binaries.
+                                Execute <strong>[84] Extreme Path</strong>, then reboot. If failure persists, execute <strong>[68] SFC & DISM</strong> to restore potentially corrupted system binaries.
                             </div>
                         </div>
                     </div>

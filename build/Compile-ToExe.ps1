@@ -8,14 +8,14 @@ complete with an Administrator execution manifest for seamless deployment.
 
 .NOTES
 Execute this script from the build/ directory or the project root.
-Output will be generated in the Output/ directory at the project root.
+Output will be generated in the release/ directory at the project root.
 #>
 
 # Automatically determine project root (parent of build/ directory)
 $ProjectRoot = Split-Path $PSScriptRoot -Parent
 
 $SourceFile = Join-Path $ProjectRoot "src\WinPrinterFix.ps1"
-$OutputDir  = Join-Path $ProjectRoot "Output"
+$OutputDir  = Join-Path $ProjectRoot "release"
 $OutputFile = Join-Path $OutputDir "WinPrinterFix.exe"
 $IconFile   = Join-Path $ProjectRoot "assets\icon.ico"
 
@@ -47,7 +47,7 @@ $ps2exeParams = @{
     requireAdmin = $true
     title       = "Windows Printer Sharing Fix"
     description = "Windows Printer Sharing Fix Tool"
-    version     = "1.0.0.0"
+    version     = "2.1.0.0"
     company     = "khairudinfahmi"
     copyright   = "2026 khairudinfahmi"
 }
@@ -62,6 +62,14 @@ try {
     
     Write-Host "`nCompilation Successful!" -ForegroundColor Green
     Write-Host "EXE file generated at: $OutputFile" -ForegroundColor Cyan
+    
+    # Auto-copy dokumentasi.html to release/ for portable EXE distribution
+    $docSource = Join-Path $ProjectRoot "docs\dokumentasi.html"
+    $docDest = Join-Path $OutputDir "dokumentasi.html"
+    if (Test-Path $docSource) {
+        Copy-Item $docSource $docDest -Force
+        Write-Host "Documentation bundled: $docDest" -ForegroundColor Green
+    }
     
     Write-Host "`nInitiating Code Signing process..." -ForegroundColor Cyan
     $certName = "khairudinfahmi"

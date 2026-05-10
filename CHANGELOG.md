@@ -7,15 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2026-05-10
+
+### Changed
+- **Global ID Migration**: All 88 features have been reorganized into a strictly sequential, logical 3-column architecture for improved usability and professional consistency.
+  - **Column 1 [01-30]**: Core Fixes & Network Services (Error codes, DNS, SMB, WSD, IPP, Firewall).
+  - **Column 2 [31-60]**: Spooler, Drivers & Policies (Spooler management, V4 drivers, LSA, SAC, UAC).
+  - **Column 3 [61-88]**: Diagnostics & Automation (Credentials, Backup, SFC, Troubleshooter, ALLFIX, Exit).
+- **Key ID Changes**:
+  - `[65]` Registry Backup (was `[13]`)
+  - `[84]` Extreme Path (was `[24]`)
+  - `[85]` ALLFIX (was `[25]`)
+  - `[86]` Silent Nuke (was `[37]`)
+  - `[88]` EXIT SCRIPT (was `[31]`)
+- **UI Overhaul**: Feature text color standardized to Green for consistency. Special operations `[84]`, `[85]`, `[86]` highlighted in Red for visibility.
+- **Console Layout**: Dynamic buffer/window sizing (180 columns) with proportional column widths (`62/55/58`) prevents text wrapping on any console size.
+- **Help System**: All 88 help entries remapped to match new sequential IDs. Guide workflow references updated.
+- **Termination Logic**: Fixed bypass IDs from old `31/30/37` to correct `88/87/86`.
+- **AllFix**: Expanded from 42 to 50 automated repair steps.
+
+### Fixed
+- `$colWidth` undefined variable causing PadRight crash in Show-Menu column 3.
+- BufferSize not set before WindowSize causing silent console resize failure.
+- 18 switch cases referencing non-existent function names (e.g., `Uninstall-KBUpdate` → `Manage-WindowsUpdate`).
+- ISS installer source path corrected from `Output/` to `release/`.
+- Stale old-ID references in help guide text.
+
+---
+
+## [2.0.0] - 2026-05-10
+
+### Added
+- 18 new advanced diagnostic and repair modules, expanding total features from 70 to 88.
+- **Driver & Windows Update**: Universal Print V4 Fix, PCL/PostScript Toggle, KB Uninstall & Pause, Orphaned Driver Sweeper, Force-Kill Driver Process.
+- **Network & Port**: WSD to TCP/IP Converter, Network Socket Re-init, Rescue Network Profile (Watchdog), Ghost USB Port Eliminator.
+- **Spooler & Queue**: Hard-Nuke Print Queue (.shd/.spl purge), Spooler Dependency Registry Reset.
+- **Credentials**: Cross-User Credential Mapping, Force-Set Default Printer (Registry Bypass).
+- **Third-Party Integration**: Auto-Sanitize Printer Share Name, Browser Print Sandbox Fix (Chromium), Auto-Inject F4/Folio Paper Size.
+- **Advanced Diagnostics**: GPO Intervention Detection (Policy Scan), PrintService Event Log Parser (Top 5).
+
+### Changed
+- AllFix expanded from 42 to 50 automated repair steps with 8 new safe integrations.
+- Extreme Path (Win 11 24H2/25H2) enhanced with V4 Driver Fix, Spooler Dependency Reset, and Share Name Sanitization.
+- Menu system updated: dynamic row rendering supports variable-length columns.
+- Help system expanded: full `? <number>` support for all 88 features.
+
+---
+
 ## [1.0.1] - 2026-05-04
 
 ### Changed
-- UI Enhancement: Explicitly highlighted options `[24]` (Red), `[25]` (Yellow), and `[37] SILENT NUKE` (Magenta) in the main CLI menu for better visibility.
-- UI Enhancement: Updated the footer "NOTE:" section to explicitly reference the 3 primary operation modes: `[25] ALLFIX`, `[24] EXTREME PATH`, and `[37] SILENT NUKE`.
+- UI Enhancement: Highlighted primary operation modes in the CLI menu for better visibility.
 - Documentation: Updated OS Support requirements to clarify Legacy OS (Windows 7/8/8.1) as "Partial/Registry Support only".
 - Documentation: Replaced all emojis in the HTML manual with professional Lucide icons.
-- Documentation: Corrected typo in log and backup directory paths (`WinPrinterFixLog.txt` instead of `PrinterFixlog.txt`).
-- Features: Explicitly mapped error code `0x80070005` (Access Denied) into Option `[17]` descriptor for easier troubleshooting discovery.
+- Documentation: Corrected typo in log and backup directory paths.
+- Features: Explicitly mapped error code `0x80070005` (Access Denied) into option descriptor for easier troubleshooting discovery.
 
 ---
 

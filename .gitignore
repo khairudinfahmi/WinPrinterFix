@@ -1,9 +1,11 @@
 # ===========================
 # Build Output (intermediary)
 # ===========================
-Output/
+# Ignore everything in the release directory except .gitkeep
+release/*
+!release/.gitkeep
 
-# Exclude all EXE files
+# Exclude all EXE files globally
 *.exe
 
 # ===========================

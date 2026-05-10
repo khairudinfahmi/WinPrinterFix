@@ -1,12 +1,12 @@
 [Setup]
 AppName=Windows Printer Sharing Fix
-AppVersion=1.0
+AppVersion=2.0
 AppPublisher=khairudinfahmi
 AppPublisherURL=https://github.com/khairudinfahmi/WinPrinterFix
 AppSupportURL=https://github.com/khairudinfahmi/WinPrinterFix/issues
 DefaultDirName={autopf}\Windows Printer Sharing Fix
 DefaultGroupName=Windows Printer Sharing Fix
-OutputDir=..\Output
+OutputDir=..\release
 OutputBaseFilename=WindowsPrinterSharingFix_Installer
 Compression=lzma
 SolidCompression=yes
@@ -18,12 +18,12 @@ PrivilegesRequired=admin
 DisableWelcomePage=no
 VersionInfoCompany=khairudinfahmi
 VersionInfoProductName=Windows Printer Sharing Fix
-VersionInfoProductVersion=1.0.0.0
-VersionInfoVersion=1.0.0.0
+VersionInfoProductVersion=2.0.0.0
+VersionInfoVersion=2.0.0.0
 VersionInfoDescription=Windows Printer Sharing Fix Setup Installer
 
 [Files]
-Source: "..\Output\WinPrinterFix.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\release\WinPrinterFix.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\docs\dokumentasi.html"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\khairudinfahmi_cert.cer"; DestDir: "{app}"; Flags: ignoreversion
