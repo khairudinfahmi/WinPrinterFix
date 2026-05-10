@@ -39,6 +39,10 @@ else {
 
 if ($buildInfo -and $null -ne $buildInfo.ProductName) {
     $script:productName = $buildInfo.ProductName
+    # Microsoft registry quirk: Windows 11 still reports as "Windows 10"
+    if ($script:buildNumber -ge 22000 -and $script:productName -match "Windows 10") {
+        $script:productName = $script:productName -replace "Windows 10", "Windows 11"
+    }
 }
 else {
     $script:productName = "Windows NT $([Environment]::OSVersion.Version.Major)"
