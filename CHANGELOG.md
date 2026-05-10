@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 18 switch cases referencing non-existent function names (e.g., `Uninstall-KBUpdate` → `Manage-WindowsUpdate`).
 - ISS installer source path corrected from `Output/` to `release/`.
 - Stale old-ID references in help guide text.
+- Windows 11 misidentification bug caused by legacy `ProductName` registry strings (now actively checks Build >= 22000).
 
 ---
 
