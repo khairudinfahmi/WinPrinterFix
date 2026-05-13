@@ -799,10 +799,11 @@ function Fix-ProviderOrder {
 }
 
 function Fix-NTLMv2 { 
-    Write-Log "Enforcing NTLMv2 Response Compliance..." -Type "INFO"
+    Write-Log "Enforcing Strict NTLMv2 Response Compliance (Synology NAS Compatible)..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LmCompatibilityLevel -Value 1 -Type DWord -Force 
-        Write-Log "NTLMv2 successfully enforced." -Type "SUCCESS"
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LmCompatibilityLevel -Value 3 -Type DWord -Force 
+        Write-Log "Strict NTLMv2 successfully enforced." -Type "SUCCESS"
+        Write-Host "  [+] Strict NTLMv2 enforced (Value 3). NAS Synology & Modern Print Sharing secured." -ForegroundColor Green
     }
     catch {}
 }
@@ -1583,14 +1584,12 @@ function Inject-F4PaperSize {
         $heightMicrons = 330200
         $formsPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Print\Forms"
         if (-not (Test-Path "$formsPath\$formName")) {
-            $formData = [byte[]]@(
-                0x00, 0x00, 0x00, 0x00,
-                [BitConverter]::GetBytes([int]$widthMicrons) +
-                [BitConverter]::GetBytes([int]$heightMicrons) +
-                [byte[]]@(0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00) +
-                [BitConverter]::GetBytes([int]$widthMicrons) +
-                [BitConverter]::GetBytes([int]$heightMicrons)
-            )
+            $formData = [byte[]](0x00, 0x00, 0x00, 0x00) + 
+                        [BitConverter]::GetBytes([int]$widthMicrons) + 
+                        [BitConverter]::GetBytes([int]$heightMicrons) + 
+                        [byte[]](0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00) + 
+                        [BitConverter]::GetBytes([int]$widthMicrons) + 
+                        [BitConverter]::GetBytes([int]$heightMicrons)
             try {
                 New-Item -Path "$formsPath\$formName" -Force -ErrorAction Stop | Out-Null
                 Set-ItemProperty -Path "$formsPath\$formName" -Name "FormData" -Value $formData -Type Binary -Force -ErrorAction SilentlyContinue

@@ -1,6 +1,6 @@
 [Setup]
 AppName=Windows Printer Sharing Fix
-AppVersion=2.1.0
+AppVersion=2.1.1
 AppPublisher=khairudinfahmi
 AppPublisherURL=https://github.com/khairudinfahmi/WinPrinterFix
 AppSupportURL=https://github.com/khairudinfahmi/WinPrinterFix/issues
@@ -18,8 +18,8 @@ PrivilegesRequired=admin
 DisableWelcomePage=no
 VersionInfoCompany=khairudinfahmi
 VersionInfoProductName=Windows Printer Sharing Fix
-VersionInfoProductVersion=2.1.0.0
-VersionInfoVersion=2.1.0.0
+VersionInfoProductVersion=2.1.1.0
+VersionInfoVersion=2.1.1.0
 VersionInfoDescription=Windows Printer Sharing Fix Setup Installer
 
 [Files]
