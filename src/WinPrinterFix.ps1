@@ -1592,7 +1592,7 @@ function Inject-F4PaperSize {
                         [BitConverter]::GetBytes([int]$heightMicrons)
             try {
                 New-Item -Path "$formsPath\$formName" -Force -ErrorAction Stop | Out-Null
-                Set-ItemProperty -Path "$formsPath\$formName" -Name "FormData" -Value $formData -Type Binary -Force -ErrorAction SilentlyContinue
+                New-ItemProperty -Path "$formsPath\$formName" -Name "FormData" -PropertyType Binary -Value $formData -Force -ErrorAction SilentlyContinue | Out-Null
             }
             catch {}
         }
