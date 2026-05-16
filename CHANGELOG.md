@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Reorganized and aligned the 89-option menu for a cleaner look.
-- Sanitized the source code (removed all comments and internal tags).
+- Cleaned up code.
 - Improved error messages for the update uninstaller.
 
 ---
