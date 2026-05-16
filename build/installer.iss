@@ -1,6 +1,6 @@
 [Setup]
 AppName=Windows Printer Sharing Fix
-AppVersion=2.1.1
+AppVersion=2.2.8
 AppPublisher=khairudinfahmi
 AppPublisherURL=https://github.com/khairudinfahmi/WinPrinterFix
 AppSupportURL=https://github.com/khairudinfahmi/WinPrinterFix/issues
@@ -18,19 +18,19 @@ PrivilegesRequired=admin
 DisableWelcomePage=no
 VersionInfoCompany=khairudinfahmi
 VersionInfoProductName=Windows Printer Sharing Fix
-VersionInfoProductVersion=2.1.1.0
-VersionInfoVersion=2.1.1.0
+VersionInfoProductVersion=2.2.8.0
+VersionInfoVersion=2.2.8.0
 VersionInfoDescription=Windows Printer Sharing Fix Setup Installer
 
 [Files]
 Source: "..\release\WinPrinterFix.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\icon.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\docs\dokumentasi.html"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\docs\documentation.html"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\khairudinfahmi_cert.cer"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Windows Printer Sharing Fix"; Filename: "{app}\WinPrinterFix.exe"; IconFilename: "{app}\icon.ico"
-Name: "{group}\Windows Printer Sharing Fix Documentation"; Filename: "{app}\dokumentasi.html"
+Name: "{group}\Windows Printer Sharing Fix Documentation"; Filename: "{app}\documentation.html"
 Name: "{autodesktop}\Windows Printer Sharing Fix"; Filename: "{app}\WinPrinterFix.exe"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
 
 [Tasks]

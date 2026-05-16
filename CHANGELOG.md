@@ -7,6 +7,105 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.8] - 2026-05-17
+
+### Added
+- Added wusa.exe fallback for update uninstalls (Option [69]). If DISM fails, it will try wusa automatically.
+
+### Changed
+- Reorganized and aligned the 89-option menu for a cleaner look.
+- Sanitized the source code (removed all comments and internal tags).
+- Improved error messages for the update uninstaller.
+
+---
+
+## [2.2.7] - 2026-05-17
+
+### Added
+- **Remove Injected Port (Option [87])**: Added `Remove-LocalPortUNC` function to safely delete custom ports created by the Titanium Bypass (Option [86]). Includes a Registry Purge fallback if standard removal is blocked by Windows security policies.
+- **Titanium Bypass Polish**: Optimized `Map-LocalPortUNC` with improved diagnostic logging and direct registry injection verification.
+
+### Changed
+- **Global ID Re-indexing**: Reorganized features into an 89-option architecture.
+  - `[87]` Remove Injected Local Port (UNC)
+  - `[88]` Reboot System
+  - `[89]` EXIT SCRIPT
+- **UI Enhancement**: Standardized "Ultimate Bypass" nomenclature across all diagnostic modules for better clarity.
+
+---
+
+## [2.2.6] - 2026-05-17
+
+### Added
+- **Registry Bypass for Local Ports**: Significantly enhanced `Map-LocalPortUNC` (Option [86]) with a fallback mechanism. If the standard Windows API for port creation is blocked by RPC security policies, the tool now injects the UNC path directly into the registry and restarts the spooler to force availability.
+
+### Changed
+- **Standardized Error Codes**: Expanded all hex error codes to their full 10-character format (e.g., 0x0000011b, 0x00000709) across the entire UI, console logs, and documentation for maximum clarity and enterprise compliance.
+- **Professional Language Polish**: Replaced "stiff" or AI-centric terminology (e.g., "mutated", "transmitted", "numerals") with natural, professional technical language ("updated", "issued", "numbers") to ensure a polished user experience.
+- **Function Standardization**: Renamed core repair functions to include their corresponding error codes (e.g., Fix-11b -> Fix-RpcAuthn0x0000011b) for better developer traceability and maintenance.
+- **Code Refactoring**: Cleaned up internal documentation and removed redundant debug comments to improve script readability and performance.
+- **Improved Spooler Management**: Optimized the spooler refresh logic to ensure a cleaner state transition between service stop and start operations.
+
+---
+
+## [2.2.5] - 2026-05-17
+
+### Added
+- **Ultimate Bypass (Option [86])**: Added `Map-LocalPortUNC` function. This allows users to map a local port directly to a UNC path (`\\TargetIP\ShareName`), effectively bypassing persistent RPC "Check printer name" or "0x709" errors when standard sharing protocols fail.
+- **Enhanced PrintNightmare Bypasses**: Expanded `Fix-AdvancedPointAndPrint` (Option [56]) with critical registry overrides (`RestrictDriverInstallationToAdministrators = 0`, `NoWarningNoElevationOnInstall = 1`, etc.). This enables silent driver downloads from host machines even under strict modern security policies.
+- **AllFix Sequence Markers**: Added visual menu-mapping hints (e.g., `(Menu 64)`) to each step in the `AllFix-Core` sequence, allowing users to trace which individual fix corresponds to each automated step.
+
+### Fixed
+- **Spooler Resilience**: Added explicit `Set-Service spooler -StartupType Automatic` during the Spooler Hard Reset (Option [31]) to ensure the service persists after a reboot.
+- **SMB Mutual Auth**: Added `RequireMutualAuthentication = 0` to `Fix-SMBSigning` (Option [16]) to ensure smooth NTLM fallback for workgroup environments.
+- **Network Discovery Hardening**: Integrated `nlasvc` (Network List Service) and `Dnscache` into `Fix-NetworkServices` (Option [04]) to ensure reliable profile detection.
+- **Directory ACL**: Expanded `Reset-SpoolerPerm` (Option [06]) to grant "Everyone" FullControl on the spooler directory, resolving persistent permission-based sharing blocks.
+- **UI & Feature Expansion**: Updated the toolkit to **88 options**. Reindexed "Reboot" and "Exit" to options [87] and [88] respectively.
+
+---
+
+## [2.2.3] - 2026-05-16
+
+### Fixed
+- **GPO Synchronization**: Moved `gpupdate /force` to the beginning of the `AllFix-Core` and `Extreme-25H2` sequences. This prevents domain-joined machines from reverting registry fixes immediately after script execution.
+- **Sequence Integrity**: Standardized the `AllFix-Core` sequence to a consistent 50-step repair flow, correcting duplicate numbering and inconsistent step labels.
+- **Error 0x00000709 (HKCU Permissions)**: Added `Fix-HKCU-PrinterKeyPerms` to grant FullControl to the printer registry key. This resolves "Access Denied" errors when writing to the Device key during printer assignment.
+- **Print Migration (Home Edition Compatibility)**: Added validation for `PrintBrm.exe` existence. The tool now correctly identifies when the utility is missing (common in Windows Home editions) and provides a clear informative message instead of a CLI error.
+- **Code Optimization**: Removed the legacy `Fix-709` dead code function, fully transitioning to the multi-layered `Fix-709-Deep` implementation.
+
+### Added
+- **KB5089549 Driver Bypass**: Implemented `Fix-CrossSignedDriverPolicy` to disable the new cross-signed driver enforcement (Audit Mode) introduced in the May 2026 patch.
+- **Post-Update Automation**: Integrated `Set-PostPatchTuesdayTask`, which deploys a scheduled task (`PrinterFixPostUpdate`) to automatically re-apply critical registry fixes after Windows Updates or reboots.
+- **Enhanced KB List**: Updated `Manage-WindowsUpdate` with a curated list of known printer-breaking KBs from 2025-2026.
+
+## [2.2.2] - 2026-05-16
+
+### Added
+- **Deep Fix 0x00000709**: Integrated a new multi-layered repair logic (Option [02]) targeting persistent 0x00000709 errors. Includes RPC Named Pipe enforcement, Kerberos disabling (`ForceKerberosForRpc=0`), and HKCU device key sanitation.
+- **Automated Deep Fix**: Integrated `Fix-709-Deep` into the `AllFix-Core` [84] and `Extreme-25H2` [83] sequences.
+
+## [2.2.1] - 2026-05-16
+
+### Fixed
+- **PrintBRM Migration**: Improved the launch logic for `PrintBrm.exe` (Option [81]) to open in a persistent CMD window with the help manual (`/?`) automatically displayed.
+- **DISM Capture**: Enhanced DISM uninstallation modules to correctly capture and report exit codes (0/3010) for verification.
+- **Windows Update Compliance**: Added robust registry keys (`PauseFeatureUpdatesStartTime`, `PauseUpdatesExpiryTime`) to ensure Windows 11 respects update pauses.
+- **WUSA Compatibility**: Removed silent flags from `wusa.exe` uninstalls to resolve security-driven interface blocks on modern builds.
+- **UI Alignment**: Standardized console headers for better readability in 80-column terminals.
+
+## [2.2.0] - 2026-05-15
+
+### Changed
+- **Feature Optimization**: Removed the non-essential "Auto-Inject F4/Folio Paper Size" feature (previously Option [50]) to streamline the toolkit.
+- **Global ID Re-indexing**: Reorganized all features into a strictly sequential 87-option architecture (down from 88). 
+- **UX Improvement**: Renamed "Case 2" troubleshooting to "STILL DENIED? (Persistent)" for better user clarity. Added strategic tips for manual credential injection (Option [60]) when automated fixes are blocked by modern Windows 11 security policies.
+- **AllFix Sequence**: Adjusted automated repair sequence from 50 to 49 steps.
+
+### Fixed
+- **Redundant Code**: Purged legacy F4 injection logic and registry manipulation to reduce script footprint and potential security surface.
+
+---
+
 ## [2.1.1] - 2026-05-13
 
 ### Fixed

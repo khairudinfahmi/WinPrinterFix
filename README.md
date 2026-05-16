@@ -2,34 +2,22 @@
 
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011%20%7C%20Server-0078D6?logo=windows&logoColor=white)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?logo=powershell&logoColor=white)
-![License](https://img.shields.io/badge/License-GPL_3.0-green)
-![Features](https://img.shields.io/badge/Features-88-orange)
-![Version](https://img.shields.io/badge/Version-2.1.1-blue)
+![Version](https://img.shields.io/badge/Version-2.2.8-blue)
 
-an automated troubleshooting and repair tool designed to resolve **all Windows printer sharing issues**. Features native support for Windows 10, Windows 11 (including 24H2/25H2/26H2 builds), ARM64 (Snapdragon) architectures, and Windows Server 2025.
+A simple but powerful tool to fix common Windows printer sharing problems. Works on Windows 10, 11 (including 24H2+), ARM64, and Windows Server 2025.
 
 ---
 
-## The Problem
+## What it fixes
 
-Following routine Windows updates, network printer sharing frequently breaks, throwing critical system errors such as:
-- `0x0000011b` — RPC Authentication Failure
-- `0x00000709` — Point and Print Restriction / Failure to set default printer
-- `0x00000bc4` — No printers were found
-- `0x80070035` — The network path was not found
-- `0x80070005` — Access Denied (Spooler ACL)
-- `0x00000040` — Network Unavailable
-- `0x00000002` — CopyFilesPolicy Violation
-- `0x0000007e` — RPC Bitness Mismatch (32/64-bit architecture conflict)
-- And many more...
-
-This tool resolves **all of these issues automatically** via a centralized interactive console.
+Windows updates often break network printing with cryptic errors. This tool fixes them:
+- `0x0000011b`, `0x00000709`, `0x00000bc4`, `0x80070035`, `0x00000040`, `0x0000007e`, etc.
 
 ---
 
-## Features (88 Repair Options)
+## 89 Repair Options
 
-### Column 1: Core Fixes & Network Services [01-30]
+### Column 1: Core & Network [01-30]
 | # | Feature |
 |---|---|
 | 01 | Patch Error 0x0000011b (RpcAuthnLevelPrivacy) |
@@ -63,7 +51,7 @@ This tool resolves **all of these issues automatically** via a centralized inter
 | 29 | Manually Inject Standard TCP/IP Port |
 | 30 | Force Initialize WSD Print Device |
 
-### Column 2: Spooler, Drivers & Policies [31-60]
+### Column 2: Spooler, Drivers & Policies [31-59]
 | # | Feature |
 |---|---|
 | 31 | Hard Reset Print Spooler (Purge Queue) |
@@ -85,49 +73,50 @@ This tool resolves **all of these issues automatically** via a centralized inter
 | 47 | Fix Microsoft Edge / UWP Printing |
 | 48 | Reinstall Microsoft Print to PDF/XPS |
 | 49 | Browser Print Sandbox Fix (Chromium) |
-| 50 | Auto-Inject F4/Folio Paper Size |
-| 51 | Force Permanent Default Printer |
-| 52 | Force-Set Default Printer (Reg Bypass) |
-| 53 | Fix RDP Printer Terminal Services |
-| 54 | Auto-Sanitize Printer Share Name |
-| 55 | Downgrade LSA Protection (Legacy Auth) |
-| 56 | Bypass Smart App Control (SAC) |
-| 57 | Bypass Advanced ServerList Point & Print |
-| 58 | Bypass UAC Admin Network TokenFilter |
-| 59 | Force NTLMv2 Response Compliance |
-| 60 | Manage Windows Protected Print (WPP) |
+| 50 | Force Permanent Default Printer |
+| 51 | Force-Set Default Printer (Reg Bypass) |
+| 52 | Fix RDP Printer Terminal Services |
+| 53 | Auto-Sanitize Printer Share Name |
+| 54 | Downgrade LSA Protection (Legacy Auth) |
+| 55 | Bypass Smart App Control (SAC) |
+| 56 | Bypass Advanced ServerList Point & Print |
+| 57 | Bypass UAC Admin Network TokenFilter |
+| 58 | Force NTLMv2 Response Compliance |
+| 59 | Manage Windows Protected Print (WPP) |
 
-### Column 3: Diagnostics & Automation [61-88]
+### Column 3: Diagnostics & Automation [60-89]
 | # | Feature |
 |---|---|
-| 61 | Inject Credentials into Vault Permanently |
-| 62 | Purge Stale Credentials from Vault |
-| 63 | Bypass Credential Guard (Strict NTLM) |
-| 64 | Cross-User Credential Mapping |
-| 65 | Pre-execution Registry Backup (Spooler) |
-| 66 | Rollback Registry from Backup |
-| 67 | Generate System Restore Point (Security) |
-| 68 | System File Checker & DISM Restoration |
-| 69 | Restart BITS (Background Transfer) |
-| 70 | Uninstall & Pause Specific KB Update |
-| 71 | Launch Native Windows Troubleshooter |
-| 72 | Force Printer Online Status |
-| 73 | Launch Services.msc |
-| 74 | Detect OS Version & Build Architecture |
-| 75 | Ping & Port 445/135 Diagnostics |
-| 76 | View Execution Logs |
-| 77 | Audit Last 20 Print Service Error Logs |
-| 78 | System Diagnostics Audit |
-| 79 | PrintService Event Log Parser (Top 5) |
-| 80 | Generate HTML Diagnostic Report |
-| 81 | Detect GPO Intervention (Policy Scan) |
-| 82 | PrintBRM (Backup/Restore Migration) |
-| 83 | Enable SMB Guest Access & Drop Anonymous Blocks |
-| **84** | **EXTREME PATH (WIN 11 24H2/25H2 & ARM64)** |
-| **85** | **ALLFIX (50 AUTOMATED REPAIR SEQUENCES)** |
-| **86** | **SILENT NUKE & ALLFIX (ZERO-PROMPT)** |
-| 87 | Reboot System |
-| 88 | EXIT SCRIPT |
+| 60 | Inject Credentials into Vault Permanently |
+| 61 | Purge Stale Credentials from Vault |
+| 62 | Bypass Credential Guard (Strict NTLM) |
+| 63 | Cross-User Credential Mapping |
+| 64 | Pre-execution Registry Backup (Spooler) |
+| 65 | Rollback Registry from Backup |
+| 66 | Generate System Restore Point (Security) |
+| 67 | System File Checker & DISM Restoration |
+| 68 | Restart BITS (Background Transfer) |
+| 69 | Uninstall & Pause Specific KB Update |
+| 70 | Launch Native Windows Troubleshooter |
+| 71 | Force Printer Online Status |
+| 72 | Launch Services.msc |
+| 73 | Detect OS Version & Build Architecture |
+| 74 | Ping & Port 445/135 Diagnostics |
+| 75 | View Execution Logs |
+| 76 | Audit Last 20 Print Service Error Logs |
+| 77 | System Diagnostics Audit |
+| 78 | PrintService Event Log Parser (Top 5) |
+| 79 | Generate HTML Diagnostic Report |
+| 80 | Detect GPO Intervention (Policy Scan) |
+| 81 | PrintBRM (Backup/Restore Migration) |
+| 82 | Enable SMB Guest Access & Drop Anonymous Blocks |
+| **83** | **EXTREME PATH (WIN 11 24H2/25H2 & ARM64)** |
+| **84** | **ALLFIX (50 AUTOMATED REPAIR SEQUENCES)** |
+| **85** | **SILENT NUKE & ALLFIX (ZERO-PROMPT)** |
+| 86 | Map Local Port to UNC Path (Bypass 0x00000709) |
+| 87 | Remove Injected Local Port (UNC) |
+| 88 | Reboot System |
+| 89 | EXIT SCRIPT |
 
 ---
 
@@ -147,17 +136,17 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 ### Quick Start (Recommended for Beginners)
 1. Download the installer from the **[Releases](../../releases)** tab.
 2. Run the application as an **Administrator**.
-3. Type `65` → Enter (Execute registry backup).
-4. Type `85` → Enter (Execute ALLFIX - 50 automated repair steps).
+3. Type `64` → Enter (Execute registry backup).
+4. Type `84` → Enter (Execute ALLFIX - 50 automated repair steps).
 5. Reboot your system.
 
 ### Specific Workflow for Windows 11 24H2/25H2
-1. Type `65` → Enter (Execute registry backup).
-2. Type `84` → Enter (Execute Extreme Path fixes).
+1. Type `64` → Enter (Execute registry backup).
+2. Type `83` → Enter (Execute Extreme Path fixes).
 3. Reboot your system.
 
 ### Emergency Mode (Unattended)
-- Type `86` → Enter (Silent Nuke: Executes all fixes and forcibly reboots the system without user prompts).
+- Type `85` → Enter (Silent Nuke: Executes all fixes and forcibly reboots the system without user prompts).
 
 ### Help & Documentation
 - Type `?` → Display the help guide.
@@ -169,19 +158,19 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 ## Interactive Console Interface
 
 ```text
- USER: admin | COMPUTERNAME: OFFICE-PC | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix
+ USER: admin | COMPUTERNAME: OFFICE-PC | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix v2.2.8
  =======================================================================================================
 
  CORE FIXES & NETWORK SERVICES              SPOOLER, DRIVERS & POLICIES              DIAGNOSTICS & AUTOMATION
 
- [01] Patch Error 0x0000011b                 [31] Hard Reset Print Spooler             [61] Inject Credentials into Vault
- [02] Bypass Error 0x00000709                [32] Re-initialize RPC & DCOM             [62] Purge Stale Credentials
+ [01] Patch Error 0x0000011b                 [31] Hard Reset Print Spooler             [60] Inject Credentials into Vault
+ [02] Bypass Error 0x00000709                [32] Re-initialize RPC & DCOM             [61] Purge Stale Credentials
  ...                                         ...                                       ...
- [30] Force Initialize WSD Print Device      [60] Manage Windows Protected Print       [85] ALLFIX (50 AUTOMATED STEPS)
-                                                                                        [86] SILENT NUKE & ALLFIX
+ [30] Force Initialize WSD Print Device      [59] Manage Windows Protected Print       [84] ALLFIX (50 AUTOMATED STEPS)
+                                                                                        [85] SILENT NUKE & ALLFIX
  -----------------------------------------------------------------------------------------------------------
  :   NOTE:                                                                              :
- :   [85] ALLFIX (50 Steps) | [84] EXTREME PATH (Win11) | [86] SILENT NUKE             :
+ :   [84] ALLFIX (50 Steps) | [83] EXTREME PATH (Win11) | [85] SILENT NUKE             :
  :   Input [?] for HELP     | [? 7] feature 7 details   | [? all] open HTML            :
  -----------------------------------------------------------------------------------------------------------
 
@@ -196,7 +185,7 @@ Type option: _
 |---|---|
 | Windows 10 (All Builds) | Fully Supported |
 | Windows 11 21H2 - 23H2 | Fully Supported |
-| Windows 11 24H2 / 25H2 / 26H2 | Supported (Requires Extreme Path `[84]`) |
+| Windows 11 24H2 / 25H2 / 26H2 | Supported (Requires Extreme Path `[83]`) |
 | Windows 11 ARM64 (Snapdragon) | Supported |
 | Windows Server 2019 / 2022 / 2025 | Fully Supported |
 | Windows 7, 8, 8.1 | Partial / Registry Support Only |
@@ -242,12 +231,12 @@ Invoke-ps2exe -inputFile src\WinPrinterFix.ps1 -outputFile release\WinPrinterFix
 ```text
 WinPrinterFix/
 ├── src/
-│   └── WinPrinterFix.ps1                      # Core PowerShell source code (88 features)
+│   └── WinPrinterFix.ps1                      # Core PowerShell source code (89 features)
 ├── assets/
 │   ├── icon.ico                                # Application icon
 │   └── khairudinfahmi_cert.cer                 # Code signing certificate
 ├── docs/
-│   └── dokumentasi.html                        # Offline HTML
+│   └── documentation.html                      # Offline HTML Documentation
 ├── build/
 │   ├── Compile-ToExe.ps1                       # Build automation script
 │   └── installer.iss                           # Inno Setup installer script
@@ -265,7 +254,7 @@ WinPrinterFix/
 
 ## Important Notes
 - **Elevation Required**: This utility **must be executed as an Administrator** to modify registry keys and manage Windows subsystem services.
-- **Backup Mandatory**: Always execute a **Registry Backup (Option `[65]`)** before running any automated repair sequences.
+- **Backup Mandatory**: Always execute a **Registry Backup (Option `[64]`)** before running any automated repair sequences.
 - **Reboot Required**: A system reboot is strictly necessary to commit registry changes and restart network stacks.
 - **Air-Gapped Support**: This tool operates **100% offline**, requiring zero internet connectivity.
 
