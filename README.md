@@ -111,7 +111,7 @@ Windows updates often break network printing with cryptic errors. This tool fixe
 | 81 | PrintBRM (Backup/Restore Migration) |
 | 82 | Enable SMB Guest Access & Drop Anonymous Blocks |
 | **83** | **EXTREME PATH (WIN 11 24H2/25H2 & ARM64)** |
-| **84** | **ALLFIX (50 AUTOMATED REPAIR SEQUENCES)** |
+| **84** | **ALLFIX (50 AUTOMATED FIXES)** |
 | **85** | **SILENT ALLFIX & REBOOT (ZERO-PROMPT)** |
 | 86 | Map Local Port to UNC Path (Bypass 0x00000709) |
 | 87 | Remove Injected Local Port (UNC) |
@@ -137,7 +137,7 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 1. Download the installer from the **[Releases](../../releases)** tab.
 2. Run the application as an **Administrator**.
 3. Type `64` → Enter (Execute registry backup).
-4. Type `84` → Enter (Execute ALLFIX - 50 automated repair steps).
+4. Type `84` → Enter (Execute ALLFIX - 50 automated fixes).
 5. Reboot your system.
 
 ### Specific Workflow for Windows 11 24H2/25H2
@@ -254,7 +254,7 @@ WinPrinterFix/
 
 ## Important Notes
 - **Elevation Required**: This utility **must be executed as an Administrator** to modify registry keys and manage Windows subsystem services.
-- **Backup Mandatory**: Always execute a **Registry Backup (Option `[64]`)** before running any automated repair sequences.
+- **Backup Mandatory**: Always execute a **Registry Backup (Option `[64]`)** before running any automated fixes.
 - **Reboot Required**: A system reboot is strictly necessary to commit registry changes and restart network stacks.
 - **Air-Gapped Support**: This tool operates **100% offline**, requiring zero internet connectivity.
 

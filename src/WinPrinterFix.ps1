@@ -1912,7 +1912,7 @@ function Remove-LocalPortUNC {
 function AllFix-Core {
     cls
     Write-Host "`n  ==================================================================================================="
-    Write-Host "         EXECUTE ALLFIX (50 AUTOMATED REPAIR SEQUENCES)"
+    Write-Host "         EXECUTE ALLFIX (50 AUTOMATED FIXES)"
     Write-Host "  ===================================================================================================`n"
     Write-Log "RUN ALLFIX (SILENT=$script:silentNuke)" -Type "INFO"
 
@@ -2304,7 +2304,7 @@ function Show-Help {
         '81' = @("PrintBRM (Backup/Restore Migration)", "Executes full backup or restoration of printer topologies via PrintBrm.exe.", "Deploying printers to multiple workstations or migrating to new hardware.")
         '82' = @("Enable SMB Guest Access & Drop Anonymous Blocks", "Enables AllowInsecureGuestAuth in LanmanWorkstation registry.", "For password-less sharing in local networks.")
         '83' = @("EXTREME PATH (WIN 11 24H2/25H2 & ARM64 SPECIFIC)", "Aggressive fix combination: DnsOnWire, StrictNameChecking, NTLM level, SMB Signing, Kerberos purge, etc.", "Standard fixes didn't work on latest Win 11.", "Built specifically for Build 26000 and above.")
-        '84' = @("EXECUTE ALLFIX (50 AUTOMATED REPAIR SEQUENCES)", "Executes 50 automated repair steps sequentially.", "PRIMARY RECOMMENDATION - the recommended fix for most general cases.", "REBOOT SYSTEM upon completion for best results.")
+        '84' = @("EXECUTE ALLFIX (50 AUTOMATED FIXES)", "Executes 50 automated fixes sequentially.", "PRIMARY RECOMMENDATION - the recommended fix for most general cases.", "REBOOT SYSTEM upon completion for best results.")
         '85' = @("SILENT ALLFIX & REBOOT (ZERO-PROMPT)", "Executes all 50 steps + automated reboot silently.", "Emergency situations requiring immediate unattended fixes.", "SYSTEM WILL AUTOMATICALLY REBOOT! Save all critical work prior!")
         '86' = @("Map Local Port to UNC Path (Bypass 0x00000709)", "Attempts standard port creation, then falls back to a Direct Registry Injection bypass if blocked.", "When standard sharing fails and the system entirely blocks 'Add-PrinterPort' commands.")
         '87' = @("Remove Injected Local Port (UNC)", "Attempts standard port removal, then falls back to a Registry Purge if blocked.", "When a mapped port is no longer needed or was misconfigured.")
@@ -2562,7 +2562,7 @@ function Show-Menu {
         "[81] PrintBRM (Backup/Restore Migration)",
         "[82] Enable SMB Guest Access & Drop Anon Blocks",
         "[83] EXTREME PATH (WIN 11 24H2/25H2 & ARM64)",
-        "[84] ALLFIX (50 AUTOMATED REPAIR SEQUENCES)",
+        "[84] ALLFIX (50 AUTOMATED FIXES)",
         "[85] SILENT ALLFIX & REBOOT (ZERO-PROMPT)",
         "[86] Map Local Port to UNC Path (Bypass 0x00000709)",
         "[87] Remove Injected Local Port (UNC)",
