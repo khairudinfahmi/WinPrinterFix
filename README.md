@@ -120,6 +120,51 @@ Windows updates often break network printing with cryptic errors. This tool fixe
 
 ---
 
+## 🔍 Transparency & Under-the-Hood Mechanics
+
+To ensure 100% operational transparency, users should be aware that certain automated macros and advanced features in this script execute deep system-level changes that are not explicitly prompted during execution:
+
+### 1. Macro Executions: ALLFIX `[84/85]` & EXTREME PATH `[83]`
+These options act as automated playbooks. In addition to standard fixes, they silently execute the following background operations:
+* **GPO Override (`gpupdate /force`):** Flushes and forces a Group Policy update before writing to the registry to ensure local changes take precedence temporarily.
+* **Persistent Task Injection:** Silently deploys `PrinterFixPostUpdate` and `PrinterFixDaily` into Windows Task Scheduler. This runs a hidden PowerShell script every day at 10:00 AM and upon startup to automatically re-apply RPC and Spooler registry fixes, preventing Windows Updates from breaking the printer again.
+* **Aggressive Cache Purging:** Executes `klist purge` (clears Kerberos tickets), `ipconfig /flushdns` & `registerdns`, and `nbtstat -RR` without user confirmation to ensure clean network topologies.
+* **Extreme Path Exclusive (`cmdkey` wipe):** Option `[83]` actively searches the Windows Credential Manager and forcefully deletes all cached credentials related to the local computer name to resolve strict Win 11 NAS/Sharing authentication loops.
+
+### 2. Registry Bypass & Injection `[86/87]`
+When standard Windows APIs fail to map a UNC network printer due to strict 0x00000709 blocks, Option `[86]` performs a **Direct Registry Injection**. It forcibly writes the network path directly into `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports`, bypassing the Windows Spooler API validation entirely.
+
+### 3. Force-Kill Procedures `[37] & [44]`
+Features involving "Force Purging" or "Bypassing drivers in use" will instantly send termination signals (`Stop-Process -Force`) to critical Windows services including `PrintIsolationHost`, `printfilterpipelinesvc`, and `splwow64`. This will abruptly interrupt any active printing operations across the entire host without warning dialogs.
+
+---
+
+## Repository Structure
+
+```text
+WinPrinterFix/
+├── src/
+│   └── WinPrinterFix.ps1                      # Core PowerShell source code (89 features)
+├── assets/
+│   ├── icon.ico                                # Application icon
+│   └── khairudinfahmi_cert.cer                 # Code signing certificate
+├── docs/
+│   └── documentation.html                      # Offline HTML Documentation
+├── build/
+│   ├── Compile-ToExe.ps1                       # Build automation script
+│   └── installer.iss                           # Inno Setup installer script
+├── release/
+│   ├── WinPrinterFix.exe                       # Compiled portable executable
+│   └── WindowsPrinterSharingFix_Installer.exe  # Full setup installer
+├── .gitignore
+├── CHANGELOG.md                                # Version history
+├── CONTRIBUTING.md                             # Contribution guidelines
+├── LICENSE                                     # GPL-3.0 License
+└── README.md                                   # Primary documentation
+```
+
+---
+
 ## Download & Installation
 
 Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
@@ -226,32 +271,6 @@ Invoke-ps2exe -inputFile src\WinPrinterFix.ps1 -outputFile release\WinPrinterFix
 
 ---
 
-## Repository Structure
-
-```text
-WinPrinterFix/
-├── src/
-│   └── WinPrinterFix.ps1                      # Core PowerShell source code (89 features)
-├── assets/
-│   ├── icon.ico                                # Application icon
-│   └── khairudinfahmi_cert.cer                 # Code signing certificate
-├── docs/
-│   └── documentation.html                      # Offline HTML Documentation
-├── build/
-│   ├── Compile-ToExe.ps1                       # Build automation script
-│   └── installer.iss                           # Inno Setup installer script
-├── release/
-│   ├── WinPrinterFix.exe                       # Compiled portable executable
-│   └── WindowsPrinterSharingFix_Installer.exe  # Full setup installer
-├── .gitignore
-├── CHANGELOG.md                                # Version history
-├── CONTRIBUTING.md                             # Contribution guidelines
-├── LICENSE                                     # GPL-3.0 License
-└── README.md                                   # Primary documentation
-```
-
----
-
 ## Important Notes
 - **Elevation Required**: This utility **must be executed as an Administrator** to modify registry keys and manage Windows subsystem services.
 - **Backup Mandatory**: Always execute a **Registry Backup (Option `[64]`)** before running any automated fixes.
@@ -278,3 +297,4 @@ Feel free to modify and distribute, but please ensure credit is attributed to th
 **@khairudinfahmi** — 2026
 
 > Engineered to assist IT administrators and end-users frustrated by persistent Windows printer sharing deployment failures.
+  
