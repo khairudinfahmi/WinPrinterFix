@@ -28,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Improved
 - Added security warnings for credential injection and Point-and-Print operations.
-- Scheduled task triggers now include RepetitionDuration for watchdog reliability.
 - Disable-PasswordSharing: Documented everyoneincludesanonymous security implications.
 - NTLMv2 conflict with Deep0x00000709 documented; NtlmMinClientSec aligned.
 - Reset-Network: Removed manual $LASTEXITCODE assignment; uses actual exit codes.
