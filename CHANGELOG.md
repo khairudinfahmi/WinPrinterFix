@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.3.0] - 2026-05-17
+
+### Fixed
+- Force-DefaultPrinterRegistry: Removed trailing colon from Device string that caused printer assignment failures.
+- Fix-CrossSignedDriverPolicy: Changed SilentlyContinue to Stop with post-write verification for registry operations.
+- Fix-AdvancedPointAndPrint: Filled empty catch blocks with proper error logging.
+- Inject-CrossUserCredentials: Fixed race condition with registry unload retry loop.
+- Manage-WindowsUpdate: Hardened DISM package name parsing with regex and null guard.
+- Sweep-OrphanedDrivers: Rewrote pnputil output parsing for Win10/Win11 compatibility.
+- Fix-Deep0x00000709: Device key write now verified post-set to confirm success.
+- Convert-WSDtoTCPIP: Now migrates all WSD printers instead of only the first match.
+- Reset-SpoolerDependencyReg: Added post-write SCM verification via Get-Service.
+- Parse-PrintEventLog: Unified EventID map and verified all menu references.
+- Nuke-PrintQueue / Reset-Spooler: Replaced static sleep with status polling loop.
+- AllFix-Core gpupdate: Now runs with 30-second timeout via background job.
+- Map-LocalPortUNC: Added input sanitization for UNC path validation.
+- Watchdog & Post-Update Tasks: Rewrote triggers using `schtasks.exe` instead of `New-ScheduledTaskTrigger` to bypass critical Interval property crashes natively found in Windows 11 Home (Build 26100).
+- Fix-mDNS: Added dynamic path creation (`New-Item`) for `DNSClient` and `Dnscache` registries to prevent "Cannot find path" errors during `-ErrorAction Stop` strict enforcement.
+
+### Improved
+- Added security warnings for credential injection and Point-and-Print operations.
+- Scheduled task triggers now include RepetitionDuration for watchdog reliability.
+- Disable-PasswordSharing: Documented everyoneincludesanonymous security implications.
+- NTLMv2 conflict with Deep0x00000709 documented; NtlmMinClientSec aligned.
+- Reset-Network: Removed manual $LASTEXITCODE assignment; uses actual exit codes.
+- Sanitize-PrinterShareName: Added empty-name guard.
+- Fix-V4ClassDriver: Added DriverPath null guard to prevent exception on missing paths.
+- Create-RestorePoint: 24-hour throttle now reports as WARNING instead of ERROR.
+- Fix-PrintToPDF: Added reboot advisory to user output.
+- $silentNuke flag now resets to $false after AllFix-Core completes.
+- Extreme-25H2: Backup-Registry called at start before any modifications.
+- Write-Log: Added fallback log path detection (TEMP/UserProfile) when C:\ is not writable.
+
+### Changed
+- Renamed "AUTOMATED REPAIR SEQUENCES" to "AUTOMATED FIXES" across all UI and documentation.
+- Removed all external attribution from script header and console footer.
+- Cleaned up script synopsis to minimal project metadata only.
+
+---
+
 ## [2.2.9] - 2026-05-17
 
 ### Added

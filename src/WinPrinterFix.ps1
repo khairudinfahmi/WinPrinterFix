@@ -1,11 +1,37 @@
+#Requires -Version 5.1
+<#
+.SYNOPSIS
+    Windows Printer Sharing Fix - v2.3.0
+    @KHAIRUDINFAHMI
+
+.PARAMETER nuke
+    Silent AllFix mode - executes all 50 fixes then reboots automatically.
+#>
+
 param(
     [switch]$nuke
 )
 
-$script:version = "2.2.9"
-$script:logFile = "C:\WinPrinterFixLog.txt"
-$script:backupDir = "C:\WinPrinterFixBackup"
+$script:version    = "2.3.0"
+$script:backupDir  = "C:\WinPrinterFixBackup"
 $script:silentNuke = $nuke
+
+$script:logFile = $null
+$candidateLogs = @(
+    "C:\WinPrinterFixLog.txt",
+    "$env:TEMP\WinPrinterFixLog.txt",
+    "$env:USERPROFILE\Desktop\WinPrinterFixLog.txt"
+)
+foreach ($cl in $candidateLogs) {
+    try {
+        Add-Content -Path $cl -Value "" -Encoding UTF8 -ErrorAction Stop
+        $script:logFile = $cl
+        break
+    } catch { }
+}
+if (-not $script:logFile) {
+    $script:logFile = "$env:TEMP\WinPrinterFixLog.txt"
+}
 
 $script:isARM64 = ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64')
 $script:isServer = ((Get-CimInstance Win32_OperatingSystem).ProductType -ne 1)
@@ -227,7 +253,6 @@ function Fix-HKCU-PrinterKeyPerms {
 function Set-PostPatchTuesdayTask {
     Write-Log "Deploying Post-Windows-Update Auto-Reapply Task..." -Type "INFO"
     try {
-
         $fixScript = @'
 Set-ItemProperty "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC" -Name RpcUseNamedPipeProtocol -Value 1 -Type DWord -Force -EA SilentlyContinue
 Set-ItemProperty "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC" -Name ForceKerberosForRpc -Value 0 -Type DWord -Force -EA SilentlyContinue
@@ -238,18 +263,13 @@ Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Syste
 Restart-Service spooler -Force -EA SilentlyContinue
 '@
         $encodedScript = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($fixScript))
-        $action = New-ScheduledTaskAction -Execute "powershell.exe" `
-            -Argument "-WindowStyle Hidden -EncodedCommand $encodedScript"
-
-        $trigger = New-ScheduledTaskTrigger -AtStartup
-
-        $trigger2 = New-ScheduledTaskTrigger -Daily -At "10:00AM"
-
-        Register-ScheduledTask -TaskName "PrinterFixPostUpdate" `
-            -Action $action -Trigger $trigger -User "SYSTEM" -RunLevel Highest -Force | Out-Null
-
-        Register-ScheduledTask -TaskName "PrinterFixDaily" `
-            -Action $action -Trigger $trigger2 -User "SYSTEM" -RunLevel Highest -Force | Out-Null
+        $cmd = "powershell.exe -WindowStyle Hidden -EncodedCommand $encodedScript"
+        
+        & schtasks.exe /create /tn "PrinterFixPostUpdate" /tr $cmd /sc onstart /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
+        if ($LASTEXITCODE -ne 0) { throw "schtasks ONSTART returned exit code $LASTEXITCODE" }
+        
+        & schtasks.exe /create /tn "PrinterFixDaily" /tr $cmd /sc daily /st 10:00 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
+        if ($LASTEXITCODE -ne 0) { throw "schtasks DAILY returned exit code $LASTEXITCODE" }
 
         Write-Log "Post-Windows-Update reapply task deployed successfully." -Type "SUCCESS"
         Write-Host "  [+] Auto-reapply task deployed. Registry fixes will re-apply automatically after every reboot/update." -ForegroundColor Green
@@ -344,7 +364,7 @@ function Enable-SMBGuest {
         Set-ItemProperty -Path $path -Name AllowInsecureGuestAuth -Value 1 -Type DWord -Force -ErrorAction Stop
 
         $pathServer = "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"
-        Set-ItemProperty -Path $pathServer -Name EnableSecuritySignature -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $pathServer -Name EnableSecuritySignature -Value 0 -Type DWord -Force -ErrorAction Stop
 
         Write-Log "Guest access enabled." -Type "SUCCESS"
         Write-Host "  [+] SMB credential protection lowered to permit Guest access." -ForegroundColor Green
@@ -527,14 +547,22 @@ function Manage-SMB1 {
     Write-Host "  [1] ENABLE SMB1 (Emergency) `n  [2] DISABLE SMB1 (Recommended)"
     $smbopt = Read-Host "  Select Option (1/2)"
     if ($smbopt -eq '1') {
-        Write-Log "Enabling SMB 1.0 Protocol..." -Type "INFO"
-        Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction SilentlyContinue | Out-Null
-        Write-Host "  [+] SMB 1.0 Protocol enabled." -ForegroundColor Green
+        try {
+            Write-Log "Enabling SMB 1.0 Protocol..." -Type "INFO"
+            Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction Stop | Out-Null
+            Write-Host "  [+] SMB 1.0 Protocol enabled." -ForegroundColor Green
+        } catch {
+            Write-Log "Failed to enable SMB1: $($_.Exception.Message)" -Type "ERROR"
+        }
     }
     if ($smbopt -eq '2') {
-        Write-Log "Disabling SMB 1.0 Protocol..." -Type "INFO"
-        Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction SilentlyContinue | Out-Null
-        Write-Host "  [+] SMB 1.0 Protocol successfully disabled for security." -ForegroundColor Green
+        try {
+            Write-Log "Disabling SMB 1.0 Protocol..." -Type "INFO"
+            Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction Stop | Out-Null
+            Write-Host "  [+] SMB 1.0 Protocol successfully disabled for security." -ForegroundColor Green
+        } catch {
+            Write-Log "Failed to disable SMB1: $($_.Exception.Message)" -Type "ERROR"
+        }
     }
 }
 
@@ -700,14 +728,43 @@ function Scan-RemotePrinter {
 }
 
 function Remote-SpoolerReset {
-    Write-Host "`n  REMOTE SPOOLER RESTART (VIA WINRM/DCOM)"
-    $ip = Read-Host "  [?] Target IP/Hostname"
+    Write-Host "`n  ======================================================================"
+    Write-Host "               REMOTE PRINT SPOOLER RESET"
+    Write-Host "  ======================================================================"
+    Write-Host "  [!] Requires admin access on the remote machine." -ForegroundColor Yellow
+    $target = Read-Host "  [?] Target hostname or IP (e.g., 192.168.1.10)"
+    if (-not $target) { Write-Host "  [-] Cancelled - empty input." -ForegroundColor Red; return }
+
+    Write-Log "Remote Spooler Reset targeting: $target" -Type "INFO"
     try {
-        Invoke-Command -ComputerName $ip -ScriptBlock { Restart-Service spooler -Force } -ErrorAction Stop
-        Write-Host "  [+] Remote Spooler on $ip successfully restarted!" -ForegroundColor Green
-    }
-    catch {
-        Write-Host "  [-] Access denied. Verify WinRM/DCOM accessibility and permissions." -ForegroundColor Red
+        Write-Host "  [*] Pinging $target..." -ForegroundColor Cyan
+        if (-not (Test-Connection $target -Count 1 -Quiet)) {
+            Write-Host "  [-] Host unreachable. Check network and firewall." -ForegroundColor Red
+            Write-Log "Remote-SpoolerReset: $target unreachable." -Type "ERROR"
+            return
+        }
+        Write-Host "  [+] Host reachable." -ForegroundColor Green
+
+        Write-Host "  [*] Stopping Spooler on $target..." -ForegroundColor Cyan
+        $stopResult = & sc.exe \\$target stop spooler 2>&1
+        Start-Sleep -Seconds 3
+
+        Write-Host "  [*] Starting Spooler on $target..." -ForegroundColor Cyan
+        $startResult = & sc.exe \\$target start spooler 2>&1
+        Start-Sleep -Seconds 2
+
+        $queryResult = & sc.exe \\$target query spooler 2>&1
+        if ($queryResult -match 'RUNNING') {
+            Write-Log "Remote Spooler on $target restarted successfully." -Type "SUCCESS"
+            Write-Host "  [+] Print Spooler on $target is now RUNNING." -ForegroundColor Green
+        } else {
+            Write-Log "Remote Spooler on $target may not have restarted. Check manually." -Type "WARNING"
+            Write-Host "  [!] Spooler state uncertain. Verify manually on $target." -ForegroundColor Yellow
+        }
+    } catch {
+        Write-Log "Remote-SpoolerReset failed: $($_.Exception.Message)" -Type "ERROR"
+        Write-Host "  [-] Failed: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "  [!] Ensure admin shares (C$) and RPC (port 135/445) are accessible." -ForegroundColor Yellow
     }
 }
 
@@ -759,9 +816,9 @@ function Uninstall-Printer {
 function Fix-SMBSigning {
     Write-Log "Disabling SMB Signing enforcement & Mutual Auth..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name RequireSecuritySignature -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name RequireSecuritySignature -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name RequireMutualAuthentication -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name RequireSecuritySignature -Value 0 -Type DWord -Force -ErrorAction Stop
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name RequireSecuritySignature -Value 0 -Type DWord -Force -ErrorAction Stop
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name RequireMutualAuthentication -Value 0 -Type DWord -Force -ErrorAction Stop
 
         Write-Log "SMB Signing enforcement disabled." -Type "SUCCESS"
         Write-Host "  [+] SMB Signature requirements dropped (Resolves Win 11 NAS/Legacy connectivity)." -ForegroundColor Green
@@ -787,8 +844,14 @@ function Fix-UWPPrinting {
 function Fix-mDNS {
     Write-Log "Enabling mDNS & LLMNR discovery protocols..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" -Name EnableMulticast -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters" -Name EnableMDNS -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        $dnsPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient"
+        if (-not (Test-Path $dnsPath)) { New-Item -Path $dnsPath -Force | Out-Null }
+        Set-ItemProperty -Path $dnsPath -Name EnableMulticast -Value 1 -Type DWord -Force -ErrorAction Stop
+
+        $dnsCachePath = "HKLM:\SYSTEM\CurrentControlSet\Services\Dnscache\Parameters"
+        if (-not (Test-Path $dnsCachePath)) { New-Item -Path $dnsCachePath -Force | Out-Null }
+        Set-ItemProperty -Path $dnsCachePath -Name EnableMDNS -Value 1 -Type DWord -Force -ErrorAction Stop
+
         Write-Log "mDNS/LLMNR protocols activated." -Type "SUCCESS"
     }
     catch {
@@ -816,10 +879,14 @@ function Fix-WSDFirewall {
 function Fix-LSAProtection {
     Write-Log "Downgrading LSA Protection (Permitting legacy authentication)..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name RunAsPPL -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name RunAsPPL -Value 0 -Type DWord -Force -ErrorAction Stop
         Write-Log "LSA PPL enforcement downgraded." -Type "SUCCESS"
+        Write-Host "  [+] LSA Protection downgraded." -ForegroundColor Green
     }
-    catch {}
+    catch {
+        Write-Log "Fix-LSAProtection failed: $($_.Exception.Message) (May be enforced by Secure Boot or Credential Guard)" -Type "WARNING"
+        Write-Host "  [!] LSA Protection could not be changed - system security policy may be enforcing it." -ForegroundColor Yellow
+    }
 }
 
 function Fix-SAC {
@@ -827,10 +894,14 @@ function Fix-SAC {
     try {
         $path = "HKLM:\SYSTEM\CurrentControlSet\Control\CI\Policy"
         if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
-        Set-ItemProperty -Path $path -Name VerifiedAndReputablePolicyState -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $path -Name VerifiedAndReputablePolicyState -Value 0 -Type DWord -Force -ErrorAction Stop
         Write-Log "SAC active bypass deployed." -Type "SUCCESS"
+        Write-Host "  [+] Smart App Control bypassed." -ForegroundColor Green
     }
-    catch {}
+    catch {
+        Write-Log "Fix-SAC failed: $($_.Exception.Message) (SAC may be enforced by UEFI/policy)" -Type "WARNING"
+        Write-Host "  [!] SAC bypass failed - may require manual change in Windows Security settings." -ForegroundColor Yellow
+    }
 }
 
 function Fix-IPPSharing {
@@ -853,61 +924,76 @@ function Fix-AdvancedPointAndPrint {
     try {
         $path = "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint"
         if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
-        Set-ItemProperty -Path $path -Name InForest -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $path -Name TrustedServers -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $path -Name ServerList -Value "*.*" -Type String -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $path -Name InForest -Value 1 -Type DWord -Force -ErrorAction Stop
+        Set-ItemProperty -Path $path -Name TrustedServers -Value 1 -Type DWord -Force -ErrorAction Stop
+        Set-ItemProperty -Path $path -Name ServerList -Value "*.*" -Type String -Force -ErrorAction Stop
 
-        Set-ItemProperty -Path $path -Name RestrictDriverInstallationToAdministrators -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $path -Name NoWarningNoElevationOnInstall -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $path -Name NoWarningNoElevationOnUpdate -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path $path -Name UpdatePromptSettings -Value 2 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $path -Name RestrictDriverInstallationToAdministrators -Value 0 -Type DWord -Force -ErrorAction Stop
+        Set-ItemProperty -Path $path -Name NoWarningNoElevationOnInstall -Value 1 -Type DWord -Force -ErrorAction Stop
+        Set-ItemProperty -Path $path -Name NoWarningNoElevationOnUpdate -Value 1 -Type DWord -Force -ErrorAction Stop
+        Set-ItemProperty -Path $path -Name UpdatePromptSettings -Value 2 -Type DWord -Force -ErrorAction Stop
 
         $pkgPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PackagePointAndPrint"
         if (-not (Test-Path $pkgPath)) { New-Item -Path $pkgPath -Force | Out-Null }
-        Set-ItemProperty -Path $pkgPath -Name PackagePointAndPrintServerList -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $pkgPath -Name PackagePointAndPrintServerList -Value 1 -Type DWord -Force -ErrorAction Stop
 
         Write-Log "Point & Print constraints & PrintNightmare entirely bypassed." -Type "SUCCESS"
         Write-Host "  [+] PrintNightmare Elevation Restrictions and Point & Print fully neutralized." -ForegroundColor Green
     }
-    catch {}
+    catch {
+        Write-Log "Fix-AdvancedPointAndPrint failed: $($_.Exception.Message)" -Type "ERROR"
+        Write-Host "  [-] Point & Print bypass failed: $($_.Exception.Message)" -ForegroundColor Red
+    }
 }
 
 function Fix-ModernSMB {
     Write-Log "Enforcing Modern SMB2/SMB3 Server Configurations..." -Type "INFO"
     try {
-        Set-SmbServerConfiguration -EnableSMB2Protocol $true -Force -ErrorAction SilentlyContinue
+        Set-SmbServerConfiguration -EnableSMB2Protocol $true -Force -ErrorAction Stop
         Write-Log "SMB2/SMB3 topologies active." -Type "SUCCESS"
+        Write-Host "  [+] SMB2/SMB3 protocol enforced." -ForegroundColor Green
     }
-    catch {}
+    catch {
+        Write-Log "Fix-ModernSMB failed: $($_.Exception.Message)" -Type "ERROR"
+    }
 }
 
 function Set-SpoolerRecovery {
     Write-Log "Configuring Print Spooler automatic restart recovery..." -Type "INFO"
     try {
         & sc.exe failure spooler reset= 0 actions= restart/60000/restart/60000/restart/60000 > $null 2>&1
+        if ($LASTEXITCODE -ne 0) { throw "sc.exe returned exit code $LASTEXITCODE" }
         Write-Log "Spooler Auto-Restart Recovery configured." -Type "SUCCESS"
+        Write-Host "  [+] Spooler auto-restart on crash configured." -ForegroundColor Green
     }
-    catch {}
+    catch {
+        Write-Log "Set-SpoolerRecovery failed: $($_.Exception.Message)" -Type "ERROR"
+    }
 }
 
 function Fix-UACTokenFilter {
     Write-Log "Bypassing UAC Network Administrator restrictions..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name LocalAccountTokenFilterPolicy -Value 1 -Type DWord -Force
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name LocalAccountTokenFilterPolicy -Value 1 -Type DWord -Force -ErrorAction Stop
         Write-Log "LocalAccountTokenFilterPolicy set to 1." -Type "SUCCESS"
         Write-Host "  [+] UAC network administration token filtering disabled." -ForegroundColor Green
     }
-    catch {}
+    catch {
+        Write-Log "Fix-UACTokenFilter failed: $($_.Exception.Message)" -Type "ERROR"
+    }
 }
 
 function Reset-SpoolerDependency {
     Write-Log "Purging third-party Spooler dependencies..." -Type "INFO"
     try {
         & sc.exe config spooler depend= RPCSS/http > $null 2>&1
+        if ($LASTEXITCODE -ne 0) { throw "sc.exe returned exit code $LASTEXITCODE" }
         Write-Log "Dependencies explicitly reset to RPCSS and http (IPP compliant)." -Type "SUCCESS"
-        Write-Host "  [+] Print Spooler dependencies structurally repaired for modern IPP support." -ForegroundColor Green
+        Write-Host "  [+] Print Spooler dependencies repaired for modern IPP support." -ForegroundColor Green
     }
-    catch {}
+    catch {
+        Write-Log "Reset-SpoolerDependency failed: $($_.Exception.Message)" -Type "ERROR"
+    }
 }
 
 function Fix-ProviderOrder {
@@ -930,17 +1016,19 @@ function Fix-ProviderOrder {
 function Fix-NTLMv2 {
     Write-Log "Enforcing Strict NTLMv2 Response Compliance (Synology NAS Compatible)..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LmCompatibilityLevel -Value 3 -Type DWord -Force
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LmCompatibilityLevel -Value 3 -Type DWord -Force -ErrorAction Stop
         Write-Log "Strict NTLMv2 successfully enforced." -Type "SUCCESS"
-        Write-Host "  [+] Strict NTLMv2 enforced (Value 3). NAS Synology & Modern Print Sharing secured." -ForegroundColor Green
+        Write-Host "  [+] Strict NTLMv2 enforced (Level 3). NAS Synology & Modern Print Sharing secured." -ForegroundColor Green
     }
-    catch {}
+    catch {
+        Write-Log "Fix-NTLMv2 failed: $($_.Exception.Message)" -Type "ERROR"
+    }
 }
 
 function Fix-Network0x00000040 {
     Write-Log "Fixing Error 0x00000040 (Network connection timeout)..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name KeepConn -Value 65535 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name KeepConn -Value 65535 -Type DWord -Force -ErrorAction Stop
         Restart-Service LanmanWorkstation -Force -ErrorAction SilentlyContinue
         Write-Log "KeepConn SMB set to maximum." -Type "SUCCESS"
         Write-Host "  [+] SMB connection timeout extended to mitigate unstable network topologies." -ForegroundColor Green
@@ -953,7 +1041,7 @@ function Fix-Network0x00000040 {
 function Fix-DriverCopy0x00000002 {
     Write-Log "Fixing Error 0x00000002 (Driver CopyFilesPolicy)..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name CopyFilesPolicy -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name CopyFilesPolicy -Value 1 -Type DWord -Force -ErrorAction Stop
         Write-Log "CopyFilesPolicy activated." -Type "SUCCESS"
         Write-Host "  [+] CopyFilesPolicy allowed so OS can ingest missing drivers from Host." -ForegroundColor Green
     }
@@ -965,7 +1053,7 @@ function Fix-DriverCopy0x00000002 {
 function Fix-RpcBitness0x0000007e {
     Write-Log "Fixing Error 0x0000007e (RPC Bitness/Auth error)..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" -Name RpcAuthenticationLevel -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" -Name RpcAuthenticationLevel -Value 0 -Type DWord -Force -ErrorAction Stop
         Write-Log "RPC Authentication downgraded." -Type "SUCCESS"
         Write-Host "  [+] RPC Auth limitations removed to facilitate cross-architecture communication." -ForegroundColor Green
     }
@@ -983,15 +1071,25 @@ function Manage-WPP {
     Write-Host "  [1] ENABLE WPP (Legacy printers will likely fail)"
     Write-Host "  [2] DISABLE WPP (Safe for Legacy LAN Sharing - Recommended)"
     $opt = Read-Host "  Select Option (1/2)"
+    $wppPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP"
+    if (-not (Test-Path $wppPath)) { New-Item -Path $wppPath -Force | Out-Null }
     if ($opt -eq '1') {
-        Write-Log "Enabling WPP Mode..." -Type "INFO"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP" -Name Enabled -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
-        Write-Host "  [+] WPP Enabled." -ForegroundColor Yellow
+        try {
+            Write-Log "Enabling WPP Mode..." -Type "INFO"
+            Set-ItemProperty -Path $wppPath -Name Enabled -Value 1 -Type DWord -Force -ErrorAction Stop
+            Write-Host "  [+] WPP Enabled." -ForegroundColor Yellow
+        } catch {
+            Write-Log "Failed to enable WPP: $($_.Exception.Message)" -Type "ERROR"
+        }
     }
     if ($opt -eq '2') {
-        Write-Log "Disabling WPP Mode..." -Type "INFO"
-        Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP" -Name Enabled -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Write-Host "  [+] WPP Successfully Disabled (Compatibility Mode)." -ForegroundColor Green
+        try {
+            Write-Log "Disabling WPP Mode..." -Type "INFO"
+            Set-ItemProperty -Path $wppPath -Name Enabled -Value 0 -Type DWord -Force -ErrorAction Stop
+            Write-Host "  [+] WPP Successfully Disabled (Compatibility Mode)." -ForegroundColor Green
+        } catch {
+            Write-Log "Failed to disable WPP: $($_.Exception.Message)" -Type "ERROR"
+        }
     }
 }
 
@@ -1046,11 +1144,12 @@ function Manage-DefaultPrinter {
 function Set-SpoolerWatchdog {
     Write-Log "Injecting Spooler Watchdog Task..." -Type "INFO"
     try {
-        $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-WindowStyle Hidden -Command `"if((Get-Service spooler).Status -ne 'Running'){ Start-Service spooler }`""
-        $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 5)
-        Register-ScheduledTask -TaskName "SpoolerWatchdog" -Action $action -Trigger $trigger -User "SYSTEM" -RunLevel Highest -Force | Out-Null
-        Write-Log "Spooler Watchdog successfully deployed." -Type "SUCCESS"
-        Write-Host "  [+] Automated task injected. Spooler audited every 5 minutes and automatically resurrected if offline." -ForegroundColor Green
+        $cmd = "powershell.exe -WindowStyle Hidden -Command \`"if((Get-Service spooler).Status -ne 'Running'){ Start-Service spooler }\`""
+        & schtasks.exe /create /tn "SpoolerWatchdog" /tr $cmd /sc minute /mo 5 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
+        if ($LASTEXITCODE -ne 0) { throw "schtasks returned exit code $LASTEXITCODE" }
+        
+        Write-Log "Spooler Watchdog deployed (indefinite repetition, every 5 min)." -Type "SUCCESS"
+        Write-Host "  [+] Spooler Watchdog active. Audited every 5 minutes indefinitely." -ForegroundColor Green
     }
     catch {
         Write-Log "Failed Watchdog deployment: $($_.Exception.Message)" -Type "ERROR"
@@ -1060,8 +1159,8 @@ function Set-SpoolerWatchdog {
 function Fix-RDPPrinter {
     Write-Log "Repairing RDP Printer Terminal Services Redirection..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name fDisableCpm -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name fEnablePrintRDR -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name fDisableCpm -Value 0 -Type DWord -Force -ErrorAction Stop
+        Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name fEnablePrintRDR -Value 1 -Type DWord -Force -ErrorAction Stop
         Write-Log "RDP Redirection activated." -Type "SUCCESS"
         Write-Host "  [+] Local printers are now visible during Remote Desktop (RDP) sessions." -ForegroundColor Green
     }
@@ -1113,11 +1212,11 @@ function Fix-PrintToPDF {
     Write-Log "Reinstalling / Refreshing Microsoft Print to PDF & XPS..." -Type "INFO"
     Write-Host "  [*] This process requires approximately 10-30 seconds..." -ForegroundColor Cyan
     try {
-        Disable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -ErrorAction SilentlyContinue | Out-Null
+        Disable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -ErrorAction Stop | Out-Null
         Start-Sleep -Seconds 2
-        Enable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -ErrorAction SilentlyContinue | Out-Null
+        Enable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -ErrorAction Stop | Out-Null
         Write-Log "Print to PDF successfully refreshed." -Type "SUCCESS"
-        Write-Host "  [+] Missing/corrupted Microsoft Print to PDF drivers successfully restored!" -ForegroundColor Green
+        Write-Host "  [+] Microsoft Print to PDF drivers restored. REBOOT RECOMMENDED." -ForegroundColor Green
     }
     catch {
         Write-Log "Failed to refresh PrintToPDF: $($_.Exception.Message)" -Type "ERROR"
@@ -1127,7 +1226,7 @@ function Fix-PrintToPDF {
 function Fix-CredentialGuard {
     Write-Log "Bypassing Credential Guard Restrictions (Strict NTLM)..." -Type "INFO"
     try {
-        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LsaCfgFlags -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LsaCfgFlags -Value 0 -Type DWord -Force -ErrorAction Stop
         Write-Log "Credential Guard protection (LsaCfgFlags) disabled." -Type "SUCCESS"
         Write-Host "  [+] Strict NTLM blockade in Win 11 Pro/Enterprise alleviated." -ForegroundColor Green
     }
@@ -1139,9 +1238,9 @@ function Fix-CredentialGuard {
 function Manage-BITS {
     Write-Log "Restarting BITS Service..." -Type "INFO"
     try {
-        Restart-Service BITS -Force -ErrorAction SilentlyContinue
+        Restart-Service BITS -Force -ErrorAction Stop
         Write-Log "Background Intelligent Transfer Service (BITS) restarted." -Type "SUCCESS"
-        Write-Host "  [+] Windows native driver downloader service restarted to prevent stalled connections." -ForegroundColor Green
+        Write-Host "  [+] BITS service restarted." -ForegroundColor Green
     }
     catch {
         Write-Log "Failed to restart BITS: $($_.Exception.Message)" -Type "ERROR"
@@ -1346,10 +1445,10 @@ function Manage-WindowsUpdate {
             if (-not (Test-Path $wuPath)) { New-Item -Path $wuPath -Force | Out-Null }
 
             $pauseDate = (Get-Date).AddDays(35).ToString("yyyy-MM-ddTHH:mm:ssZ")
-            Set-ItemProperty -Path $wuPath -Name PauseQualityUpdatesStartTime -Value $pauseDate -Force -ErrorAction SilentlyContinue
-            Set-ItemProperty -Path $wuPath -Name PauseFeatureUpdatesStartTime -Value $pauseDate -Force -ErrorAction SilentlyContinue
-            Set-ItemProperty -Path $wuPath -Name PauseUpdatesExpiryTime -Value $pauseDate -Force -ErrorAction SilentlyContinue
-            Set-ItemProperty -Path $wuPath -Name SetDisableUXWUAccess -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+            Set-ItemProperty -Path $wuPath -Name PauseQualityUpdatesStartTime -Value $pauseDate -Force -ErrorAction Stop
+            Set-ItemProperty -Path $wuPath -Name PauseFeatureUpdatesStartTime -Value $pauseDate -Force -ErrorAction Stop
+            Set-ItemProperty -Path $wuPath -Name PauseUpdatesExpiryTime -Value $pauseDate -Force -ErrorAction Stop
+            Set-ItemProperty -Path $wuPath -Name SetDisableUXWUAccess -Value 1 -Type DWord -Force -ErrorAction Stop
 
             Write-Host "  [+] Windows Update fully paused for 35 days." -ForegroundColor Green
             Write-Log "Windows Update paused until $pauseDate." -Type "SUCCESS"
@@ -1511,10 +1610,14 @@ function Rescue-NetworkProfile {
         if (-not $publicFound) { Write-Host "  [+] All profiles are already Private/Domain. No action needed." -ForegroundColor Green }
         $deployWatchdog = Read-Host "`n  [?] Deploy Network Profile Watchdog (checks every 10 min)? (Y/N)"
         if ($deployWatchdog -eq 'Y') {
-            $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-WindowStyle Hidden -Command `"Get-NetConnectionProfile | Where-Object { `$_.NetworkCategory -eq 'Public' } | Set-NetConnectionProfile -NetworkCategory Private`""
-            $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 10)
+            $action  = New-ScheduledTaskAction -Execute "powershell.exe" `
+                -Argument "-WindowStyle Hidden -Command `"Get-NetConnectionProfile | Where-Object { `$_.NetworkCategory -eq 'Public' } | Set-NetConnectionProfile -NetworkCategory Private`""
+            $trigger = New-CimInstance -CimClass (Get-CimClass MSFT_TaskRegistrationTrigger -Namespace Root/Microsoft/Windows/TaskScheduler) -ClientOnly
+            $trigger.Repetition = New-CimInstance -CimClass (Get-CimClass MSFT_TaskRepetitionPattern -Namespace Root/Microsoft/Windows/TaskScheduler) -ClientOnly
+            $trigger.Repetition.Interval = 'PT10M'
+            $trigger.Repetition.StopAtDurationEnd = $false
             Register-ScheduledTask -TaskName "NetworkProfileWatchdog" -Action $action -Trigger $trigger -User "SYSTEM" -RunLevel Highest -Force | Out-Null
-            Write-Log "Network Profile Watchdog deployed." -Type "SUCCESS"
+            Write-Log "Network Profile Watchdog deployed (indefinite repetition)." -Type "SUCCESS"
             Write-Host "  [+] Watchdog deployed. Profile enforced to Private every 10 minutes." -ForegroundColor Green
         }
     }
