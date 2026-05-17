@@ -2,7 +2,7 @@
 
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011%20%7C%20Server-0078D6?logo=windows&logoColor=white)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?logo=powershell&logoColor=white)
-![Version](https://img.shields.io/badge/Version-2.2.8-blue)
+![Version](https://img.shields.io/badge/Version-2.2.9-blue)
 
 A simple but powerful tool to fix common Windows printer sharing problems. Works on Windows 10, 11 (including 24H2+), ARM64, and Windows Server 2025.
 

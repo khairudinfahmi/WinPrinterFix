@@ -2,7 +2,7 @@ param(
     [switch]$nuke
 )
 
-$script:version = "2.2.8"
+$script:version = "2.2.9"
 $script:logFile = "C:\WinPrinterFixLog.txt"
 $script:backupDir = "C:\WinPrinterFixBackup"
 $script:silentNuke = $nuke
@@ -1773,7 +1773,7 @@ function Detect-GPOIntervention {
 function Parse-PrintEventLog {
     Write-Log "Parsing top 5 PrintService Error/Warning events..." -Type "INFO"
     Write-Host "`n  ======================================================================"
-    Write-Host "               PRINTSERVICE EVENT LOG PARSER (TOP 5)"
+    Write-Host "                 PRINTSERVICE EVENT LOG PARSER (TOP 5)"
     Write-Host "  ======================================================================"
     try {
         $events = Get-WinEvent -FilterHashtable @{
@@ -1782,7 +1782,6 @@ function Parse-PrintEventLog {
         } -MaxEvents 5 -ErrorAction SilentlyContinue
         if ($events) {
             $resolutionMap = @{
-                '372' = "Spooler crash. Execute [06] or [37] Hard-Nuke Print Queue."
                 '808' = "Driver install failure. Execute [43] Orphaned Driver Sweeper."
                 '842' = "Queue corruption. Execute [37] Hard-Nuke Print Queue."
                 '354' = "Spooler failed to start. Execute [38] Spooler Dependency Reset."
@@ -1793,8 +1792,25 @@ function Parse-PrintEventLog {
                 $color = if ($evt.Level -eq 2) { "Red" } else { "Yellow" }
                 Write-Host "`n  [$levelStr] Event $($evt.Id) - $($evt.TimeCreated)" -ForegroundColor $color
                 Write-Host "  Message: $($evt.Message)" -ForegroundColor White
-                if ($resolutionMap.ContainsKey($evt.Id.ToString())) {
-                    Write-Host "  SUGGESTION: $($resolutionMap[$evt.Id.ToString()])" -ForegroundColor Green
+
+                $suggestion = ""
+                if ($evt.Id -eq 372) {
+                    if ($evt.Message -match "Access is denied" -or $evt.Message -match "error code.*: 5\b") {
+                        $suggestion = "Permission blocked. Execute [12] Disable Password Sharing or [60] Inject Credentials."
+                    }
+                    elseif ($evt.Message -match "The network path was not found" -or $evt.Message -match "error code.*: 53\b") {
+                        $suggestion = "Host unreachable. Verify Host IP/Power, then Execute [14] Open Firewall."
+                    }
+                    else {
+                        $suggestion = "Spooler/Driver crash. Execute [06] or [37] Hard-Nuke Print Queue."
+                    }
+                }
+                elseif ($resolutionMap.ContainsKey($evt.Id.ToString())) {
+                    $suggestion = $resolutionMap[$evt.Id.ToString()]
+                }
+
+                if ($suggestion) {
+                    Write-Host "  SUGGESTION: $suggestion" -ForegroundColor Green
                 }
             }
         }
@@ -2426,7 +2442,7 @@ function Show-Menu {
     Write-Host "$env:COMPUTERNAME " -ForegroundColor Green -NoNewline
     Write-Host "| OS: " -NoNewline
     Write-Host "$winName " -ForegroundColor Blue -NoNewline
-    Write-Host "| Windows Printer Sharing Fix v2.2.8" -ForegroundColor Green
+    Write-Host "| Windows Printer Sharing Fix v2.2.9" -ForegroundColor Green
 
     Write-Host " TIME ZONE: " -NoNewline
     Write-Host "$(Get-TimeZone | Select-Object -ExpandProperty Id) | $(Get-Date -Format 'HH.mm.ss')" -ForegroundColor Red

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.2.9] - 2026-05-17
+
+### Added
+- Smarter suggestions for Event ID 372 error messages (identifying credential or network blockages).
+
+---
+
 ## [2.2.8] - 2026-05-17
 
 ### Added

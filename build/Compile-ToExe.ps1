@@ -1,4 +1,4 @@
-﻿$ProjectRoot = Split-Path $PSScriptRoot -Parent
+$ProjectRoot = Split-Path $PSScriptRoot -Parent
 
 $SourceFile = Join-Path $ProjectRoot "src\WinPrinterFix.ps1"
 $OutputDir  = Join-Path $ProjectRoot "release"
@@ -31,7 +31,7 @@ $ps2exeParams = @{
     requireAdmin = $true
     title       = "Windows Printer Sharing Fix"
     description = "Windows Printer Sharing Fix Tool"
-    version     = "2.2.8.0"
+    version     = "2.2.9.0"
     company     = "khairudinfahmi"
     copyright   = "2026 khairudinfahmi"
 }
