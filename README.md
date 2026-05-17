@@ -120,22 +120,15 @@ Windows updates often break network printing with cryptic errors. This tool fixe
 
 ---
 
-## 🔍 Transparency & Under-the-Hood Mechanics
+## ⚠️ Good to Know: Under the Hood
 
-To ensure 100% operational transparency, users should be aware that certain automated macros and advanced features in this script execute deep system-level changes that are not explicitly prompted during execution:
+To keep things completely transparent, if you run the automated playbooks (`[83]`, `[84]`, or `[85]`), the script does a few extra things in the background that don't pop up on the screen. This is done to make sure the fixes actually stick:
 
-### 1. Macro Executions: ALLFIX `[84/85]` & EXTREME PATH `[83]`
-These options act as automated playbooks. In addition to standard fixes, they silently execute the following background operations:
-* **GPO Override (`gpupdate /force`):** Flushes and forces a Group Policy update before writing to the registry to ensure local changes take precedence temporarily.
-* **Persistent Task Injection:** Silently deploys `PrinterFixPostUpdate` and `PrinterFixDaily` into Windows Task Scheduler. This runs a hidden PowerShell script every day at 10:00 AM and upon startup to automatically re-apply RPC and Spooler registry fixes, preventing Windows Updates from breaking the printer again.
-* **Aggressive Cache Purging:** Executes `klist purge` (clears Kerberos tickets), `ipconfig /flushdns` & `registerdns`, and `nbtstat -RR` without user confirmation to ensure clean network topologies.
-* **Extreme Path Exclusive (`cmdkey` wipe):** Option `[83]` actively searches the Windows Credential Manager and forcefully deletes all cached credentials related to the local computer name to resolve strict Win 11 NAS/Sharing authentication loops.
-
-### 2. Registry Bypass & Injection `[86/87]`
-When standard Windows APIs fail to map a UNC network printer due to strict 0x00000709 blocks, Option `[86]` performs a **Direct Registry Injection**. It forcibly writes the network path directly into `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports`, bypassing the Windows Spooler API validation entirely.
-
-### 3. Force-Kill Procedures `[37] & [44]`
-Features involving "Force Purging" or "Bypassing drivers in use" will instantly send termination signals (`Stop-Process -Force`) to critical Windows services including `PrintIsolationHost`, `printfilterpipelinesvc`, and `splwow64`. This will abruptly interrupt any active printing operations across the entire host without warning dialogs.
+- **GPO Override (`gpupdate /force`):** It forces a local Group Policy update right before modifying the registry so your domain controller doesn't immediately overwrite the fixes.
+- **Scheduled Tasks Injection:** It silently creates two tasks (`PrinterFixPostUpdate` and `PrinterFixDaily`) in Windows Task Scheduler. These run quietly in the background at 10:00 AM and on startup to re-apply the RPC registry fixes automatically (just in case Windows Update tries to break it again).
+- **Network & Credential Wipes:** It runs commands like `klist purge`, `ipconfig /flushdns`, and `nbtstat -RR`. If you use Extreme Path `[83]`, it also forcefully wipes stale network credentials from your Windows Vault using `cmdkey`. 
+- **Registry Overrides [86/87]:** If you use the UNC Bypass feature and Windows blocks the standard API, the script will forcefully inject or delete the port directly inside `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports`. 
+- **Force Kills [37] & [44]:** When you purge the queue or try to bypass a locked driver, the script sends a direct termination signal (`Stop-Process -Force`) to `splwow64`, `PrintIsolationHost`, and `printfilterpipelinesvc`. This drops all active print jobs immediately.
 
 ---
 
@@ -297,4 +290,3 @@ Feel free to modify and distribute, but please ensure credit is attributed to th
 **@khairudinfahmi** — 2026
 
 > Engineered to assist IT administrators and end-users frustrated by persistent Windows printer sharing deployment failures.
-  
