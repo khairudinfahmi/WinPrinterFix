@@ -60,7 +60,7 @@ Windows updates often break network printing with cryptic errors. This tool fixe
 | 34 | Configure Spooler Auto-Restart on Crash |
 | 35 | Purge Stale Spooler Dependencies |
 | 36 | Deploy Spooler Watchdog (5-Min Audit) |
-| 37 | Hard-Nuke Print Queue (.shd/.spl) |
+| 37 | Force Purge Print Queue (.shd/.spl) |
 | 38 | Spooler Dependency Registry Reset |
 | 39 | Driver Management (Print Server Properties) |
 | 40 | Disable Print Driver Isolation |
@@ -112,7 +112,7 @@ Windows updates often break network printing with cryptic errors. This tool fixe
 | 82 | Enable SMB Guest Access & Drop Anonymous Blocks |
 | **83** | **EXTREME PATH (WIN 11 24H2/25H2 & ARM64)** |
 | **84** | **ALLFIX (50 AUTOMATED REPAIR SEQUENCES)** |
-| **85** | **SILENT NUKE & ALLFIX (ZERO-PROMPT)** |
+| **85** | **SILENT ALLFIX & REBOOT (ZERO-PROMPT)** |
 | 86 | Map Local Port to UNC Path (Bypass 0x00000709) |
 | 87 | Remove Injected Local Port (UNC) |
 | 88 | Reboot System |
@@ -146,7 +146,7 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 3. Reboot your system.
 
 ### Emergency Mode (Unattended)
-- Type `85` → Enter (Silent Nuke: Executes all fixes and forcibly reboots the system without user prompts).
+- Type `85` → Enter (Silent AllFix: Executes all fixes and forcibly reboots the system without user prompts).
 
 ### Help & Documentation
 - Type `?` → Display the help guide.
@@ -158,7 +158,7 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 ## Interactive Console Interface
 
 ```text
- USER: admin | COMPUTERNAME: OFFICE-PC | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix v2.2.8
+ USER: admin | COMPUTERNAME: OFFICE-PC | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix v2.2.9
  =======================================================================================================
 
  CORE FIXES & NETWORK SERVICES              SPOOLER, DRIVERS & POLICIES              DIAGNOSTICS & AUTOMATION
@@ -167,11 +167,11 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
  [02] Bypass Error 0x00000709                [32] Re-initialize RPC & DCOM             [61] Purge Stale Credentials
  ...                                         ...                                       ...
  [30] Force Initialize WSD Print Device      [59] Manage Windows Protected Print       [84] ALLFIX (50 AUTOMATED STEPS)
-                                                                                        [85] SILENT NUKE & ALLFIX
+                                                                                        [85] SILENT ALLFIX & REBOOT
  -----------------------------------------------------------------------------------------------------------
  :   NOTE:                                                                              :
- :   [84] ALLFIX (50 Steps) | [83] EXTREME PATH (Win11) | [85] SILENT NUKE             :
- :   Input [?] for HELP     | [? 7] feature 7 details   | [? all] open HTML            :
+ :   [84] ALLFIX (50 Steps) | [83] EXTREME PATH (Win11) | [85] SILENT ALLFIX           :
+ :   [?] HELP | [? 7] INFO | [? all] HTML | TIP: If 'Check Printer Name' error, use Option [86] :
  -----------------------------------------------------------------------------------------------------------
 
 Type option: _

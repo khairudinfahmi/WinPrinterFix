@@ -1561,9 +1561,9 @@ function Remove-GhostUSBPrinters {
 }
 
 function Nuke-PrintQueue {
-    Write-Log "Executing Hard-Nuke on Print Queue..." -Type "INFO"
+    Write-Log "Executing Force Purge on Print Queue..." -Type "INFO"
     Write-Host "`n  ======================================================================"
-    Write-Host "               HARD-NUKE PRINT QUEUE"
+    Write-Host "                FORCE PURGE PRINT QUEUE"
     Write-Host "  ======================================================================"
     try {
         Write-Host "  [*] Terminating Print Spooler and all child processes..." -ForegroundColor Cyan
@@ -1580,10 +1580,10 @@ function Nuke-PrintQueue {
         Remove-Item "$spoolDir\*" -Force -Recurse -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 1
         Start-Service spooler -ErrorAction Stop
-        Write-Log "Hard-Nuke complete. $totalFiles corrupt spool files destroyed." -Type "SUCCESS"
-        Write-Host "  [+] Print Queue obliterated. $totalFiles stale files purged. Spooler restarted." -ForegroundColor Green
+        Write-Log "Force Purge complete. $totalFiles corrupt spool files cleared." -Type "SUCCESS"
+        Write-Host "  [+] Print Queue cleared. $totalFiles stale files purged. Spooler restarted." -ForegroundColor Green
     }
-    catch { Write-Log "Hard-Nuke failed: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "Force Purge failed: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Reset-SpoolerDependencyRegistry {
@@ -1783,7 +1783,7 @@ function Parse-PrintEventLog {
         if ($events) {
             $resolutionMap = @{
                 '808' = "Driver install failure. Execute [43] Orphaned Driver Sweeper."
-                '842' = "Queue corruption. Execute [37] Hard-Nuke Print Queue."
+                '842' = "Queue corruption. Execute [37] Force Purge Print Queue."
                 '354' = "Spooler failed to start. Execute [38] Spooler Dependency Reset."
                 '824' = "Printer offline. Execute [26] WSD to TCP/IP Converter."
             }
@@ -1802,7 +1802,7 @@ function Parse-PrintEventLog {
                         $suggestion = "Host unreachable. Verify Host IP/Power, then Execute [14] Open Firewall."
                     }
                     else {
-                        $suggestion = "Spooler/Driver crash. Execute [06] or [37] Hard-Nuke Print Queue."
+                        $suggestion = "Spooler/Driver crash. Execute [06] or [37] Force Purge Print Queue."
                     }
                 }
                 elseif ($resolutionMap.ContainsKey($evt.Id.ToString())) {
@@ -2071,7 +2071,7 @@ function AllFix-Core {
     $profiles = Get-NetConnectionProfile -ErrorAction SilentlyContinue
     $profiles | Where-Object { $_.NetworkCategory -eq 'Public' } | Set-NetConnectionProfile -NetworkCategory Private -ErrorAction SilentlyContinue
 
-    Write-Host "  [*] [46/50] Hard-Nuking corrupt Print Queue files... (Menu 37)" -ForegroundColor Cyan
+    Write-Host "  [*] [46/50] Force Purging print queue files... (Menu 37)" -ForegroundColor Cyan
     Nuke-PrintQueue
 
     Write-Host "  [*] [47/50] Resetting Spooler Dependencies (Registry)... (Menu 38)" -ForegroundColor Cyan
@@ -2092,7 +2092,7 @@ function AllFix-Core {
 
     if ($script:silentNuke) {
         Write-Host "`n  ==================================================================================================="
-        Write-Host "    [+] SILENT NUKE CONCLUDED! SYSTEM REBOOTING IN 3 SECONDS!"
+        Write-Host "    [+] SILENT ALLFIX COMPLETED! REBOOTING IN 3 SECONDS..."
         Write-Host "  ===================================================================================================`n"
         Start-Sleep -Seconds 3
         Restart-Computer -Force
@@ -2185,7 +2185,7 @@ function Extreme-25H2 {
     catch {}
 
     Write-Log "Extreme Path concluded!" -Type "SUCCESS"
-    Write-Host "  [+] Extreme security configuration changes complete. System reboot highly recommended." -ForegroundColor Green
+    Write-Host "  [+] Extreme security configuration changes complete. System reboot is recommended." -ForegroundColor Green
 
     $extremeRestart = Read-Host "`n   [?] Execute immediate system reboot now? (Y/N)"
     if ($extremeRestart -eq 'Y') { Restart-Computer -Force }
@@ -2257,7 +2257,7 @@ function Show-Help {
         '34' = @("Configure Spooler Auto-Restart on Crash", "Configures recovery action: auto-restart upon crash via sc.exe.", "Spooler highly unstable, requiring self-healing mechanisms.")
         '35' = @("Purge Stale Spooler Dependencies", "Resets DependOnService spooler parameters to default (RPCSS, http).", "Spooler inactive despite operational RPC services.")
         '36' = @("Deploy Spooler Watchdog (5-Minute Audit)", "Deploys a scheduled task auditing the spooler every 5 minutes.", "High-uptime print server environments requiring constant availability.")
-        '37' = @("Hard-Nuke Print Queue (.shd/.spl)", "Terminates all print processes and purges corrupt .shd/.spl spool files.", "Standard cancellation methods fail to clear the queue completely.")
+        '37' = @("Force Purge Print Queue (.shd/.spl)", "Terminates all print processes and purges corrupt .shd/.spl spool files.", "Standard cancellation methods fail to clear the queue completely.")
         '38' = @("Spooler Dependency Registry Reset", "Resets Spooler's DependOnService registry to factory defaults (RPCSS, http) directly via HK_LOCAL_MACHINE.", "Spooler won't start even after a reboot.")
         '39' = @("Driver Management (Print Server Properties)", "Launches Print Server Properties GUI to manage installed drivers.", "Printer utilizing incorrect driver or duplicate driver instances.")
         '40' = @("Disable Print Driver Isolation", "Disables IsolationPolicy in the registry.", "Spooler crashing concurrently with specific drivers.")
@@ -2276,7 +2276,7 @@ function Show-Help {
         '53' = @("Auto-Sanitize Printer Share Name", "Scans shared printers and replaces illegal characters in share names with underscores.", "Clients cannot connect to a printer shared with a long or complex name.")
         '54' = @("Downgrade LSA Protection (Legacy Auth)", "Disables RunAsPPL in LSA registry.", "Share login failures due to strict Win 11 LSA protection.")
         '55' = @("Bypass Smart App Control (SAC)", "Sets VerifiedAndReputablePolicyState to Off.", "Windows 11 SAC actively blocking driver installers.")
-        '56' = @("Bypass Advanced ServerList Point & Print (PrintNightmare Bypass)", "Injects PrintNightmare bypasses (Elevation Override) and ServerList wildcard (*) into registry.", "Throws 'Check Printer Name' or 'Access Denied' generic errors during driver download.", "Crucial for Windows 11 Build 22621+")
+        '56' = @("Bypass Advanced ServerList Point & Print (PrintNightmare Bypass)", "Injects PrintNightmare bypasses (Elevation Override) and ServerList wildcard (*) into registry.", "Throws 'Check Printer Name' or 'Access Denied' generic errors during driver download.", "Required for Windows 11 Build 22621+")
         '57' = @("Bypass UAC Admin Network TokenFilter", "Configures LocalAccountTokenFilterPolicy = 1.", "Remote administration to workgroup hosts failing due to UAC filtering.")
         '58' = @("Force NTLMv2 Response Compliance", "Configures LmCompatibilityLevel strictly to NTLMv2 (Level 3).", "'Access Denied' when authenticating against varying OS versions or Synology NAS.")
         '59' = @("Manage Windows Protected Print (WPP)", "Disables Windows Protected Print feature.", "Printer driver incompatible with WPP isolation.")
@@ -2284,7 +2284,7 @@ function Show-Help {
         '61' = @("Purge Stale Credentials from Windows Vault", "Purges invalid or outdated credentials from the vault via cmdkey.", "Host password was changed but local machine retains stale cache.")
         '62' = @("Bypass Credential Guard (Strict NTLM Block)", "Disables LsaCfgFlags Credential Guard registry node.", "Enterprise/Pro environments with Credential Guard enabled.")
         '63' = @("Cross-User Credential Mapping", "Injects network credentials into ALL user profiles via NTUSER.DAT registry load.", "Setting up a shared PC with multiple local accounts.")
-        '64' = @("Pre-execution Registry Backup (Spooler & Network)", "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\WinPrinterFixBackup.", "Highly recommended before applying other fixes.", "Always run this first!")
+        '64' = @("Pre-execution Registry Backup (Spooler & Network)", "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\WinPrinterFixBackup.", "Recommended before applying other fixes.", "Always run this first!")
         '65' = @("Rollback Registry from Backup", "Imports .reg files from the backup directory.", "If things get worse after applying fixes.", "Only functional if [64] Backup was previously executed.")
         '66' = @("Generate System Restore Point (Security)", "Generates a System Restore Point for full OS rollback.", "Prior to executing major system-level architectural changes.")
         '67' = @("System File Checker & DISM Restoration", "Executes SFC /scannow and DISM RestoreHealth.", "Frequent BSODs, anomalous errors, or post-malware cleanup.", "This process may take 10-30 minutes!")
@@ -2305,8 +2305,8 @@ function Show-Help {
         '82' = @("Enable SMB Guest Access & Drop Anonymous Blocks", "Enables AllowInsecureGuestAuth in LanmanWorkstation registry.", "For password-less sharing in local networks.")
         '83' = @("EXTREME PATH (WIN 11 24H2/25H2 & ARM64 SPECIFIC)", "Aggressive fix combination: DnsOnWire, StrictNameChecking, NTLM level, SMB Signing, Kerberos purge, etc.", "Standard fixes didn't work on latest Win 11.", "Built specifically for Build 26000 and above.")
         '84' = @("EXECUTE ALLFIX (50 AUTOMATED REPAIR SEQUENCES)", "Executes 50 automated repair steps sequentially.", "PRIMARY RECOMMENDATION - the recommended fix for most general cases.", "REBOOT SYSTEM upon completion for best results.")
-        '85' = @("SILENT NUKE & ALLFIX (ZERO-PROMPT)", "Executes all 50 steps + automated reboot silently.", "Emergency situations requiring immediate unattended fixes.", "SYSTEM WILL AUTOMATICALLY REBOOT! Save all critical work prior!")
-        '86' = @("Map Local Port to UNC Path (Titanium Bypass)", "Attempts standard port creation, then falls back to a Direct Registry Injection bypass if blocked.", "When standard sharing fails and the system entirely blocks 'Add-PrinterPort' commands.")
+        '85' = @("SILENT ALLFIX & REBOOT (ZERO-PROMPT)", "Executes all 50 steps + automated reboot silently.", "Emergency situations requiring immediate unattended fixes.", "SYSTEM WILL AUTOMATICALLY REBOOT! Save all critical work prior!")
+        '86' = @("Map Local Port to UNC Path (Bypass 0x00000709)", "Attempts standard port creation, then falls back to a Direct Registry Injection bypass if blocked.", "When standard sharing fails and the system entirely blocks 'Add-PrinterPort' commands.")
         '87' = @("Remove Injected Local Port (UNC)", "Attempts standard port removal, then falls back to a Registry Purge if blocked.", "When a mapped port is no longer needed or was misconfigured.")
         '88' = @("Reboot System", "Executes an immediate system reboot.", "Always execute after running any major fixes.")
         '89' = @("EXIT SCRIPT", "Exits the tool.", "When troubleshooting is complete.")
@@ -2338,17 +2338,17 @@ function Show-Help {
         Write-Host "    3. Reboot System" -ForegroundColor White
         Write-Host ""
         Write-Host "  EMERGENCY PROTOCOL (Quick Automated):" -ForegroundColor Yellow
-        Write-Host "    - Execute [85] Silent Nuke (WARNING: Auto-reboots!)" -ForegroundColor White
+        Write-Host "    - Execute [85] Silent AllFix (WARNING: Auto-reboots!)" -ForegroundColor White
         Write-Host ""
         Write-Host "  FEATURE CATEGORIES:" -ForegroundColor Yellow
         Write-Host "    [01-09] Error Code Fixes (0x0000011b, 0x00000709, 0x00000bc4, 0x00000035, 0x000006d1, 0x00000040, 0x00000002, 0x0000007e)" -ForegroundColor Cyan
         Write-Host "    [10-30] Network & Sharing Configuration (DNS, SMB, Firewall, WSD, IPP)" -ForegroundColor Cyan
-        Write-Host "    [31-38] Spooler Management (Reset, RPC, Recovery, Watchdog, Nuke)" -ForegroundColor Cyan
+        Write-Host "    [31-38] Spooler Management (Reset, RPC, Recovery, Watchdog, Purge)" -ForegroundColor Cyan
         Write-Host "    [39-53] Drivers & Printing (Isolation, V4, PCL, Ghost, PDF, RDP)" -ForegroundColor Cyan
         Write-Host "    [54-59] Security & Policy (LSA, SAC, UAC, NTLMv2, WPP)" -ForegroundColor Cyan
         Write-Host "    [60-69] Credentials & System (Vault, Backup, SFC, BITS, KB)" -ForegroundColor Cyan
         Write-Host "    [70-81] Diagnostics & Utilities (Troubleshooter, Logs, GPO, BRM)" -ForegroundColor Green
-        Write-Host "    [82-89] Special Operations (Extreme, AllFix, Local UNC, Purge UNC, Nuke)" -ForegroundColor Green
+        Write-Host "    [82-89] Special Operations (Extreme, AllFix, Local UNC, Purge UNC, Silent AllFix)" -ForegroundColor Green
 
         Write-Host ""
         Write-Host "  QUICK TROUBLESHOOTING:" -ForegroundColor Yellow
@@ -2512,7 +2512,7 @@ function Show-Menu {
         "[34] Configure Spooler Auto-Restart on Crash",
         "[35] Purge Stale Spooler Dependencies",
         "[36] Deploy Spooler Watchdog (5-Min Audit)",
-        "[37] Hard-Nuke Print Queue (.shd/.spl)",
+        "[37] Force Purge Print Queue (.shd/.spl)",
         "[38] Spooler Dependency Registry Reset",
         "[39] Driver Management (Print Server Props)",
         "[40] Disable Print Driver Isolation",
@@ -2563,7 +2563,7 @@ function Show-Menu {
         "[82] Enable SMB Guest Access & Drop Anon Blocks",
         "[83] EXTREME PATH (WIN 11 24H2/25H2 & ARM64)",
         "[84] ALLFIX (50 AUTOMATED REPAIR SEQUENCES)",
-        "[85] SILENT NUKE & ALLFIX (ZERO-PROMPT)",
+        "[85] SILENT ALLFIX & REBOOT (ZERO-PROMPT)",
         "[86] Map Local Port to UNC Path (Bypass 0x00000709)",
         "[87] Remove Injected Local Port (UNC)",
         "[88] Reboot System",
@@ -2608,7 +2608,7 @@ function Show-Menu {
 
     Write-Host ("-" * $totalW) -ForegroundColor Red
     $noteLine1 = " :   NOTE: ".PadRight($totalW - 2) + ":"
-    $noteLine2 = " :   [84] ALLFIX (50 Steps) | [83] EXTREME PATH (Win11) | [85] SILENT NUKE ".PadRight($totalW - 2) + ":"
+    $noteLine2 = " :   [84] ALLFIX (50 Steps) | [83] EXTREME PATH (Win11) | [85] SILENT ALLFIX ".PadRight($totalW - 2) + ":"
     $noteLine3 = " :   [?] HELP | [? 7] INFO | [? all] HTML | TIP: If 'Check Printer Name' error, use Option [86] ".PadRight($totalW - 2) + ":"
 
     Write-Host $noteLine1 -ForegroundColor Red

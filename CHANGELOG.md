@@ -29,15 +29,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.2.7] - 2026-05-17
 
 ### Added
-- **Remove Injected Port (Option [87])**: Added `Remove-LocalPortUNC` function to safely delete custom ports created by the Titanium Bypass (Option [86]). Includes a Registry Purge fallback if standard removal is blocked by Windows security policies.
-- **Titanium Bypass Polish**: Optimized `Map-LocalPortUNC` with improved diagnostic logging and direct registry injection verification.
+- **Remove Injected Port (Option [87])**: Added `Remove-LocalPortUNC` function to safely delete custom ports created by the UNC Port Mapping Bypass (Option [86]). Includes a Registry Purge fallback if standard removal is blocked by Windows security policies.
+- **UNC Port Mapping Bypass Polish**: Optimized `Map-LocalPortUNC` with improved diagnostic logging and direct registry injection verification.
 
 ### Changed
 - **Global ID Re-indexing**: Reorganized features into an 89-option architecture.
   - `[87]` Remove Injected Local Port (UNC)
   - `[88]` Reboot System
   - `[89]` EXIT SCRIPT
-- **UI Enhancement**: Standardized "Ultimate Bypass" nomenclature across all diagnostic modules for better clarity.
+- **UI Enhancement**: Standardized "UNC Bypass" nomenclature across all diagnostic modules for better clarity.
 
 ---
 
@@ -58,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.2.5] - 2026-05-17
 
 ### Added
-- **Ultimate Bypass (Option [86])**: Added `Map-LocalPortUNC` function. This allows users to map a local port directly to a UNC path (`\\TargetIP\ShareName`), effectively bypassing persistent RPC "Check printer name" or "0x709" errors when standard sharing protocols fail.
+- **UNC Port Bypass (Option [86])**: Added `Map-LocalPortUNC` function. This allows users to map a local port directly to a UNC path (`\\TargetIP\ShareName`), effectively bypassing persistent RPC "Check printer name" or "0x709" errors when standard sharing protocols fail.
 - **Enhanced PrintNightmare Bypasses**: Expanded `Fix-AdvancedPointAndPrint` (Option [56]) with critical registry overrides (`RestrictDriverInstallationToAdministrators = 0`, `NoWarningNoElevationOnInstall = 1`, etc.). This enables silent driver downloads from host machines even under strict modern security policies.
 - **AllFix Sequence Markers**: Added visual menu-mapping hints (e.g., `(Menu 64)`) to each step in the `AllFix-Core` sequence, allowing users to trace which individual fix corresponds to each automated step.
 
@@ -96,7 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **PrintBRM Migration**: Improved the launch logic for `PrintBrm.exe` (Option [81]) to open in a persistent CMD window with the help manual (`/?`) automatically displayed.
 - **DISM Capture**: Enhanced DISM uninstallation modules to correctly capture and report exit codes (0/3010) for verification.
-- **Windows Update Compliance**: Added robust registry keys (`PauseFeatureUpdatesStartTime`, `PauseUpdatesExpiryTime`) to ensure Windows 11 respects update pauses.
+- **Windows Update Compliance**: Added registry keys (`PauseFeatureUpdatesStartTime`, `PauseUpdatesExpiryTime`) to ensure Windows 11 respects update pauses.
 - **WUSA Compatibility**: Removed silent flags from `wusa.exe` uninstalls to resolve security-driven interface blocks on modern builds.
 - **UI Alignment**: Standardized console headers for better readability in 80-column terminals.
 
@@ -132,7 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `[65]` Registry Backup (was `[13]`)
   - `[84]` Extreme Path (was `[24]`)
   - `[85]` ALLFIX (was `[25]`)
-  - `[86]` Silent Nuke (was `[37]`)
+  - `[85]` Silent AllFix (was `[37]`)
   - `[88]` EXIT SCRIPT (was `[31]`)
 - **UI Overhaul**: Feature text color standardized to Green for consistency. Special operations `[84]`, `[85]`, `[86]` highlighted in Red for visibility.
 - **Console Layout**: Dynamic buffer/window sizing (180 columns) with proportional column widths (`62/55/58`) prevents text wrapping on any console size.
@@ -156,7 +156,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 18 new advanced diagnostic and repair modules, expanding total features from 70 to 88.
 - **Driver & Windows Update**: Universal Print V4 Fix, PCL/PostScript Toggle, KB Uninstall & Pause, Orphaned Driver Sweeper, Force-Kill Driver Process.
 - **Network & Port**: WSD to TCP/IP Converter, Network Socket Re-init, Rescue Network Profile (Watchdog), Ghost USB Port Eliminator.
-- **Spooler & Queue**: Hard-Nuke Print Queue (.shd/.spl purge), Spooler Dependency Registry Reset.
+- **Spooler & Queue**: Force Purge Print Queue (.shd/.spl purge), Spooler Dependency Registry Reset.
 - **Credentials**: Cross-User Credential Mapping, Force-Set Default Printer (Registry Bypass).
 - **Third-Party Integration**: Auto-Sanitize Printer Share Name, Browser Print Sandbox Fix (Chromium), Auto-Inject F4/Folio Paper Size.
 - **Advanced Diagnostics**: GPO Intervention Detection (Policy Scan), PrintService Event Log Parser (Top 5).
@@ -187,11 +187,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Native support for Windows Server 2019, 2022, and 2025.
 - AllFix: 42 automated repair steps executed sequentially via a single command.
 - Extreme Path tailored specifically for Windows 11 Build 26000+.
-- Silent Nuke mode (zero-interaction, unattended execution with forced auto-restart).
+- Silent AllFix mode (zero-interaction, unattended execution with forced auto-restart).
 - Interactive contextual help system (`?`, `? <number>`, `? all`).
 - Comprehensive offline HTML documentation with built-in search functionality.
 - Inno Setup compiler integration with automated code signing certificate generation.
-- Build automation script (`Compile-ToExe.ps1`) to seamlessly compile PS1 source into standalone EXE.
+- Build automation script (`Compile-ToExe.ps1`) to compile PS1 source into standalone EXE.
 - Advanced system diagnostics (Print Spooler state, RPC, Windows Defender Firewall, Network Profile).
 - Remote network printer management utilities (Ping test, Port 445/135 Scan, Remote Target Spooler Reset).
 - PrintBRM (Printer Backup/Restore Migration) native integration.

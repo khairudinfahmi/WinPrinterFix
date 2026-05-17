@@ -151,7 +151,7 @@
                     { id: "34", title: "Configure Spooler Auto-Restart on Crash", problem: "Print Spooler crashes and remains inactive.", solution: "Configures recovery action: auto-restart upon crash via sc.exe.", whenToUse: "Spooler highly unstable, requiring self-healing mechanisms." },
                     { id: "35", title: "Purge Stale Spooler Dependencies", problem: "Spooler fails to start due to invalid service dependencies.", solution: "Resets DependOnService spooler parameters to default (RPCSS, http).", whenToUse: "Spooler inactive despite operational RPC services." },
                     { id: "36", title: "Deploy Spooler Watchdog (5-Minute Audit)", problem: "Spooler silently terminates without notification.", solution: "Deploys a scheduled task auditing the spooler every 5 minutes.", whenToUse: "High-uptime print server environments requiring constant availability." },
-                    { id: "37", title: "Hard-Nuke Print Queue (.shd/.spl)", problem: "Print queue permanently stuck with undeletable jobs.", solution: "Terminates all print processes and purges corrupt .shd/.spl spool files.", whenToUse: "Standard cancellation methods fail to clear the queue completely." },
+                    { id: "37", title: "Force Purge Print Queue (.shd/.spl)", problem: "Print queue permanently stuck with undeletable jobs.", solution: "Terminates all print processes and purges corrupt .shd/.spl spool files.", whenToUse: "Standard cancellation methods fail to clear the queue completely." },
                     { id: "38", title: "Spooler Dependency Registry Reset", problem: "Spooler fails to start due to corrupted or missing service dependencies.", solution: "Resets Spooler's DependOnService registry to factory defaults (RPCSS, http) directly via HK_LOCAL_MACHINE.", whenToUse: "Spooler won't start even after a reboot." },
                     { id: "39", title: "Driver Management (Print Server Properties)", problem: "Corrupted or duplicate printer drivers.", solution: "Launches Print Server Properties GUI to manage installed drivers.", whenToUse: "Printer utilizing incorrect driver or duplicate driver instances." },
                     { id: "40", title: "Disable Print Driver Isolation", problem: "Printer driver crash forces spooler termination.", solution: "Disables IsolationPolicy in the registry.", whenToUse: "Spooler crashing concurrently with specific drivers." },
@@ -170,7 +170,7 @@
                     { id: "53", title: "Auto-Sanitize Printer Share Name", problem: "Printer sharing fails due to special characters or spaces in share name.", solution: "Scans shared printers and replaces illegal characters in share names with underscores.", whenToUse: "Clients cannot connect to a printer shared with a long or complex name." },
                     { id: "54", title: "Downgrade LSA Protection (Legacy Auth)", problem: "Authentication rejected due to aggressive LSA Protection.", solution: "Disables RunAsPPL in LSA registry.", whenToUse: "Share login failures due to strict Win 11 LSA protection." },
                     { id: "55", title: "Bypass Smart App Control (SAC)", problem: "Smart App Control blocking driver installation.", solution: "Sets VerifiedAndReputablePolicyState to Off.", whenToUse: "Windows 11 SAC actively blocking driver installers." },
-                    { id: "56", title: "Bypass Advanced ServerList Point & Print (PrintNightmare Bypass)", problem: "PrintNightmare policies obstructing silent driver installation causing general connect errors.", solution: "Injects PrintNightmare bypasses (Elevation Override) and ServerList wildcard (*) into registry.", whenToUse: "Throws 'Check Printer Name' or 'Access Denied' generic errors during driver download.", note: "Crucial for Windows 11 Build 22621+" },
+                    { id: "56", title: "Bypass Advanced ServerList Point & Print (PrintNightmare Bypass)", problem: "PrintNightmare policies obstructing silent driver installation causing general connect errors.", solution: "Injects PrintNightmare bypasses (Elevation Override) and ServerList wildcard (*) into registry.", whenToUse: "Throws 'Check Printer Name' or 'Access Denied' generic errors during driver download.", note: "Required for Windows 11 Build 22621+" },
                     { id: "57", title: "Bypass UAC Admin Network TokenFilter", problem: "Admin share access denied despite administrative credentials.", solution: "Configures LocalAccountTokenFilterPolicy = 1.", whenToUse: "Remote administration to workgroup hosts failing due to UAC filtering." },
                     { id: "58", title: "Force NTLMv2 Response Compliance", problem: "Authentication fails due to NTLM version mismatch.", solution: "Configures LmCompatibilityLevel strictly to NTLMv2 (Level 3).", whenToUse: "'Access Denied' when authenticating against varying OS versions or Synology NAS." },
                     { id: "59", title: "Manage Windows Protected Print (WPP)", problem: "WPP in Windows 11 obstructing legacy driver usage.", solution: "Disables Windows Protected Print feature.", whenToUse: "Printer driver incompatible with WPP isolation." }
@@ -183,7 +183,7 @@
                     { id: "61", title: "Purge Stale Credentials from Windows Vault", problem: "Cached legacy logins causing authentication conflicts.", solution: "Purges invalid or outdated credentials from the vault via cmdkey.", whenToUse: "Host password was changed but local machine retains stale cache." },
                     { id: "62", title: "Bypass Credential Guard (Strict NTLM Block)", problem: "Credential Guard actively blocking NTLM authentication to shares.", solution: "Disables LsaCfgFlags Credential Guard registry node.", whenToUse: "Enterprise/Pro environments with Credential Guard enabled." },
                     { id: "63", title: "Cross-User Credential Mapping", problem: "Multiple user accounts need credentials for the same network printer.", solution: "Injects network credentials into ALL user profiles via NTUSER.DAT registry load.", whenToUse: "Setting up a shared PC with multiple local accounts." },
-                    { id: "64", title: "Pre-execution Registry Backup (Spooler & Network)", problem: "Requirement to backup state before Modifying registry.", solution: "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\\WinPrinterFixBackup.", whenToUse: "Highly recommended before applying other fixes.", note: "Always run this first!" },
+                    { id: "64", title: "Pre-execution Registry Backup (Spooler & Network)", problem: "Requirement to backup state before Modifying registry.", solution: "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\\WinPrinterFixBackup.", whenToUse: "Recommended before applying other fixes.", note: "Always run this first!" },
                     { id: "65", title: "Rollback Registry from Backup", problem: "Need to undo changes made by this tool.", solution: "Imports .reg files from the backup directory.", whenToUse: "If things get worse after applying fixes.", note: "Only functional if [64] Backup was previously executed." },
                     { id: "66", title: "Generate System Restore Point (Security)", problem: "Need to create a restore point before making system changes.", solution: "Generates a System Restore Point for full OS rollback.", whenToUse: "Prior to executing major system-level architectural changes." },
                     { id: "67", title: "System File Checker & DISM Restoration", problem: "Corrupted or damaged Windows system files.", solution: "Executes SFC /scannow and DISM RestoreHealth.", whenToUse: "Frequent BSODs, anomalous errors, or post-malware cleanup.", note: "This process may take 10-30 minutes!" },
@@ -204,8 +204,8 @@
                     { id: "82", title: "Enable SMB Guest Access & Drop Anonymous Blocks", problem: "Continuous prompt for credentials when accessing shares.", solution: "Enables AllowInsecureGuestAuth in LanmanWorkstation registry.", whenToUse: "For password-less sharing in local networks." },
                     { id: "83", title: "EXTREME PATH (WIN 11 24H2/25H2 & ARM64 SPECIFIC)", problem: "Standard fixes ineffective on latest Windows 11 builds.", solution: "Aggressive fix combination: DnsOnWire, StrictNameChecking, NTLM level, SMB Signing, Kerberos purge, etc.", whenToUse: "Standard fixes didn't work on latest Win 11.", note: "Built specifically for Build 26000 and above." },
                     { id: "84", title: "EXECUTE ALLFIX (50 AUTOMATED REPAIR SEQUENCES)", problem: "Unknown error, requires a complete and thorough system repair.", solution: "Executes 50 automated repair steps sequentially.", whenToUse: "PRIMARY RECOMMENDATION - the recommended fix for most general cases.", note: "REBOOT SYSTEM upon completion for best results." },
-                    { id: "85", title: "SILENT NUKE & ALLFIX (ZERO-PROMPT)", problem: "Need to blindly run all fixes without user prompts.", solution: "Executes all 50 steps + automated reboot silently.", whenToUse: "Emergency situations requiring immediate unattended fixes.", warning: "SYSTEM WILL AUTOMATICALLY REBOOT! Save all critical work prior!" },
-                    { id: "86", title: "Map Local Port to UNC Path (Titanium Bypass)", problem: "Ultimate bypass when standard RPC network sharing fails with '0x00000709' or 'Check Printer Name' errors.", solution: "Attempts standard port creation, then falls back to a Direct Registry Injection bypass if blocked.", whenToUse: "When standard sharing fails and the system entirely blocks 'Add-PrinterPort' commands." },
+                    { id: "85", title: "SILENT ALLFIX & REBOOT (ZERO-PROMPT)", problem: "Need to blindly run all fixes without user prompts.", solution: "Executes all 50 steps + automated reboot silently.", whenToUse: "Emergency situations requiring immediate unattended fixes.", warning: "SYSTEM WILL AUTOMATICALLY REBOOT! Save all critical work prior!" },
+                    { id: "86", title: "Map Local Port to UNC Path (Bypass 0x00000709)", problem: "Direct registry fallback when standard RPC network sharing fails with '0x00000709' or 'Check Printer Name' errors.", solution: "Attempts standard port creation, then falls back to a Direct Registry Injection bypass if blocked.", whenToUse: "When standard sharing fails and the system entirely blocks 'Add-PrinterPort' commands." },
                     { id: "87", title: "Remove Injected Local Port (UNC)", problem: "Need to clean up or remove a previously mapped IP port created by Option [86].", solution: "Attempts standard port removal, then falls back to a Registry Purge if blocked.", whenToUse: "When a mapped port is no longer needed or was misconfigured." },
                     { id: "88", title: "Reboot System", problem: "Need to apply registry changes to active state.", solution: "Executes an immediate system reboot.", whenToUse: "Always execute after running any major fixes." },
                     { id: "89", title: "EXIT SCRIPT", problem: "Finished operations.", solution: "Exits the tool.", whenToUse: "When troubleshooting is complete." }
@@ -371,7 +371,7 @@
                     <p class="text-slate-600 dark:text-slate-300 leading-relaxed mb-10 text-lg relative z-10">
                         <strong>Windows Printer Sharing Fix</strong> is an automated, zero-dependency
                         troubleshooting and repair tool designed to resolve persistent printer sharing issues across all
-                        modern Windows environments. It seamlessly bridges the gap between strict Microsoft security
+                        modern Windows environments. It bridges the gap between strict Microsoft security
                         policies (like PrintNightmare restrictions) and legacy LAN networking requirements.
                     </p>
 
@@ -650,7 +650,7 @@
                             <i data-lucide="shield-check" class="w-40 h-40 text-purple-500"></i>
                         </div>
                         <div class="relative z-10">
-                            <h3 class="font-extrabold text-xl text-slate-900 dark:text-white mb-2">Win 11 Next-Gen</h3>
+                            <h3 class="font-extrabold text-xl text-slate-900 dark:text-white mb-2">Win 11 Custom</h3>
                             <p
                                 class="text-xs text-purple-600 dark:text-purple-400 font-bold mb-6 tracking-widest uppercase bg-purple-50 dark:bg-purple-900/30 inline-block px-2.5 py-1 rounded">
                                 Build 26000+ Specific</p>
@@ -679,14 +679,14 @@
                             <i data-lucide="flame" class="w-40 h-40 text-rose-500"></i>
                         </div>
                         <div class="relative z-10">
-                            <h3 class="font-extrabold text-xl text-slate-900 dark:text-white mb-2">Emergency Nuke</h3>
+                            <h3 class="font-extrabold text-xl text-slate-900 dark:text-white mb-2">Emergency Silent AllFix</h3>
                             <p
                                 class="text-xs text-rose-600 dark:text-rose-400 font-bold mb-6 tracking-widest uppercase bg-rose-50 dark:bg-rose-900/30 inline-block px-2.5 py-1 rounded">
-                                Zero-Touch IT Deploy</p>
+                                Unattended Execution</p>
                             <ol class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
                                 <li class="flex items-start gap-3"><span
                                         class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 font-bold shrink-0 text-xs">1</span>
-                                    <span class="pt-0.5">Execute <strong>[85] SILENT NUKE</strong>.</span>
+                                    <span class="pt-0.5">Execute <strong>[85] SILENT ALLFIX</strong>.</span>
                                 </li>
                                 <li
                                     class="p-3.5 bg-rose-50 dark:bg-rose-900/20 rounded-xl border border-rose-100 dark:border-rose-800/50 mt-4 text-rose-800 dark:text-rose-300 text-xs font-semibold leading-relaxed shadow-sm">
@@ -821,7 +821,7 @@
                                 class="px-8 pb-7 text-indigo-900/80 dark:text-indigo-200/80 text-base border-t border-indigo-200 dark:border-indigo-800/50 pt-5 leading-relaxed space-y-4">
                                 <p>This is the infamous <strong>PrintNightmare / 0x00000709</strong> restriction where
                                     Windows entirely blocks the standard <code>Add-PrinterPort</code> API. To fix this
-                                    instantly, use the Titanium Bypass mechanism.</p>
+                                    instantly, use the registry port injection mechanism.</p>
                                 <ol class="list-decimal pl-5 space-y-2.5 font-medium mt-2">
                                     <li>Execute <span
                                             class="bg-indigo-100 dark:bg-indigo-900/80 px-2 py-1 rounded-md font-mono text-sm font-bold border border-indigo-200 dark:border-indigo-700/50 text-indigo-700 dark:text-indigo-300">[86]
@@ -937,10 +937,10 @@
                                             class="flex gap-4 p-4 hover:bg-slate-800/60 rounded-2xl transition-all border border-transparent hover:border-slate-700/50">
                                             <i data-lucide="check-circle-2"
                                                 class="w-7 h-7 text-emerald-400 shrink-0 mt-0.5"></i>
-                                            <div><strong class="text-white block mb-1 text-lg">Titanium Bypass</strong>
+                                            <div><strong class="text-white block mb-1 text-lg">Registry Port Injection</strong>
                                                 Injecting UNC paths directly into <code
                                                     class="text-slate-400 font-mono text-sm">HKLM\\Ports</code> to
-                                                bypass Win32 API blockades.</div>
+                                                 bypass Win32 API blockades.</div>
                                         </li>
                                         <li
                                             class="flex gap-4 p-4 hover:bg-slate-800/60 rounded-2xl transition-all border border-transparent hover:border-slate-700/50">
@@ -958,7 +958,7 @@
                                             <div><strong class="text-white block mb-1 text-lg">Elevation
                                                     Override</strong> Neutralizing <code
                                                     class="text-slate-400 font-mono text-sm">NoWarningNoElevationOnInstall</code>
-                                                for seamless silent driver ingestion.</div>
+                                                to allow unattended driver installations.</div>
                                         </li>
                                     </ul>
                                 </div>
