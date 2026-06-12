@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.3.0] - 2026-05-17
+## [2.3.0] - 2026-06-12
+
+### Added
+- GPO intervention scanner (Option 80) now performs active domain membership queries, suppressing Domain Controller overwrite warnings and gpresult logs for Workgroup users.
+- Introduced recommended configuration mapping in GPO diagnostics, formatting matching parameters as `[Active Fix]` in Green and only flagging mismatches as `[!] Policy Override (Restricted)` in Red.
+- Added direct HKLM Print spooler configuration keys (`RpcOverNamedPipes`, `RpcOverTcp`) inside Option 2 and Option 13 to enforce RPC pathways under Windows 11 24H2+.
+- Renamed Menu 83 to explicitly indicate compatibility with `26H2+` platforms.
+- Universal localization permissions: modified Option 6 and Option 7 to resolve security descriptors using the generic World SID (`S-1-1-0`) instead of the English-bound string `"Everyone"`.
+- Added target IP and username validation check inside `Add-Credential` (Option 60).
+- Refactored Option 69 to "Windows Update & Blocker Management" sub-menu, offering a quality/feature update pause for 35 days (using InvariantCulture date strings to avoid localized character substitution issues), specific KB uninstallation via DISM, and a permanent update blocker targeting core services (wuauserv, UsoSvc, bits, and a WaaSMedicSvc self-healing bypass) along with a restore option.
+- Hardened the auto-reapply scheduled task in `Set-PostPatchTuesdayTask` (Option 5) to directly force `RpcOverNamedPipes` and `RpcOverTcp` under the printer control parameters registry on boot.
 
 ### Fixed
 - Force-DefaultPrinterRegistry: Removed trailing colon from Device string that caused printer assignment failures.

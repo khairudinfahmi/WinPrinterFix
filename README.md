@@ -96,7 +96,7 @@ Windows updates often break network printing with cryptic errors. This tool fixe
 | 66 | Generate System Restore Point (Security) |
 | 67 | System File Checker & DISM Restoration |
 | 68 | Restart BITS (Background Transfer) |
-| 69 | Uninstall & Pause Specific KB Update |
+| 69 | Windows Update & Blocker Management |
 | 70 | Launch Native Windows Troubleshooter |
 | 71 | Force Printer Online Status |
 | 72 | Launch Services.msc |
@@ -110,7 +110,7 @@ Windows updates often break network printing with cryptic errors. This tool fixe
 | 80 | Detect GPO Intervention (Policy Scan) |
 | 81 | PrintBRM (Backup/Restore Migration) |
 | 82 | Enable SMB Guest Access & Drop Anonymous Blocks |
-| **83** | **EXTREME PATH (WIN 11 24H2/25H2 & ARM64)** |
+| **83** | **EXTREME PATH (WIN 11 24H2/25H2/26H2+ & ARM64)** |
 | **84** | **ALLFIX (50 AUTOMATED FIXES)** |
 | **85** | **SILENT ALLFIX & REBOOT (ZERO-PROMPT)** |
 | 86 | Map Local Port to UNC Path (Bypass 0x00000709) |
@@ -129,6 +129,9 @@ To keep things completely transparent, if you run the automated playbooks (`[83]
 - **Network & Credential Wipes:** It runs commands like `klist purge`, `ipconfig /flushdns`, and `nbtstat -RR`. If you use Extreme Path `[83]`, it also forcefully wipes stale network credentials from your Windows Vault using `cmdkey`. 
 - **Registry Overrides [86/87]:** If you use the UNC Bypass feature and Windows blocks the standard API, the script will forcefully inject or delete the port directly inside `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports`. 
 - **Force Kills [37] & [44]:** When you purge the queue or try to bypass a locked driver, the script sends a direct termination signal (`Stop-Process -Force`) to `splwow64`, `PrintIsolationHost`, and `printfilterpipelinesvc`. This drops all active print jobs immediately.
+- **Driver Signature & Policy Bypass (KB5089549):** Temporarily sets `VulnerableDriverBlocklistEnable = 0` and `VerifiedAndReputablePolicyState = 0` to bypass driver block restrictions introduced in the post-KB5089549 cumulative update.
+- **Strict Name & DNS Aliasing:** Configures `DisableStrictNameChecking = 1` and `DnsOnWire = 1` to ensure you can map/connect to printer shares using DNS CNAMEs or hostname aliases instead of only IPs.
+- **NTLM Minimum Security Relaxation:** In Extreme Path `[83]`, sets client/server NTLM requirements to allow legacy authentication handshakes and prevent credential validation errors on Workgroups.
 
 ---
 

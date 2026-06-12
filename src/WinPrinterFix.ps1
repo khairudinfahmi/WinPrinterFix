@@ -34,7 +34,19 @@ if (-not $script:logFile) {
 }
 
 $script:isARM64 = ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64')
-$script:isServer = ((Get-CimInstance Win32_OperatingSystem).ProductType -ne 1)
+$script:isServer = $false
+try {
+    $prodOptions = Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\ProductOptions" -ErrorAction SilentlyContinue
+    if ($prodOptions -and $prodOptions.ProductType -ne "WinNT") {
+        $script:isServer = $true
+    }
+} catch {
+    try {
+        $script:isServer = ((Get-CimInstance Win32_OperatingSystem -ErrorAction Stop).ProductType -ne 1)
+    } catch {
+        $script:isServer = $false
+    }
+}
 
 $buildInfo = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -ErrorAction SilentlyContinue
 if ($buildInfo -and $null -ne $buildInfo.CurrentBuild) {
@@ -172,6 +184,8 @@ function Fix-Deep0x00000709 {
         Set-ItemProperty -Path $printPath -Name RpcAuthnLevelPrivacyEnabled -Value 0 -Type DWord -Force
         Set-ItemProperty -Path $printPath -Name DnsOnWire              -Value 1 -Type DWord -Force
         Set-ItemProperty -Path $printPath -Name CopyFilesPolicy        -Value 1 -Type DWord -Force
+        Set-ItemProperty -Path $printPath -Name RpcOverNamedPipes       -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $printPath -Name RpcOverTcp              -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
 
         $lanPath = "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"
         Set-ItemProperty -Path $lanPath -Name DisableStrictNameChecking -Value 1 -Type DWord -Force
@@ -233,8 +247,9 @@ function Fix-HKCU-PrinterKeyPerms {
 
         $regKey = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Windows"
         $acl = Get-Acl $regKey
+        $sid = New-Object System.Security.Principal.SecurityIdentifier([System.Security.Principal.WellKnownSidType]::WorldSid, $null)
         $rule = New-Object System.Security.AccessControl.RegistryAccessRule(
-            "Everyone",
+            $sid,
             "FullControl",
             "ContainerInherit,ObjectInherit",
             "None",
@@ -242,7 +257,7 @@ function Fix-HKCU-PrinterKeyPerms {
         )
         $acl.SetAccessRule($rule)
         Set-Acl -Path $regKey -AclObject $acl -ErrorAction Stop
-        Write-Log "HKCU Windows key: Everyone FullControl granted." -Type "SUCCESS"
+        Write-Log "HKCU Windows key: Everyone (S-1-1-0) FullControl granted." -Type "SUCCESS"
         Write-Host "  [+] Registry permission fix applied (Everyone = FullControl on printer device key)." -ForegroundColor Green
     }
     catch {
@@ -258,6 +273,8 @@ Set-ItemProperty "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC" -Na
 Set-ItemProperty "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC" -Name ForceKerberosForRpc -Value 0 -Type DWord -Force -EA SilentlyContinue
 Set-ItemProperty "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC" -Name RpcProtocols -Value 7 -Type DWord -Force -EA SilentlyContinue
 Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name RpcAuthnLevelPrivacyEnabled -Value 0 -Type DWord -Force -EA SilentlyContinue
+Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name RpcOverNamedPipes -Value 1 -Type DWord -Force -EA SilentlyContinue
+Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name RpcOverTcp -Value 1 -Type DWord -Force -EA SilentlyContinue
 Set-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP" -Name Enabled -Value 0 -Type DWord -Force -EA SilentlyContinue
 Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name LocalAccountTokenFilterPolicy -Value 1 -Type DWord -Force -EA SilentlyContinue
 Restart-Service spooler -Force -EA SilentlyContinue
@@ -450,6 +467,10 @@ function Fix-NamedPipes {
         Set-ItemProperty -Path $rpcPath -Name RpcProtocols -Value 0x7 -Type DWord -Force
         Set-ItemProperty -Path $rpcPath -Name RpcOverNamedPipes -Value 1 -Type DWord -Force
 
+        $printPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Print"
+        Set-ItemProperty -Path $printPath -Name RpcOverNamedPipes -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+        Set-ItemProperty -Path $printPath -Name RpcOverTcp -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
+
         Write-Log "Named Pipes activated." -Type "SUCCESS"
         Write-Host "  [+] RPC Named Pipes pathway for print spooling corrected." -ForegroundColor Green
     }
@@ -530,8 +551,8 @@ function Reset-SpoolerPerm {
     Write-Log "Resetting Spooler directory ACL permissions..." -Type "INFO"
     try {
         & icacls "$env:SystemRoot\System32\Spool\Printers" /reset /t /c /q > $null 2>&1
-        & icacls "$env:SystemRoot\System32\Spool\Printers" /grant "Everyone:(OI)(CI)F" /T /C /Q > $null 2>&1
-        Write-Log "Spooler ACL reset & Everyone grant complete." -Type "SUCCESS"
+        & icacls "$env:SystemRoot\System32\Spool\Printers" /grant "*S-1-1-0:(OI)(CI)F" /T /C /Q > $null 2>&1
+        Write-Log "Spooler ACL reset & Everyone (S-1-1-0) grant complete." -Type "SUCCESS"
         Write-Host "  [+] Print queue directory permissions reset and granted to Everyone." -ForegroundColor Green
     }
     catch {
@@ -569,8 +590,15 @@ function Manage-SMB1 {
 function Add-Credential {
     Write-Host "`n  INJECT WINDOWS CREDENTIALS"
     $ip = Read-Host "  [?] Target IP/Hostname (e.g., 192.168.1.10)"
+    if ($null -ne $ip) { $ip = $ip.Trim() }
     $usr = Read-Host "  [?] Username on Target Host"
+    if ($null -ne $usr) { $usr = $usr.Trim() }
     $pass = Read-Host "  [?] Password on Target Host (Visible Text)"
+
+    if (-not $ip -or -not $usr) {
+        Write-Host "  [-] Cancelled - target host and username are required." -ForegroundColor Red
+        return
+    }
 
     try {
         Start-Process -FilePath "cmdkey.exe" -ArgumentList "/add:$ip", "/user:$usr", "/pass:`"$pass`"" -WindowStyle Hidden -Wait
@@ -618,8 +646,9 @@ function Force-PrinterOnline {
         try {
             $prn = Get-CimInstance Win32_Printer -Filter "Name='$pname'" -ErrorAction Stop
             if ($prn) {
-                $prn | Invoke-CimMethod -MethodName "SetDefaultPrinter" | Out-Null
-                Write-Log "Printer $pname state forced." -Type "SUCCESS"
+                $prn.WorkOffline = $false
+                Set-CimInstance -InputObject $prn -ErrorAction Stop
+                Write-Log "Printer $pname state forced online." -Type "SUCCESS"
                 Write-Host "  [+] Online enforcement command sent to $pname." -ForegroundColor Green
             }
             else {
@@ -706,6 +735,15 @@ function Test-Connectivity {
     }
     else {
         Write-Host "  [-] PING FAILED: Target Host unreachable or explicitly blocking ICMP." -ForegroundColor Red
+        Write-Host "  [*] Checking TCP ports 445 and 135 anyway..." -ForegroundColor Cyan
+        
+        $port445 = Test-NetConnection $ip -Port 445 -WarningAction SilentlyContinue
+        if ($port445.TcpTestSucceeded) { Write-Host "  [+] PORT 445 (SMB): OPEN (Ping was blocked but host is alive)" -ForegroundColor Green }
+        else { Write-Host "  [-] PORT 445 (SMB): CLOSED" -ForegroundColor Red }
+
+        $port135 = Test-NetConnection $ip -Port 135 -WarningAction SilentlyContinue
+        if ($port135.TcpTestSucceeded) { Write-Host "  [+] PORT 135 (RPC): OPEN (Ping was blocked but host is alive)" -ForegroundColor Green }
+        else { Write-Host "  [-] PORT 135 (RPC): CLOSED" -ForegroundColor Red }
     }
 }
 
@@ -1300,6 +1338,7 @@ function Fix-V4ClassDriver {
             $v4Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Print\Environments\Windows NT x86\Drivers\Version-4"
         }
         $corrupted = @()
+        $corruptedDirs = @()
         if (Test-Path $v4Path) {
             $drivers = Get-ChildItem $v4Path -ErrorAction SilentlyContinue
             foreach ($drv in $drivers) {
@@ -1307,8 +1346,12 @@ function Fix-V4ClassDriver {
                 if ($props.InfPath) {
                     $driverDir = $props.DriverPath
                     if ($driverDir) {
-                        $configDll = Join-Path (Split-Path $driverDir -Parent) "PrintConfig.dll"
-                        if (-not (Test-Path $configDll)) { $corrupted += $drv.PSChildName }
+                        $parentDir = Split-Path $driverDir -Parent
+                        $configDll = Join-Path $parentDir "PrintConfig.dll"
+                        if (-not (Test-Path $configDll)) {
+                            $corrupted += $drv.PSChildName
+                            $corruptedDirs += $parentDir
+                        }
                     }
                 }
             }
@@ -1323,10 +1366,24 @@ function Fix-V4ClassDriver {
                 if ($goodDll) {
                     Write-Host "  [+] Known-good PrintConfig.dll located at $($goodDll.FullName)" -ForegroundColor Green
                     Write-Log "PrintConfig.dll source located: $($goodDll.FullName)" -Type "SUCCESS"
+                    
+                    # Copy the known-good PrintConfig.dll to repair each corrupted directory
+                    for ($i = 0; $i -lt $corrupted.Count; $i++) {
+                        $destDir = $corruptedDirs[$i]
+                        $destFile = Join-Path $destDir "PrintConfig.dll"
+                        try {
+                            Copy-Item -Path $goodDll.FullName -Destination $destFile -Force -ErrorAction Stop
+                            Write-Host "  [+] Restored PrintConfig.dll to $destDir" -ForegroundColor Green
+                            Write-Log "Restored PrintConfig.dll to $destDir" -Type "SUCCESS"
+                        } catch {
+                            Write-Host "  [-] Failed to restore to $destDir : $($_.Exception.Message)" -ForegroundColor Red
+                            Write-Log "Failed to copy PrintConfig.dll to $destDir : $($_.Exception.Message)" -Type "ERROR"
+                        }
+                    }
                 }
             }
             & pnputil /scan-devices > $null 2>&1
-            Write-Log "V4 driver scan complete. $($corrupted.Count) corrupted entries flagged." -Type "WARNING"
+            Write-Log "V4 driver scan complete. $($corrupted.Count) corrupted entries processed." -Type "WARNING"
         }
         else {
             Write-Host "  [+] All V4 Print Class Drivers are intact." -ForegroundColor Green
@@ -1389,72 +1446,164 @@ function Switch-DriverMode {
 
 function Manage-WindowsUpdate {
     Write-Host "`n  ======================================================================"
-    Write-Host "               UNINSTALL & PAUSE SPECIFIC WINDOWS UPDATE (KB)"
+    Write-Host "                  WINDOWS UPDATE & BLOCKER MANAGEMENT"
     Write-Host "  ======================================================================"
-    Write-Log "Launching KB Update manager..." -Type "INFO"
-    try {
-        Write-Host "  [!] KNOWN PRINTER-BREAKING KBs (2025-2026):" -ForegroundColor Red
-        Write-Host "      KB5065426 (Sep 2025) - Blocks print sharing (SID check)" -ForegroundColor Yellow
-        Write-Host "      KB5066835 (Oct 2025) - Major printer sharing breaker" -ForegroundColor Yellow
-        Write-Host "      KB5068661 (Nov 2025) - Breaks printer & network sharing" -ForegroundColor Yellow
-        Write-Host "      KB5089549 (May 2026) - Cross-signed driver enforcement" -ForegroundColor Yellow
+    Write-Host "  [1] Uninstall Specific KB Update"
+    Write-Host "  [2] Pause Windows Updates for 35 Days"
+    Write-Host "  [3] Disable Windows Update Services Permanently (Blocks printer fix reversion)"
+    Write-Host "  [4] Re-enable Windows Update Services (Restore defaults)"
+    Write-Host "  [5] Cancel"
+    $opt = Read-Host "  Select Option (1-5)"
 
-        Write-Host "  [*] Enumerating recent Windows Updates..." -ForegroundColor Cyan
-        $updates = Get-HotFix -ErrorAction SilentlyContinue | Sort-Object InstalledOn -Descending | Select-Object -First 20
-        if ($updates) { $updates | Format-Table HotFixID, Description, InstalledOn -AutoSize }
-        else { Write-Host "  [-] No hotfixes detected via Get-HotFix." -ForegroundColor Yellow }
+    switch ($opt) {
+        '1' {
+            Write-Log "Launching KB Update uninstaller..." -Type "INFO"
+            try {
+                Write-Host "  [!] KNOWN PRINTER-BREAKING KBs (2025-2026):" -ForegroundColor Red
+                Write-Host "      KB5065426 (Sep 2025) - Blocks print sharing (SID check)" -ForegroundColor Yellow
+                Write-Host "      KB5066835 (Oct 2025) - Major printer sharing breaker" -ForegroundColor Yellow
+                Write-Host "      KB5068661 (Nov 2025) - Breaks printer & network sharing" -ForegroundColor Yellow
+                Write-Host "      KB5089549 (May 2026) - Cross-signed driver enforcement" -ForegroundColor Yellow
 
-        $kb = Read-Host "`n  [?] Input KB number to uninstall (e.g., KB5034441, or blank to cancel)"
-        if (-not $kb) { return }
-        $kb = $kb -replace '(?i)^KB', ''
+                Write-Host "  [*] Enumerating recent Windows Updates..." -ForegroundColor Cyan
+                $updates = Get-HotFix -ErrorAction SilentlyContinue | Sort-Object InstalledOn -Descending | Select-Object -First 20
+                if ($updates) { $updates | Format-Table HotFixID, Description, InstalledOn -AutoSize }
+                else { Write-Host "  [-] No hotfixes detected via Get-HotFix." -ForegroundColor Yellow }
 
-        $dismSuccess = $false
-        Write-Host "  [*] Attempting to uninstall KB$kb via DISM..." -ForegroundColor Cyan
-        $packages = & dism /online /get-packages 2>&1 | Select-String "Package_for_KB$kb"
+                $kb = Read-Host "`n  [?] Input KB number to uninstall (e.g., KB5034441, or blank to cancel)"
+                if (-not $kb) { return }
+                $kb = $kb -replace '(?i)^KB', ''
 
-        if ($packages) {
-            $pkgName = ($packages[0].ToString() -split ':')[1].Trim()
-            $proc = Start-Process -FilePath "dism.exe" -ArgumentList "/online /remove-package /package-name:`"$pkgName`" /quiet /norestart" -Wait -PassThru -WindowStyle Hidden
+                $dismSuccess = $false
+                Write-Host "  [*] Attempting to uninstall KB$kb via DISM..." -ForegroundColor Cyan
+                $packages = & dism /online /get-packages 2>&1 | Select-String "Package_for_KB$kb"
 
-            if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010) {
-                $dismSuccess = $true
-                Write-Log "KB$kb uninstalled via DISM." -Type "SUCCESS"
-                Write-Host "  [+] KB$kb successfully uninstalled. (Reboot may be required)" -ForegroundColor Green
-            } else {
-                Write-Log "DISM failed to uninstall KB$kb. ExitCode: $($proc.ExitCode). Falling back to wusa.exe..." -Type "WARNING"
-                Write-Host "  [-] DISM failed (ExitCode $($proc.ExitCode)). Attempting wusa.exe fallback..." -ForegroundColor Yellow
+                if ($packages) {
+                    $pkgName = ($packages[0].ToString() -split ':')[1].Trim()
+                    $proc = Start-Process -FilePath "dism.exe" -ArgumentList "/online /remove-package /package-name:`"$pkgName`" /quiet /norestart" -Wait -PassThru -WindowStyle Hidden
+
+                    if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010) {
+                        $dismSuccess = $true
+                        Write-Log "KB$kb uninstalled via DISM." -Type "SUCCESS"
+                        Write-Host "  [+] KB$kb successfully uninstalled. (Reboot may be required)" -ForegroundColor Green
+                    } else {
+                        Write-Log "DISM failed to uninstall KB$kb. ExitCode: $($proc.ExitCode). Falling back to wusa.exe..." -Type "WARNING"
+                        Write-Host "  [-] DISM failed (ExitCode $($proc.ExitCode)). Attempting wusa.exe fallback..." -ForegroundColor Yellow
+                    }
+                }
+
+                if (-not $dismSuccess) {
+                    Write-Host "  [!] A Windows dialog will appear. Please confirm the uninstallation if prompted." -ForegroundColor Cyan
+                    $proc = Start-Process wusa.exe -ArgumentList "/uninstall /kb:$kb /norestart" -Wait -PassThru
+
+                    if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010) {
+                        Write-Log "KB$kb uninstalled via wusa." -Type "SUCCESS"
+                        Write-Host "  [+] KB$kb successfully uninstalled. (Reboot may be required)" -ForegroundColor Green
+                    } else {
+                        Write-Log "Wusa failed/cancelled for KB$kb. ExitCode: $($proc.ExitCode)" -Type "WARNING"
+                        Write-Host "  [-] Uninstallation failed or was cancelled. The update may be a permanent Security Update." -ForegroundColor Red
+                    }
+                }
             }
+            catch { Write-Log "KB uninstall failed: $($_.Exception.Message)" -Type "ERROR" }
         }
+        '2' {
+            Write-Log "Pausing Windows Update for 35 days..." -Type "INFO"
+            try {
+                $wuPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+                if (-not (Test-Path $wuPath)) { New-Item -Path $wuPath -Force | Out-Null }
 
-        if (-not $dismSuccess) {
-            Write-Host "  [!] A Windows dialog will appear. Please confirm the uninstallation if prompted." -ForegroundColor Cyan
-            $proc = Start-Process wusa.exe -ArgumentList "/uninstall /kb:$kb /norestart" -Wait -PassThru
+                $pauseStart = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ", [System.Globalization.CultureInfo]::InvariantCulture)
+                $pauseEnd = (Get-Date).AddDays(35).ToString("yyyy-MM-ddTHH:mm:ssZ", [System.Globalization.CultureInfo]::InvariantCulture)
 
-            if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010) {
-                Write-Log "KB$kb uninstalled via wusa." -Type "SUCCESS"
-                Write-Host "  [+] KB$kb successfully uninstalled. (Reboot may be required)" -ForegroundColor Green
-            } else {
-                Write-Log "Wusa failed/cancelled for KB$kb. ExitCode: $($proc.ExitCode)" -Type "WARNING"
-                Write-Host "  [-] Uninstallation failed or was cancelled. The update may be a permanent Security Update." -ForegroundColor Red
+                # Set GPO Policy registry overrides
+                Set-ItemProperty -Path $wuPath -Name PauseQualityUpdatesStartTime -Value $pauseStart -Force -ErrorAction Stop
+                Set-ItemProperty -Path $wuPath -Name PauseFeatureUpdatesStartTime -Value $pauseStart -Force -ErrorAction Stop
+                Set-ItemProperty -Path $wuPath -Name PauseUpdatesExpiryTime -Value $pauseEnd -Force -ErrorAction Stop
+                Set-ItemProperty -Path $wuPath -Name SetDisableUXWUAccess -Value 1 -Type DWord -Force -ErrorAction Stop
+
+                # Set UX Settings registry overrides (used by Windows Settings UX on Home & Pro)
+                $uxPath = "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings"
+                if (-not (Test-Path $uxPath)) { New-Item -Path $uxPath -Force | Out-Null }
+                Set-ItemProperty -Path $uxPath -Name PauseUpdatesStartTime -Value $pauseStart -Force -ErrorAction Stop
+                Set-ItemProperty -Path $uxPath -Name PauseFeatureUpdatesStartTime -Value $pauseStart -Force -ErrorAction Stop
+                Set-ItemProperty -Path $uxPath -Name PauseQualityUpdatesStartTime -Value $pauseStart -Force -ErrorAction Stop
+                Set-ItemProperty -Path $uxPath -Name PauseFeatureUpdatesEndTime -Value $pauseEnd -Force -ErrorAction Stop
+                Set-ItemProperty -Path $uxPath -Name PauseQualityUpdatesEndTime -Value $pauseEnd -Force -ErrorAction Stop
+                Set-ItemProperty -Path $uxPath -Name PauseUpdatesExpiryTime -Value $pauseEnd -Force -ErrorAction Stop
+
+                Write-Host "  [+] Windows Update fully paused for 35 days (GPO and Settings UX overrides applied)." -ForegroundColor Green
+                Write-Log "Windows Update paused until $pauseEnd." -Type "SUCCESS"
             }
+            catch { Write-Log "Failed to pause Windows Update: $($_.Exception.Message)" -Type "ERROR" }
         }
+        '3' {
+            Write-Log "Disabling Windows Update Services Permanently..." -Type "INFO"
+            try {
+                $services = @("wuauserv", "UsoSvc", "bits")
+                foreach ($svc in $services) {
+                    & sc.exe config $svc start= disabled > $null 2>&1
+                    Stop-Service -Name $svc -Force -ErrorAction SilentlyContinue | Out-Null
+                }
 
-        $pauseOpt = Read-Host "`n  [?] Pause Windows Update for 35 days to prevent reinstall? (Y/N)"
-        if ($pauseOpt -eq 'Y') {
-            $wuPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
-            if (-not (Test-Path $wuPath)) { New-Item -Path $wuPath -Force | Out-Null }
+                # Disable WaaSMedicSvc via registry bypass (sc config WaaSMedicSvc start= disabled returns Access Denied)
+                Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\WaaSMedicSvc" -Name Start -Value 4 -Type DWord -Force -ErrorAction Stop
+                Stop-Service -Name "WaaSMedicSvc" -Force -ErrorAction SilentlyContinue | Out-Null
 
-            $pauseDate = (Get-Date).AddDays(35).ToString("yyyy-MM-ddTHH:mm:ssZ")
-            Set-ItemProperty -Path $wuPath -Name PauseQualityUpdatesStartTime -Value $pauseDate -Force -ErrorAction Stop
-            Set-ItemProperty -Path $wuPath -Name PauseFeatureUpdatesStartTime -Value $pauseDate -Force -ErrorAction Stop
-            Set-ItemProperty -Path $wuPath -Name PauseUpdatesExpiryTime -Value $pauseDate -Force -ErrorAction Stop
-            Set-ItemProperty -Path $wuPath -Name SetDisableUXWUAccess -Value 1 -Type DWord -Force -ErrorAction Stop
+                # Configure NoAutoUpdate in Policies registry
+                $auPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+                if (-not (Test-Path $auPath)) { New-Item -Path $auPath -Force | Out-Null }
+                Set-ItemProperty -Path $auPath -Name NoAutoUpdate -Value 1 -Type DWord -Force -ErrorAction Stop
 
-            Write-Host "  [+] Windows Update fully paused for 35 days." -ForegroundColor Green
-            Write-Log "Windows Update paused until $pauseDate." -Type "SUCCESS"
+                Write-Log "Windows Update Services permanently disabled (Medic blocked)." -Type "SUCCESS"
+                Write-Host "  [+] Core Windows Update services (wuauserv, UsoSvc, bits, WaaSMedicSvc) disabled." -ForegroundColor Green
+                Write-Host "  [+] Registry policy NoAutoUpdate forced to 1." -ForegroundColor Green
+                Write-Host "  [!] Security configurations will no longer be reverted by Windows Update." -ForegroundColor Yellow
+            }
+            catch { Write-Log "Failed to disable Windows Update: $($_.Exception.Message)" -Type "ERROR" }
         }
+        '4' {
+            Write-Log "Re-enabling Windows Update Services..." -Type "INFO"
+            try {
+                & sc.exe config wuauserv start= demand > $null 2>&1
+                & sc.exe config UsoSvc start= auto > $null 2>&1
+                & sc.exe config bits start= demand > $null 2>&1
+
+                # Restore WaaSMedicSvc to manual
+                Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\WaaSMedicSvc" -Name Start -Value 3 -Type DWord -Force -ErrorAction Stop
+
+                # Remove NoAutoUpdate restriction
+                $auPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+                if (Test-Path $auPath) {
+                    Remove-ItemProperty -Path $auPath -Name NoAutoUpdate -ErrorAction SilentlyContinue | Out-Null
+                }
+
+                # Remove pause overrides from policies
+                $wuPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+                if (Test-Path $wuPath) {
+                    $properties = @("PauseQualityUpdatesStartTime", "PauseFeatureUpdatesStartTime", "PauseUpdatesExpiryTime", "SetDisableUXWUAccess")
+                    foreach ($prop in $properties) {
+                        Remove-ItemProperty -Path $wuPath -Name $prop -ErrorAction SilentlyContinue | Out-Null
+                    }
+                }
+
+                # Remove pause overrides from UX settings
+                $uxPath = "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings"
+                if (Test-Path $uxPath) {
+                    $properties = @("PauseUpdatesStartTime", "PauseFeatureUpdatesStartTime", "PauseQualityUpdatesStartTime", "PauseFeatureUpdatesEndTime", "PauseQualityUpdatesEndTime", "PauseUpdatesExpiryTime")
+                    foreach ($prop in $properties) {
+                        Remove-ItemProperty -Path $uxPath -Name $prop -ErrorAction SilentlyContinue | Out-Null
+                    }
+                }
+
+                Write-Log "Windows Update Services restored to default startup types." -Type "SUCCESS"
+                Write-Host "  [+] Windows Update services restored to default states." -ForegroundColor Green
+                Write-Host "  [+] Automatic Update and pause restrictions removed." -ForegroundColor Green
+            }
+            catch { Write-Log "Failed to restore Windows Update: $($_.Exception.Message)" -Type "ERROR" }
+        }
+        default { return }
     }
-    catch { Write-Log "KB management failed: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Sweep-OrphanedDrivers {
@@ -1610,15 +1759,14 @@ function Rescue-NetworkProfile {
         if (-not $publicFound) { Write-Host "  [+] All profiles are already Private/Domain. No action needed." -ForegroundColor Green }
         $deployWatchdog = Read-Host "`n  [?] Deploy Network Profile Watchdog (checks every 10 min)? (Y/N)"
         if ($deployWatchdog -eq 'Y') {
-            $action  = New-ScheduledTaskAction -Execute "powershell.exe" `
-                -Argument "-WindowStyle Hidden -Command `"Get-NetConnectionProfile | Where-Object { `$_.NetworkCategory -eq 'Public' } | Set-NetConnectionProfile -NetworkCategory Private`""
-            $trigger = New-CimInstance -CimClass (Get-CimClass MSFT_TaskRegistrationTrigger -Namespace Root/Microsoft/Windows/TaskScheduler) -ClientOnly
-            $trigger.Repetition = New-CimInstance -CimClass (Get-CimClass MSFT_TaskRepetitionPattern -Namespace Root/Microsoft/Windows/TaskScheduler) -ClientOnly
-            $trigger.Repetition.Interval = 'PT10M'
-            $trigger.Repetition.StopAtDurationEnd = $false
-            Register-ScheduledTask -TaskName "NetworkProfileWatchdog" -Action $action -Trigger $trigger -User "SYSTEM" -RunLevel Highest -Force | Out-Null
-            Write-Log "Network Profile Watchdog deployed (indefinite repetition)." -Type "SUCCESS"
-            Write-Host "  [+] Watchdog deployed. Profile enforced to Private every 10 minutes." -ForegroundColor Green
+            $cmd = "powershell.exe -WindowStyle Hidden -Command \`"Get-NetConnectionProfile | Where-Object { `$_.NetworkCategory -eq 'Public' } | Set-NetConnectionProfile -NetworkCategory Private\`""
+            & schtasks.exe /create /tn "NetworkProfileWatchdog" /tr $cmd /sc minute /mo 10 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Write-Log "Network Profile Watchdog deployed (indefinite repetition)." -Type "SUCCESS"
+                Write-Host "  [+] Watchdog deployed. Profile enforced to Private every 10 minutes." -ForegroundColor Green
+            } else {
+                Write-Log "Failed to deploy Network Profile Watchdog. schtasks returned exit code $LASTEXITCODE" -Type "ERROR"
+            }
         }
     }
     catch { Write-Log "Network rescue failed: $($_.Exception.Message)" -Type "ERROR" }
@@ -1727,9 +1875,34 @@ function Inject-CrossUserCredentials {
             $ntuser = Join-Path $profilePath "NTUSER.DAT"
             if (Test-Path $ntuser) {
                 $LASTEXITCODE = 0; & reg load "HKU\$sid" $ntuser > $null 2>&1
-                Start-Process -FilePath "cmdkey.exe" -ArgumentList "/add:$ip", "/user:$usr", "/pass:`"$pass`"" -WindowStyle Hidden -Wait
-                $LASTEXITCODE = 0; & reg unload "HKU\$sid" > $null 2>&1
-                $injected++
+                if ($LASTEXITCODE -eq 0) {
+                    try {
+                        # Inject RunOnce command to execute cmdkey inside user's session at logon
+                        $runOncePath = "Registry::HKEY_USERS\$sid\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+                        Set-ItemProperty -Path $runOncePath -Name "PrinterCredFix" -Value "cmdkey.exe /add:$ip /user:$usr /pass:`"$pass`"" -Force -ErrorAction Stop
+                        Write-Log "Injected RunOnce credential command for $userName." -Type "SUCCESS"
+                    } catch {
+                        Write-Log "Failed to write RunOnce registry for ${userName}: $($_.Exception.Message)" -Type "ERROR"
+                    }
+                    
+                    # Retry loop to unload registry safely
+                    $unloaded = $false
+                    for ($retry = 1; $retry -le 5; $retry++) {
+                        $LASTEXITCODE = 0
+                        & reg unload "HKU\$sid" > $null 2>&1
+                        if ($LASTEXITCODE -eq 0) {
+                            $unloaded = $true
+                            break
+                        }
+                        Start-Sleep -Milliseconds 200
+                    }
+                    if (-not $unloaded) {
+                        Write-Log "Failed to unload registry hive for $userName ($sid) after 5 attempts." -Type "WARNING"
+                    }
+                    $injected++
+                } else {
+                    Write-Log "Failed to load registry hive for $userName ($sid)." -Type "ERROR"
+                }
             }
         }
         Write-Log "Credentials injected for $injected user profiles." -Type "SUCCESS"
@@ -1833,41 +2006,111 @@ function Detect-GPOIntervention {
     Write-Host "               GROUP POLICY (GPO) INTERVENTION DETECTION"
     Write-Host "  ======================================================================"
     try {
+        $isPartOfDomain = $false
+        try {
+            $sys = Get-CimInstance Win32_ComputerSystem -ErrorAction Stop
+            $isPartOfDomain = $sys.PartOfDomain
+        } catch {
+            $netJoin = Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -ErrorAction SilentlyContinue
+            if ($netJoin -and $netJoin.Domain -and $netJoin.Domain -ne "") {
+                $isPartOfDomain = $true
+            }
+        }
+
+        if ($isPartOfDomain) {
+            Write-Host "  [+] Domain status: DOMAIN JOINED" -ForegroundColor Green
+        } else {
+            Write-Host "  [+] Domain status: WORKGROUP (Not Domain Joined)" -ForegroundColor Green
+        }
+
         $policyPaths = @(
             @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"; Label = "Printer Policies" },
             @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint"; Label = "Point and Print" },
             @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC"; Label = "RPC Policies" },
             @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP"; Label = "Windows Protected Print" },
-            @{ Path = "HKCU:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"; Label = "User Printer Policies" }
+            @{ Path = "HKCU:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"; Label = "User Printer Policies" },
+            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation"; Label = "Lanman Workstation Policies" },
+            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanServer"; Label = "Lanman Server Policies" }
         )
+
+        $recommendations = @{
+            "DisableClientSideRendering" = 1
+            "RestrictDriverInstallationToAdministrators" = 0
+            "InForest" = 1
+            "TrustedServers" = 1
+            "ServerList" = "*.*"
+            "NoWarningNoElevationOnInstall" = 1
+            "NoWarningNoElevationOnUpdate" = 1
+            "UpdatePromptSettings" = 2
+            "RpcUseNamedPipeProtocol" = 1
+            "RpcTcpEnable" = 1
+            "RpcProtocols" = 7
+            "ForceSetup" = 1
+            "RpcAuthenticationLevel" = 0
+            "RpcOverNamedPipes" = 1
+            "ForceKerberosForRpc" = 0
+            "Enabled" = 0
+            "PackagePointAndPrintServerList" = 1
+            "RequireSecuritySignature" = 0
+            "EnableSecuritySignature" = 0
+        }
+
         $gpoDetected = $false
+        $restrictionDetected = $false
+
         foreach ($entry in $policyPaths) {
             if (Test-Path $entry.Path) {
                 $props = Get-ItemProperty $entry.Path -ErrorAction SilentlyContinue
                 $propNames = $props.PSObject.Properties | Where-Object { $_.Name -notmatch '^PS' }
                 if ($propNames.Count -gt 0) {
                     $gpoDetected = $true
-                    Write-Host "  [!] GPO LOCK: $($entry.Label)" -ForegroundColor Red
+                    Write-Host "`n  [*] Path: $($entry.Label)" -ForegroundColor Cyan
                     foreach ($prop in $propNames) {
-                        Write-Host "      $($prop.Name) = $($prop.Value)" -ForegroundColor Yellow
+                        $pName = $prop.Name
+                        $pValue = $prop.Value
+                        if ($recommendations.ContainsKey($pName)) {
+                            $recVal = $recommendations[$pName]
+                            if ($pValue.ToString() -eq $recVal.ToString()) {
+                                Write-Host "      [Active Fix] $pName = $pValue" -ForegroundColor Green
+                            } else {
+                                $restrictionDetected = $true
+                                Write-Host "      [!] Policy Override (Restricted): $pName = $pValue (Should be: $recVal)" -ForegroundColor Red
+                            }
+                        } else {
+                            Write-Host "      [*] User Override: $pName = $pValue" -ForegroundColor Yellow
+                        }
                     }
                 }
             }
         }
-        Write-Host "`n  [*] Running gpresult for printer-related GPOs..." -ForegroundColor Cyan
-        $gpresult = & gpresult /R /Scope Computer 2>&1 | Select-String -Pattern "Printer|Print|Point"
-        if ($gpresult) {
-            Write-Host "  [!] GPO references found in Computer Policy:" -ForegroundColor Yellow
-            $gpresult | ForEach-Object { Write-Host "      $_" -ForegroundColor Cyan }
-        }
-        if (-not $gpoDetected) {
-            Write-Host "  [+] No Group Policy restrictions detected on printer registry." -ForegroundColor Green
-            Write-Log "No GPO intervention detected." -Type "SUCCESS"
-        }
-        else {
-            Write-Host "`n  [!] WARNING: GPO-managed keys will be OVERWRITTEN by Domain Controller." -ForegroundColor Red
-            Write-Host "  [!] Local changes to these keys will revert after gpupdate." -ForegroundColor Red
-            Write-Log "GPO intervention detected on printer registry." -Type "WARNING"
+
+        if ($isPartOfDomain) {
+            Write-Host "`n  [*] Running gpresult for printer-related GPOs..." -ForegroundColor Cyan
+            $gpresult = & gpresult /R /Scope Computer 2>&1 | Select-String -Pattern "Printer|Print|Point"
+            if ($gpresult) {
+                Write-Host "  [!] GPO references found in Computer Policy:" -ForegroundColor Yellow
+                $gpresult | ForEach-Object { Write-Host "      $_" -ForegroundColor Cyan }
+            } else {
+                Write-Host "  [+] No active printer-related GPOs detected via gpresult." -ForegroundColor Green
+            }
+
+            if ($restrictionDetected) {
+                Write-Host "`n  [!] WARNING: GPO-managed keys will be OVERWRITTEN by Domain Controller." -ForegroundColor Red
+                Write-Host "  [!] Local changes to these keys will revert after gpupdate." -ForegroundColor Red
+                Write-Log "GPO intervention detected on printer registry." -Type "WARNING"
+            } else {
+                Write-Host "`n  [+] GPO policies are aligned with printer sharing fixes or inactive." -ForegroundColor Green
+                Write-Log "GPO checked; policies are aligned." -Type "SUCCESS"
+            }
+        } else {
+            Write-Host "`n  [+] Local Workgroup environment (no active Domain Controller detected)." -ForegroundColor Green
+            if ($restrictionDetected) {
+                Write-Host "  [!] Some local policy overrides are restricting sharing. These can be adjusted locally." -ForegroundColor Yellow
+                Write-Log "Local policy restrictions detected." -Type "WARNING"
+            } else {
+                Write-Host "  [+] No local policy conflicts detected." -ForegroundColor Green
+                Write-Log "No policy conflicts detected." -Type "SUCCESS"
+            }
         }
     }
     catch { Write-Log "GPO detection failed: $($_.Exception.Message)" -Type "ERROR" }
@@ -2280,7 +2523,7 @@ function Extreme-25H2 {
     catch {}
 
     try {
-        $LASTEXITCODE = 0; cmdkey /list | Select-String $env:COMPUTERNAME | ForEach-Object { cmdkey /delete:$($_.ToString().Split(':')[1].Trim()) > $null 2>&1 }
+        $LASTEXITCODE = 0; cmdkey /list | Select-String $env:COMPUTERNAME | ForEach-Object { $t = $_.ToString() -replace '(?i)^\s*Target:\s*', ''; cmdkey /delete:$t > $null 2>&1 }
         $LASTEXITCODE = 0; klist purge > $null 2>&1
         $LASTEXITCODE = 0; ipconfig /flushdns > $null 2>&1
         $LASTEXITCODE = 0; nbtstat -RR > $null 2>&1
@@ -2386,15 +2629,15 @@ function Show-Help {
         '60' = @("Inject Windows Credentials into Vault Permanently", "Injects username/password directly into Windows Credential Manager.", "To bypass manual authentication upon each access.")
         '61' = @("Purge Stale Credentials from Windows Vault", "Purges invalid or outdated credentials from the vault via cmdkey.", "Host password was changed but local machine retains stale cache.")
         '62' = @("Bypass Credential Guard (Strict NTLM Block)", "Disables LsaCfgFlags Credential Guard registry node.", "Enterprise/Pro environments with Credential Guard enabled.")
-        '63' = @("Cross-User Credential Mapping", "Injects network credentials into ALL user profiles via NTUSER.DAT registry load.", "Setting up a shared PC with multiple local accounts.")
+        '63' = @("Cross-User Credential Mapping", "Injects a logon RunOnce credential task into ALL user profiles via NTUSER.DAT registry load.", "Setting up a shared PC with multiple local accounts.")
         '64' = @("Pre-execution Registry Backup (Spooler & Network)", "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\WinPrinterFixBackup.", "Recommended before applying other fixes.", "Always run this first!")
         '65' = @("Rollback Registry from Backup", "Imports .reg files from the backup directory.", "If things get worse after applying fixes.", "Only functional if [64] Backup was previously executed.")
         '66' = @("Generate System Restore Point (Security)", "Generates a System Restore Point for full OS rollback.", "Prior to executing major system-level architectural changes.")
         '67' = @("System File Checker & DISM Restoration", "Executes SFC /scannow and DISM RestoreHealth.", "Frequent BSODs, anomalous errors, or post-malware cleanup.", "This process may take 10-30 minutes!")
         '68' = @("Restart BITS (Background Transfer Service)", "Restarts Background Intelligent Transfer Service.", "Drivers failing to download automatically.")
-        '69' = @("Uninstall & Pause Specific KB Update", "Removes a specific Windows Update KB via DISM (with WUSA fallback) and optionally pauses updates for 35 days.", "Immediately after a known bad Windows Update (e.g., KB5066835).")
+        '69' = @("Windows Update & Blocker Management", "Provides tools to uninstall updates, pause updates, permanently disable update services (blocking fix reverts), or restore update defaults.", "Prevent Windows from re-enabling restricted protocols or breaking printer sharing.")
         '70' = @("Launch Native Windows Troubleshooter", "Executes native Windows Printer Troubleshooter (msdt).", "Initial diagnostic step before manual intervention.")
-        '71' = @("Force Printer Online Status", "Transmits online enforcement command via printui /yl.", "Printer status stuck on 'Offline' or grayed out.")
+        '71' = @("Force Printer Online Status", "Forces the printer's WorkOffline state to false via WMI/CIM.", "Printer status stuck on 'Offline' or grayed out.")
         '72' = @("Launch Services.msc", "Launches the Services.msc MMC snap-in.", "Manual verification of Print Spooler operational status.")
         '73' = @("Detect OS Version & Build Architecture", "Displays OS version, build number, and specific recommendations.", "Before choosing a specific fix to ensure compatibility.")
         '74' = @("Ping & Port 445/135 Diagnostics", "ICMP Ping + port scanning for SMB (445) and RPC (135).", "First step in testing network connection and firewall status.")
@@ -2406,7 +2649,7 @@ function Show-Help {
         '80' = @("Detect GPO Intervention (Policy Scan)", "Scans registry and gpresult for Group Policy overrides affecting printers.", "Fixes work temporarily but break again after gpupdate or reboot.")
         '81' = @("PrintBRM (Backup/Restore Migration)", "Executes full backup or restoration of printer topologies via PrintBrm.exe.", "Deploying printers to multiple workstations or migrating to new hardware.")
         '82' = @("Enable SMB Guest Access & Drop Anonymous Blocks", "Enables AllowInsecureGuestAuth in LanmanWorkstation registry.", "For password-less sharing in local networks.")
-        '83' = @("EXTREME PATH (WIN 11 24H2/25H2 & ARM64 SPECIFIC)", "Aggressive fix combination: DnsOnWire, StrictNameChecking, NTLM level, SMB Signing, Kerberos purge, etc.", "Standard fixes didn't work on latest Win 11.", "Built specifically for Build 26000 and above.")
+        '83' = @("EXTREME PATH (WIN 11 24H2/25H2/26H2+ & ARM64 SPECIFIC)", "Aggressive fix combination: DnsOnWire, StrictNameChecking, NTLM level, SMB Signing, Kerberos purge, etc.", "Standard fixes didn't work on latest Win 11.", "Built specifically for Build 26000 and above.")
         '84' = @("EXECUTE ALLFIX (50 AUTOMATED FIXES)", "Executes 50 automated fixes sequentially.", "PRIMARY RECOMMENDATION - the recommended fix for most general cases.", "REBOOT SYSTEM upon completion for best results.")
         '85' = @("SILENT ALLFIX & REBOOT (ZERO-PROMPT)", "Executes all 50 steps + automated reboot silently.", "Emergency situations requiring immediate unattended fixes.", "SYSTEM WILL AUTOMATICALLY REBOOT! Save all critical work prior!")
         '86' = @("Map Local Port to UNC Path (Bypass 0x00000709)", "Attempts standard port creation, then falls back to a Direct Registry Injection bypass if blocked.", "When standard sharing fails and the system entirely blocks 'Add-PrinterPort' commands.")
@@ -2545,7 +2788,7 @@ function Show-Menu {
     Write-Host "$env:COMPUTERNAME " -ForegroundColor Green -NoNewline
     Write-Host "| OS: " -NoNewline
     Write-Host "$winName " -ForegroundColor Blue -NoNewline
-    Write-Host "| Windows Printer Sharing Fix v2.2.9" -ForegroundColor Green
+    Write-Host "| Windows Printer Sharing Fix v2.3.0" -ForegroundColor Green
 
     Write-Host " TIME ZONE: " -NoNewline
     Write-Host "$(Get-TimeZone | Select-Object -ExpandProperty Id) | $(Get-Date -Format 'HH.mm.ss')" -ForegroundColor Red
@@ -2650,7 +2893,7 @@ function Show-Menu {
         "[66] Generate System Restore Point (Security)",
         "[67] System File Checker & DISM Restoration",
         "[68] Restart BITS (Background Transfer)",
-        "[69] Uninstall & Pause Specific KB Update",
+        "[69] Windows Update & Blocker Management",
         "[70] Launch Native Windows Troubleshooter",
         "[71] Force Printer Online Status",
         "[72] Launch Services.msc",
@@ -2664,7 +2907,7 @@ function Show-Menu {
         "[80] Detect GPO Intervention (Policy Scan)",
         "[81] PrintBRM (Backup/Restore Migration)",
         "[82] Enable SMB Guest Access & Drop Anon Blocks",
-        "[83] EXTREME PATH (WIN 11 24H2/25H2 & ARM64)",
+        "[83] EXTREME PATH (WIN 11 24H2/25H2/26H2+ & ARM64)",
         "[84] ALLFIX (50 AUTOMATED FIXES)",
         "[85] SILENT ALLFIX & REBOOT (ZERO-PROMPT)",
         "[86] Map Local Port to UNC Path (Bypass 0x00000709)",
