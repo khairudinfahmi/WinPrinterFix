@@ -226,9 +226,9 @@ Type option: _
 |---|---|
 | Windows 10 (All Builds) | Fully Supported |
 | Windows 11 21H2 - 23H2 | Fully Supported |
-| Windows 11 24H2 / 25H2 / 26H2 | Supported (Requires Extreme Path `[83]`) |
+| Windows 11 24H2 / 25H2 / 26H2+ | Supported (Requires Extreme Path `[83]`) |
 | Windows 11 ARM64 (Snapdragon) | Supported |
-| Windows Server 2019 / 2022 / 2025 | Fully Supported |
+| Windows Server 2012 / 2016 / 2019 / 2022 / 2025 | Fully Supported |
 | Windows 7, 8, 8.1 | Partial / Registry Support Only |
 
 ---
