@@ -5,16 +5,16 @@ Thank you for your interest in contributing to the **Windows Printer Sharing Fix
 ## How to Contribute
 
 ### Reporting Bugs
-1. Navigate to the [Issues](https://github.com/khairudinfahmi/WinPrinterFix/issues) tab.
+1. Navigate to the [Issues](https://github.com/khairudinfahmi/WindowsPrinterSharingFix/issues) tab.
 2. Click **New Issue**.
 3. Provide a detailed description of the bug:
    - Operating System version/build (e.g., Windows 11 24H2 Build 26100).
    - Exact steps to reproduce the bug.
    - The specific error message encountered.
-   - Relevant screenshots or execution logs (`C:\WinPrinterFixLog.txt`).
+   - Relevant screenshots or execution logs (`C:\WindowsPrinterSharingFixLog.txt`).
 
 ### Suggesting Enhancements
-1. Navigate to the [Issues](https://github.com/khairudinfahmi/WinPrinterFix/issues) tab.
+1. Navigate to the [Issues](https://github.com/khairudinfahmi/WindowsPrinterSharingFix/issues) tab.
 2. Assign the **enhancement** label.
 3. Clearly explain the proposed feature and its use case.
 
@@ -30,7 +30,7 @@ Thank you for your interest in contributing to the **Windows Printer Sharing Fix
 ## Repository Structure
 
 ```text
-WinPrinterFix/
+WindowsPrinterSharingFix/
 ├── src/                  # Core PowerShell source code
 ├── assets/               # Icons and digital certificates
 ├── docs/                 # HTML offline documentation

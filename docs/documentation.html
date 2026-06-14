@@ -183,7 +183,7 @@
                     { id: "61", title: "Purge Stale Credentials from Windows Vault", problem: "Cached legacy logins causing authentication conflicts.", solution: "Purges invalid or outdated credentials from the vault via cmdkey.", whenToUse: "Host password was changed but local machine retains stale cache." },
                     { id: "62", title: "Bypass Credential Guard (Strict NTLM Block)", problem: "Credential Guard actively blocking NTLM authentication to shares.", solution: "Disables LsaCfgFlags Credential Guard registry node.", whenToUse: "Enterprise/Pro environments with Credential Guard enabled." },
                     { id: "63", title: "Cross-User Credential Mapping", problem: "Multiple user accounts need credentials for the same network printer.", solution: "Injects network credentials into ALL user profiles via NTUSER.DAT registry load.", whenToUse: "Setting up a shared PC with multiple local accounts." },
-                    { id: "64", title: "Pre-execution Registry Backup (Spooler & Network)", problem: "Requirement to backup state before Modifying registry.", solution: "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\\WinPrinterFixBackup.", whenToUse: "Recommended before applying other fixes.", note: "Always run this first!" },
+                    { id: "64", title: "Pre-execution Registry Backup (Spooler & Network)", problem: "Requirement to backup state before Modifying registry.", solution: "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\\WindowsPrinterSharingFixBackup.", whenToUse: "Recommended before applying other fixes.", note: "Always run this first!" },
                     { id: "65", title: "Rollback Registry from Backup", problem: "Need to undo changes made by this tool.", solution: "Imports .reg files from the backup directory.", whenToUse: "If things get worse after applying fixes.", note: "Only functional if [64] Backup was previously executed." },
                     { id: "66", title: "Generate System Restore Point (Security)", problem: "Need to create a restore point before making system changes.", solution: "Generates a System Restore Point for full OS rollback.", whenToUse: "Prior to executing major system-level architectural changes." },
                     { id: "67", title: "System File Checker & DISM Restoration", problem: "Corrupted or damaged Windows system files.", solution: "Executes SFC /scannow and DISM RestoreHealth.", whenToUse: "Frequent BSODs, anomalous errors, or post-malware cleanup.", note: "This process may take 10-30 minutes!" },
@@ -388,7 +388,7 @@
                             <ul class="space-y-3.5 text-sm text-slate-600 dark:text-slate-400">
                                 <li class="flex items-start gap-3"><i data-lucide="check-circle-2"
                                         class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i> <span
-                                        class="leading-tight"><strong>Windows 11</strong> (including 24H2, 25H2, 26H2
+                                        class="leading-tight"><strong>Windows 11</strong> (including 24H2, 25H2, 26H2+
                                         builds)</span></li>
                                 <li class="flex items-start gap-3"><i data-lucide="check-circle-2"
                                         class="w-4 h-4 text-emerald-500 mt-0.5 shrink-0"></i> <span
@@ -422,13 +422,13 @@
                                         class="w-4 h-4 mt-0.5 shrink-0 opacity-70"></i> <span
                                         class="leading-relaxed"><strong>Audit Log:</strong> Real-time execution logs are
                                         generated at <br><code
-                                            class="inline-block mt-1 bg-white/60 dark:bg-black/20 px-2 py-1 rounded text-amber-900 dark:text-amber-200 font-mono text-xs border border-amber-200/50 dark:border-amber-800/50">C:\WinPrinterFixLog.txt</code></span>
+                                            class="inline-block mt-1 bg-white/60 dark:bg-black/20 px-2 py-1 rounded text-amber-900 dark:text-amber-200 font-mono text-xs border border-amber-200/50 dark:border-amber-800/50">C:\WindowsPrinterSharingFixLog.txt</code></span>
                                 </li>
                                 <li class="flex items-start gap-3"><i data-lucide="database"
                                         class="w-4 h-4 mt-0.5 shrink-0 opacity-70"></i> <span
                                         class="leading-relaxed"><strong>Backup Vault:</strong> Pre-execution registry
                                         backups are stored in <br><code
-                                            class="inline-block mt-1 bg-white/60 dark:bg-black/20 px-2 py-1 rounded text-amber-900 dark:text-amber-200 font-mono text-xs border border-amber-200/50 dark:border-amber-800/50">C:\WinPrinterFixBackup\</code></span>
+                                            class="inline-block mt-1 bg-white/60 dark:bg-black/20 px-2 py-1 rounded text-amber-900 dark:text-amber-200 font-mono text-xs border border-amber-200/50 dark:border-amber-800/50">C:\WindowsPrinterSharingFixBackup\</code></span>
                                 </li>
                             </ul>
                         </div>
@@ -468,7 +468,7 @@
                                 <h3 class="font-bold text-slate-900 dark:text-white text-lg">Launch the Executable</h3>
                                 <p class="text-slate-600 dark:text-slate-400 mt-2.5 leading-relaxed">Right-click the
                                     <code
-                                        class="bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 text-sm font-mono text-brand-600 dark:text-brand-400">WinPrinterFix.ps1</code>
+                                        class="bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-600 text-sm font-mono text-brand-600 dark:text-brand-400">WindowsPrinterSharingFix.ps1</code>
                                     script and select <strong>Run with PowerShell</strong>, or execute the compiled
                                     <code>.exe</code> file directly if provided.</p>
                             </div>
@@ -538,7 +538,7 @@
                                 class="bg-slate-900 rounded-xl p-4 shadow-inner relative overflow-hidden group border border-slate-800">
                                 <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
                                 <code class="font-mono text-xs md:text-sm text-emerald-400 break-all pl-2 block">
-                                    powershell.exe -ExecutionPolicy Bypass -File .\WinPrinterFix.ps1 <span class="text-blue-400 font-bold">-nuke</span>
+                                    powershell.exe -ExecutionPolicy Bypass -File .\WindowsPrinterSharingFix.ps1 <span class="text-blue-400 font-bold">-nuke</span>
                                 </code>
                             </div>
                         </div>
@@ -1045,10 +1045,10 @@
                 <span>Windows Printer Sharing Fix</span>
             </div>
             <div class="text-slate-500 dark:text-slate-400 text-sm font-medium">
-                Engineered with precision by
+                Author:
                 <a href="https://instagram.com/khairudinfahmi" target="_blank"
                     class="inline-flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg hover:bg-brand-50 dark:hover:bg-brand-900/30 hover:text-brand-600 dark:hover:text-brand-400 transition-all ml-1 border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <i data-lucide="terminal" class="w-3.5 h-3.5"></i> @khairudinfahmi
+                    <i data-lucide="terminal" class="w-3.5 h-3.5"></i> @khairudinfahmi — 2026
                 </a>
             </div>
         </div>

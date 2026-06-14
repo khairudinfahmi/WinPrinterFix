@@ -2,7 +2,7 @@
 
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011%20%7C%20Server-0078D6?logo=windows&logoColor=white)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?logo=powershell&logoColor=white)
-![Version](https://img.shields.io/badge/Version-2.3.0-blue)
+![Version](https://img.shields.io/badge/Version-2.3.1-blue)
 
 A simple but powerful tool to fix common Windows printer sharing problems. Works on Windows 10, 11 (including 24H2+), ARM64, and Windows Server 2025.
 
@@ -138,9 +138,9 @@ To keep things completely transparent, if you run the automated playbooks (`[83]
 ## Repository Structure
 
 ```text
-WinPrinterFix/
+WindowsPrinterSharingFix/
 ├── src/
-│   └── WinPrinterFix.ps1                      # Core PowerShell source code (89 features)
+│   └── WindowsPrinterSharingFix.ps1           # Core PowerShell source code (89 features)
 ├── assets/
 │   ├── icon.ico                                # Application icon
 │   └── khairudinfahmi_cert.cer                 # Code signing certificate
@@ -150,7 +150,7 @@ WinPrinterFix/
 │   ├── Compile-ToExe.ps1                       # Build automation script
 │   └── installer.iss                           # Inno Setup installer script
 ├── release/
-│   ├── WinPrinterFix.exe                       # Compiled portable executable
+│   ├── WindowsPrinterSharingFix.exe            # Compiled portable executable
 │   └── WindowsPrinterSharingFix_Installer.exe  # Full setup installer
 ├── .gitignore
 ├── CHANGELOG.md                                # Version history
@@ -167,7 +167,7 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 
 | File | Description |
 |---|---|
-| `WinPrinterFix.exe` | Portable Executable — Run directly as Administrator |
+| `WindowsPrinterSharingFix.exe` | Portable Executable — Run directly as Administrator |
 | `WindowsPrinterSharingFix_Installer.exe` | Full Installer (includes start menu shortcuts & code signing) |
 
 ---
@@ -181,7 +181,7 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 4. Type `84` → Enter (Execute ALLFIX - 50 automated fixes).
 5. Reboot your system.
 
-### Specific Workflow for Windows 11 24H2/25H2
+### Specific Workflow for Windows 11 24H2/25H2/26H2+
 1. Type `64` → Enter (Execute registry backup).
 2. Type `83` → Enter (Execute Extreme Path fixes).
 3. Reboot your system.
@@ -199,7 +199,7 @@ Pre-compiled binaries are available in the **[Releases](../../releases)** tab:
 ## Interactive Console Interface
 
 ```text
- USER: admin | COMPUTERNAME: OFFICE-PC | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix v2.3.0
+ USER: admin | COMPUTERNAME: OFFICE-PC | OS: WINDOWS 11 PRO 26100 64BIT | Windows Printer Sharing Fix v2.3.1
  =======================================================================================================
 
  CORE FIXES & NETWORK SERVICES              SPOOLER, DRIVERS & POLICIES              DIAGNOSTICS & AUTOMATION
@@ -253,7 +253,7 @@ Or compile manually:
 Install-Module -Name ps2exe -Force -Scope CurrentUser
 
 # Compile
-Invoke-ps2exe -inputFile src\WinPrinterFix.ps1 -outputFile release\WinPrinterFix.exe `
+Invoke-ps2exe -inputFile src\WindowsPrinterSharingFix.ps1 -outputFile release\WindowsPrinterSharingFix.exe `
     -iconFile assets\icon.ico -requireAdmin `
     -title "Windows Printer Sharing Fix" -company "khairudinfahmi"
 ```
@@ -261,7 +261,7 @@ Invoke-ps2exe -inputFile src\WinPrinterFix.ps1 -outputFile release\WinPrinterFix
 ### Compile Installer
 
 ```powershell
-# Ensure WinPrinterFix.exe exists in the release/ directory
+# Ensure WindowsPrinterSharingFix.exe exists in the release/ directory
 & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" build\installer.iss
 ```
 
@@ -291,5 +291,3 @@ Feel free to modify and distribute, but please ensure credit is attributed to th
 ## Author
 
 **@khairudinfahmi** — 2026
-
-> Engineered to assist IT administrators and end-users frustrated by persistent Windows printer sharing deployment failures.
