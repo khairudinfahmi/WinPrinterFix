@@ -1059,11 +1059,11 @@ function Fix-ProviderOrder {
 }
 
 function Fix-NTLMv2 {
-    Write-Log "Enforcing Strict NTLMv2 Response Compliance (Synology NAS Compatible)..." -Type "INFO"
+    Write-Log "Enforcing Strict NTLMv2 Response Compliance (NAS and Samba Compatible)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LmCompatibilityLevel -Value 3 -Type DWord -Force -ErrorAction Stop
         Write-Log "Strict NTLMv2 successfully enforced." -Type "SUCCESS"
-        Write-Host "  [+] Strict NTLMv2 enforced (Level 3). NAS Synology & Modern Print Sharing secured." -ForegroundColor Green
+        Write-Host "  [+] Strict NTLMv2 enforced (Level 3). NAS and modern print sharing connections secured." -ForegroundColor Green
     }
     catch {
         Write-Log "Fix-NTLMv2 failed: $($_.Exception.Message)" -Type "ERROR"
@@ -2642,7 +2642,7 @@ function Show-Help {
         '55' = @("Bypass Smart App Control (SAC)", "Sets VerifiedAndReputablePolicyState to Off.", "Windows 11 SAC actively blocking driver installers.")
         '56' = @("Bypass Advanced ServerList Point & Print (PrintNightmare Bypass)", "Injects PrintNightmare bypasses (Elevation Override) and ServerList wildcard (*) into registry.", "Throws 'Check Printer Name' or 'Access Denied' generic errors during driver download.", "Required for Windows 11 Build 22621+")
         '57' = @("Bypass UAC Admin Network TokenFilter", "Configures LocalAccountTokenFilterPolicy = 1.", "Remote administration to workgroup hosts failing due to UAC filtering.")
-        '58' = @("Force NTLMv2 Response Compliance", "Configures LmCompatibilityLevel strictly to NTLMv2 (Level 3).", "'Access Denied' when authenticating against varying OS versions or Synology NAS.")
+        '58' = @("Force NTLMv2 Response Compliance", "Configures LmCompatibilityLevel strictly to NTLMv2 (Level 3).", "'Access Denied' when authenticating against different OS versions or network storage (NAS).")
         '59' = @("Manage Windows Protected Print (WPP)", "Disables Windows Protected Print feature.", "Printer driver incompatible with WPP isolation.")
         '60' = @("Inject Windows Credentials into Vault Permanently", "Injects username/password directly into Windows Credential Manager.", "To bypass manual authentication upon each access.")
         '61' = @("Purge Stale Credentials from Windows Vault", "Purges invalid or outdated credentials from the vault via cmdkey.", "Host password was changed but local machine retains stale cache.")

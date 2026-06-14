@@ -80,10 +80,6 @@ try {
     Write-Host "Process Failed: $_" -ForegroundColor Red
 }
 
-if ($Host.Name -eq "ConsoleHost") {
-    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-} else {
-    Start-Sleep -Seconds 2
-}
+Start-Sleep -Seconds 2
 
 

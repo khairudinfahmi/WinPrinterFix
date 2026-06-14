@@ -171,7 +171,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **F4 Paper Size Injection**: Resolved `System.Byte[]` type mismatch bug in `Inject-F4PaperSize` by refactoring array construction to a flat byte array.
-- **NTLMv2 Compatibility**: Upgraded `Fix-NTLMv2` to enforce Value 3 (Strict NTLMv2) for improved Synology NAS and modern print sharing compatibility.
+- **NTLMv2 Compatibility**: Upgraded `Fix-NTLMv2` to enforce Value 3 (Strict NTLMv2) for improved network storage (NAS) and modern print sharing compatibility.
 
 ---
 
