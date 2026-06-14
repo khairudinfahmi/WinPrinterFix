@@ -279,7 +279,7 @@ Testing is split into static code analysis, isolated execution tests, and schedu
 
 ### Static Analysis & Shift-Left Validation
 
-These steps ensure the codebase is clean, follows styling standards, and is free of syntax errors before git commit:
+These steps ensure the codebase is clean, follows styling standards, and is free of syntax errors before git commit. Run these commands from the project root folder:
 
 #### Test 1: PSScriptAnalyzer Pre-Commit Verification
 To run standard security and styling rule scans on the script:
