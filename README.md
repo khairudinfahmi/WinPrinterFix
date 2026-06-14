@@ -273,7 +273,7 @@ Invoke-ps2exe -inputFile src\WindowsPrinterSharingFix.ps1 -outputFile release\Wi
 
 ## Testing & Verification
 
-You can verify that the background tasks are functioning correctly on your system by executing the following commands in an elevated PowerShell console (run as Administrator):
+You can verify that the background tasks are functioning correctly, test behavior in isolated environments, and check code integrity using the following validation procedures:
 
 ### Test 1: SpoolerWatchdog Verification
 This task detects if the Print Spooler service stops and restarts it automatically:
@@ -299,6 +299,31 @@ Start-ScheduledTask -TaskName "PrinterFixPostUpdate"
 
 # 3. Check the registry value again (should be restored to "1")
 Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes"
+```
+
+### Test 3: Windows Sandbox Isolation Testing
+To safely verify the interface rendering and registry modification steps on a clean machine without affecting your physical environment, you can run the tool in an isolated sandbox:
+1. Make sure **Windows Sandbox** is enabled on your host machine.
+2. Copy `src/WindowsPrinterSharingFix.ps1` (or the compiled standalone `release/WindowsPrinterSharingFix.exe`).
+3. Open **Windows Sandbox** from your Start Menu.
+4. Paste the file directly onto the Sandbox desktop.
+5. Launch an elevated PowerShell console inside the Sandbox and run the script/executable to test interactions.
+
+### Test 4: PowerShell AST Syntax Validation
+Before releasing code changes, you can verify that the script is free of compilation errors, unclosed brackets, or invalid syntax using the PowerShell parser:
+```powershell
+$errors = $null
+[System.Management.Automation.Language.Parser]::ParseFile(
+    (Resolve-Path "src/WindowsPrinterSharingFix.ps1"),
+    [ref]$null,
+    [ref]$errors
+)
+if ($errors) {
+    Write-Host "[-] Syntax errors detected in script:" -ForegroundColor Red
+    $errors | ForEach-Object { Write-Host "Line $($_.Extent.StartLineNumber): $($_.Message)" -ForegroundColor Red }
+} else {
+    Write-Host "[SUCCESS] PowerShell script is syntax-clean (AST validation passed)." -ForegroundColor Green
+}
 ```
 
 ---
