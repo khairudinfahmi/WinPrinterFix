@@ -1074,7 +1074,11 @@ function Fix-Network0x00000040 {
     Write-Log "Fixing Error 0x00000040 (Network connection timeout)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name KeepConn -Value 65535 -Type DWord -Force -ErrorAction Stop
-        Restart-Service LanmanWorkstation -Force -ErrorAction SilentlyContinue
+        try {
+            Restart-Service LanmanWorkstation -Force -ErrorAction Stop
+        } catch {
+            Write-Log "LanmanWorkstation restart timed out or failed: $($_.Exception.Message)" -Type "WARNING"
+        }
         Write-Log "KeepConn SMB set to maximum." -Type "SUCCESS"
         Write-Host "  [+] SMB connection timeout extended to mitigate unstable network topologies." -ForegroundColor Green
     }
