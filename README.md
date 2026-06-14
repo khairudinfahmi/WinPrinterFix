@@ -271,6 +271,38 @@ Invoke-ps2exe -inputFile src\WindowsPrinterSharingFix.ps1 -outputFile release\Wi
 
 ---
 
+## Testing & Verification
+
+You can verify that the background tasks are functioning correctly on your system by executing the following commands in an elevated PowerShell console (run as Administrator):
+
+### Test 1: SpoolerWatchdog Verification
+This task detects if the Print Spooler service stops and restarts it automatically:
+```powershell
+# 1. Stop the spooler service manually
+Stop-Service spooler -Force
+
+# 2. Trigger the watchdog task immediately
+Start-ScheduledTask -TaskName "SpoolerWatchdog"
+
+# 3. Check the service status (should be "Running")
+Get-Service spooler
+```
+
+### Test 2: PrinterFixPostUpdate Verification
+This task restores your configuration if registry values are tampered with or reset:
+```powershell
+# 1. Temporarily write a test value (0) to a sharing registry key
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes" -Value 0
+
+# 2. Trigger the reapply task immediately
+Start-ScheduledTask -TaskName "PrinterFixPostUpdate"
+
+# 3. Check the registry value again (should be restored to "1")
+Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes"
+```
+
+---
+
 ## Important Notes
 - **Elevation Required**: This utility **must be executed as an Administrator** to modify registry keys and manage Windows subsystem services.
 - **Backup Mandatory**: Always execute a **Registry Backup (Option `[64]`)** before running any automated fixes.
