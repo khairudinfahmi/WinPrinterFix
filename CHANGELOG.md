@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-06-14
+
+### Fixed
+- Task Scheduler battery restriction: Disabled default AC power constraints (`AllowStartIfOnBatteries`, `DontStopIfGoingOnBatteries`) for all registered tasks (`PrinterFixPostUpdate`, `PrinterFixDaily`, `SpoolerWatchdog`, and `NetworkProfileWatchdog`). This resolves execution failure `0x800710E0` on laptop computers running on battery power.
+
 ---
 
 ## [2.3.0] - 2026-06-12
