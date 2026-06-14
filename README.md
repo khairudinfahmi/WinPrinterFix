@@ -273,13 +273,13 @@ Invoke-ps2exe -inputFile src\WindowsPrinterSharingFix.ps1 -outputFile release\Wi
 
 ## Testing & Verification
 
-For comprehensive validation of the project's codebase, interactive functions, and background tasks, testing is divided into **Project & Code Verification** and **Scheduled Tasks Verification**.
+Testing is split into two parts: checking the main script/code, and verifying the scheduled background tasks.
 
 ---
 
 ### Project & Code Verification
 
-These procedures verify the code integrity, syntax compilability, and interactive runtime of the main script in safe/isolated environments:
+Use these steps to verify that the script runs correctly and is free of syntax errors:
 
 #### Test 1: Windows Sandbox Isolation Testing
 To safely verify the interactive interface rendering and registry modification steps on a clean machine without affecting your physical environment:
@@ -310,7 +310,7 @@ if ($errors) {
 
 ### Scheduled Background Tasks Verification
 
-Verify that the three scheduled tasks registered by the script function correctly on your host system by executing the following commands in an elevated PowerShell console (run as Administrator):
+Run these commands in an elevated PowerShell console (run as Administrator) to verify that the registered tasks are working:
 
 #### Task 1: SpoolerWatchdog Verification
 This task detects if the Print Spooler service stops and restarts it automatically:
