@@ -1,8 +1,8 @@
 $ProjectRoot = Split-Path $PSScriptRoot -Parent
 
-$SourceFile = Join-Path $ProjectRoot "src\WinPrinterFix.ps1"
+$SourceFile = Join-Path $ProjectRoot "src\WindowsPrinterSharingFix.ps1"
 $OutputDir  = Join-Path $ProjectRoot "release"
-$OutputFile = Join-Path $OutputDir "WinPrinterFix.exe"
+$OutputFile = Join-Path $OutputDir "WindowsPrinterSharingFix.exe"
 $IconFile   = Join-Path $ProjectRoot "assets\icon.ico"
 
 if (-not (Test-Path $OutputDir)) {
@@ -11,7 +11,7 @@ if (-not (Test-Path $OutputDir)) {
 
 if (-not (Test-Path $SourceFile)) {
     Write-Host "[ERROR] Source file not found: $SourceFile" -ForegroundColor Red
-    Write-Host "Ensure the script is executed from within the WinPrinterFix project directory." -ForegroundColor Yellow
+    Write-Host "Ensure the script is executed from within the WindowsPrinterSharingFix project directory." -ForegroundColor Yellow
     exit 1
 }
 
@@ -31,7 +31,7 @@ $ps2exeParams = @{
     requireAdmin = $true
     title       = "Windows Printer Sharing Fix"
     description = "Windows Printer Sharing Fix Tool"
-    version     = "2.3.0.0"
+    version     = "2.3.1.0"
     company     = "khairudinfahmi"
     copyright   = "2026 khairudinfahmi"
 }
@@ -80,7 +80,10 @@ try {
     Write-Host "Process Failed: $_" -ForegroundColor Red
 }
 
-Write-Host "`nPress any key to exit..."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+if ($Host.Name -eq "ConsoleHost") {
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+} else {
+    Start-Sleep -Seconds 2
+}
 
 

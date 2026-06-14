@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Windows Printer Sharing Fix - v2.3.0
+    Windows Printer Sharing Fix - v2.3.1
     @KHAIRUDINFAHMI
 
 .PARAMETER nuke
@@ -12,15 +12,15 @@ param(
     [switch]$nuke
 )
 
-$script:version    = "2.3.0"
-$script:backupDir  = "C:\WinPrinterFixBackup"
+$script:version    = "2.3.1"
+$script:backupDir  = "C:\WindowsPrinterSharingFixBackup"
 $script:silentNuke = $nuke
 
 $script:logFile = $null
 $candidateLogs = @(
-    "C:\WinPrinterFixLog.txt",
-    "$env:TEMP\WinPrinterFixLog.txt",
-    "$env:USERPROFILE\Desktop\WinPrinterFixLog.txt"
+    "C:\WindowsPrinterSharingFixLog.txt",
+    "$env:TEMP\WindowsPrinterSharingFixLog.txt",
+    "$env:USERPROFILE\Desktop\WindowsPrinterSharingFixLog.txt"
 )
 foreach ($cl in $candidateLogs) {
     try {
@@ -30,7 +30,7 @@ foreach ($cl in $candidateLogs) {
     } catch { }
 }
 if (-not $script:logFile) {
-    $script:logFile = "$env:TEMP\WinPrinterFixLog.txt"
+    $script:logFile = "$env:TEMP\WindowsPrinterSharingFixLog.txt"
 }
 
 $script:isARM64 = ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64')
@@ -287,6 +287,13 @@ Restart-Service spooler -Force -EA SilentlyContinue
         
         & schtasks.exe /create /tn "PrinterFixDaily" /tr $cmd /sc daily /st 10:00 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
         if ($LASTEXITCODE -ne 0) { throw "schtasks DAILY returned exit code $LASTEXITCODE" }
+
+        # Configure tasks to run on battery power (disables 0x800710E0 error on laptops)
+        try {
+            $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+            Set-ScheduledTask -TaskName "PrinterFixPostUpdate" -Settings $settings -ErrorAction SilentlyContinue | Out-Null
+            Set-ScheduledTask -TaskName "PrinterFixDaily" -Settings $settings -ErrorAction SilentlyContinue | Out-Null
+        } catch {}
 
         Write-Log "Post-Windows-Update reapply task deployed successfully." -Type "SUCCESS"
         Write-Host "  [+] Auto-reapply task deployed. Registry fixes will re-apply automatically after every reboot/update." -ForegroundColor Green
@@ -1186,6 +1193,12 @@ function Set-SpoolerWatchdog {
         & schtasks.exe /create /tn "SpoolerWatchdog" /tr $cmd /sc minute /mo 5 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
         if ($LASTEXITCODE -ne 0) { throw "schtasks returned exit code $LASTEXITCODE" }
         
+        # Configure task to run on battery power (disables 0x800710E0 error on laptops)
+        try {
+            $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+            Set-ScheduledTask -TaskName "SpoolerWatchdog" -Settings $settings -ErrorAction SilentlyContinue | Out-Null
+        } catch {}
+
         Write-Log "Spooler Watchdog deployed (indefinite repetition, every 5 min)." -Type "SUCCESS"
         Write-Host "  [+] Spooler Watchdog active. Audited every 5 minutes indefinitely." -ForegroundColor Green
     }
@@ -1762,6 +1775,11 @@ function Rescue-NetworkProfile {
             $cmd = "powershell.exe -WindowStyle Hidden -Command \`"Get-NetConnectionProfile | Where-Object { `$_.NetworkCategory -eq 'Public' } | Set-NetConnectionProfile -NetworkCategory Private\`""
             & schtasks.exe /create /tn "NetworkProfileWatchdog" /tr $cmd /sc minute /mo 10 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
             if ($LASTEXITCODE -eq 0) {
+                # Configure task to run on battery power (disables 0x800710E0 error on laptops)
+                try {
+                    $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+                    Set-ScheduledTask -TaskName "NetworkProfileWatchdog" -Settings $settings -ErrorAction SilentlyContinue | Out-Null
+                } catch {}
                 Write-Log "Network Profile Watchdog deployed (indefinite repetition)." -Type "SUCCESS"
                 Write-Host "  [+] Watchdog deployed. Profile enforced to Private every 10 minutes." -ForegroundColor Green
             } else {
@@ -2456,7 +2474,7 @@ function AllFix-Core {
             $errors.Line | ForEach-Object { Write-Host $_ -ForegroundColor Red }
         }
         else {
-            Write-Host "   [+] Pristine! No errors detected." -ForegroundColor Green
+            Write-Host "   [+] No errors found in the log." -ForegroundColor Green
         }
         Write-Host "   --------------------`n"
     }
@@ -2467,7 +2485,7 @@ function AllFix-Core {
         Restart-Computer -Force
     }
     else {
-        Write-Host "  [*] Acknowledged, ensure manual reboot for maximum efficacy!" -ForegroundColor Cyan
+        Write-Host "  [*] Reboot manually to apply all changes." -ForegroundColor Cyan
     }
 }
 
@@ -2476,8 +2494,8 @@ function Extreme-25H2 {
     Write-Host "`n  ==================================================================================================="
     Write-Host "        EXTREME PATH FOR WIN 11 25H2 / 24H2 / 26H2+ / ARM64"
     Write-Host "  ==================================================================================================="
-    Write-Host "  [*] Aggressive specialized fix tailored for environments with maximum security enforcement."
-    Write-Host "  [*] Automated execution proceeding with zero interruptions..." -ForegroundColor Cyan
+    Write-Host "  [*] This path applies deep fixes for Windows 11 systems with strict security policies."
+    Write-Host "  [*] Running all fixes automatically..." -ForegroundColor Cyan
 
     Write-Log "Run Extreme Fix 25H2/26H2" -Type "INFO"
 
@@ -2630,7 +2648,7 @@ function Show-Help {
         '61' = @("Purge Stale Credentials from Windows Vault", "Purges invalid or outdated credentials from the vault via cmdkey.", "Host password was changed but local machine retains stale cache.")
         '62' = @("Bypass Credential Guard (Strict NTLM Block)", "Disables LsaCfgFlags Credential Guard registry node.", "Enterprise/Pro environments with Credential Guard enabled.")
         '63' = @("Cross-User Credential Mapping", "Injects a logon RunOnce credential task into ALL user profiles via NTUSER.DAT registry load.", "Setting up a shared PC with multiple local accounts.")
-        '64' = @("Pre-execution Registry Backup (Spooler & Network)", "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\WinPrinterFixBackup.", "Recommended before applying other fixes.", "Always run this first!")
+        '64' = @("Pre-execution Registry Backup (Spooler & Network)", "Exports Print, Printers Policy, and LanmanWorkstation registry trees to C:\WindowsPrinterSharingFixBackup.", "Recommended before applying other fixes.", "Always run this first!")
         '65' = @("Rollback Registry from Backup", "Imports .reg files from the backup directory.", "If things get worse after applying fixes.", "Only functional if [64] Backup was previously executed.")
         '66' = @("Generate System Restore Point (Security)", "Generates a System Restore Point for full OS rollback.", "Prior to executing major system-level architectural changes.")
         '67' = @("System File Checker & DISM Restoration", "Executes SFC /scannow and DISM RestoreHealth.", "Frequent BSODs, anomalous errors, or post-malware cleanup.", "This process may take 10-30 minutes!")
@@ -2788,11 +2806,11 @@ function Show-Menu {
     Write-Host "$env:COMPUTERNAME " -ForegroundColor Green -NoNewline
     Write-Host "| OS: " -NoNewline
     Write-Host "$winName " -ForegroundColor Blue -NoNewline
-    Write-Host "| Windows Printer Sharing Fix v2.3.0" -ForegroundColor Green
+    Write-Host "| Windows Printer Sharing Fix v2.3.1" -ForegroundColor Green
 
     Write-Host " TIME ZONE: " -NoNewline
     Write-Host "$(Get-TimeZone | Select-Object -ExpandProperty Id) | $(Get-Date -Format 'HH.mm.ss')" -ForegroundColor Red
-    Write-Host " ENGINEERED BY: @KHAIRUDINFAHMI (2026)" -ForegroundColor Magenta
+    Write-Host " AUTHOR: @KHAIRUDINFAHMI (2026)" -ForegroundColor Magenta
     Write-Host ("=" * 175) -ForegroundColor DarkGray
 
     try {

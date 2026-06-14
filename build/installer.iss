@@ -1,9 +1,9 @@
 [Setup]
 AppName=Windows Printer Sharing Fix
-AppVersion=2.3.0
+AppVersion=2.3.1
 AppPublisher=khairudinfahmi
-AppPublisherURL=https://github.com/khairudinfahmi/WinPrinterFix
-AppSupportURL=https://github.com/khairudinfahmi/WinPrinterFix/issues
+AppPublisherURL=https://github.com/khairudinfahmi/WindowsPrinterSharingFix
+AppSupportURL=https://github.com/khairudinfahmi/WindowsPrinterSharingFix/issues
 DefaultDirName={autopf}\Windows Printer Sharing Fix
 DefaultGroupName=Windows Printer Sharing Fix
 OutputDir=..\release
@@ -18,20 +18,20 @@ PrivilegesRequired=admin
 DisableWelcomePage=no
 VersionInfoCompany=khairudinfahmi
 VersionInfoProductName=Windows Printer Sharing Fix
-VersionInfoProductVersion=2.3.0.0
-VersionInfoVersion=2.3.0.0
+VersionInfoProductVersion=2.3.1.0
+VersionInfoVersion=2.3.1.0
 VersionInfoDescription=Windows Printer Sharing Fix Setup Installer
 
 [Files]
-Source: "..\release\WinPrinterFix.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\release\WindowsPrinterSharingFix.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\icon.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\docs\documentation.html"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\assets\khairudinfahmi_cert.cer"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\Windows Printer Sharing Fix"; Filename: "{app}\WinPrinterFix.exe"; IconFilename: "{app}\icon.ico"
+Name: "{group}\Windows Printer Sharing Fix"; Filename: "{app}\WindowsPrinterSharingFix.exe"; IconFilename: "{app}\icon.ico"
 Name: "{group}\Windows Printer Sharing Fix Documentation"; Filename: "{app}\documentation.html"
-Name: "{autodesktop}\Windows Printer Sharing Fix"; Filename: "{app}\WinPrinterFix.exe"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
+Name: "{autodesktop}\Windows Printer Sharing Fix"; Filename: "{app}\WindowsPrinterSharingFix.exe"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
