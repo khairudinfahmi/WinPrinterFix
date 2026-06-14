@@ -125,7 +125,11 @@ Windows updates often break network printing with cryptic errors. This tool fixe
 To keep things completely transparent, if you run the automated playbooks (`[83]`, `[84]`, or `[85]`), the script does a few extra things in the background that don't pop up on the screen. This is done to make sure the fixes actually stick:
 
 - **GPO Override (`gpupdate /force`):** It forces a local Group Policy update right before modifying the registry so your domain controller doesn't immediately overwrite the fixes.
-- **Scheduled Tasks Injection:** It silently creates two tasks (`PrinterFixPostUpdate` and `PrinterFixDaily`) in Windows Task Scheduler. These run quietly in the background at 10:00 AM and on startup to re-apply the RPC registry fixes automatically (just in case Windows Update tries to break it again).
+- **Scheduled Tasks Injection:** The script deploys background tasks under Windows Task Scheduler for persistent repairs and diagnostics:
+  - `PrinterFixPostUpdate` (runs on startup) & `PrinterFixDaily` (runs daily at 10:00 AM): Automatically re-apply critical registry fixes in case Windows Updates reset them.
+  - `SpoolerWatchdog` (runs every 5 minutes): Checks and automatically restarts the Print Spooler service if a driver crash stops it.
+  > [!NOTE]
+  > All registered tasks are configured to bypass laptop AC constraints (they will execute successfully even when unplugged). However, because `SpoolerWatchdog` runs periodically every 5 minutes, it can cause minor battery drain on laptops over time. If you want to maximize battery life, you can easily disable or delete it through the Task Scheduler GUI or by running: `Disable-ScheduledTask -TaskName "SpoolerWatchdog"` in PowerShell (as Administrator).
 - **Network & Credential Wipes:** It runs commands like `klist purge`, `ipconfig /flushdns`, and `nbtstat -RR`. If you use Extreme Path `[83]`, it also forcefully wipes stale network credentials from your Windows Vault using `cmdkey`. 
 - **Registry Overrides [86/87]:** If you use the UNC Bypass feature and Windows blocks the standard API, the script will forcefully inject or delete the port directly inside `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports`. 
 - **Force Kills [37] & [44]:** When you purge the queue or try to bypass a locked driver, the script sends a direct termination signal (`Stop-Process -Force`) to `splwow64`, `PrintIsolationHost`, and `printfilterpipelinesvc`. This drops all active print jobs immediately.
