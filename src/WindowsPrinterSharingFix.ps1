@@ -268,6 +268,11 @@ function Fix-HKCU-PrinterKeyPerms {
 function Set-PostPatchTuesdayTask {
     Write-Log "Deploying Post-Windows-Update Auto-Reapply Task..." -Type "INFO"
     try {
+        if (-not (Test-Path $script:backupDir)) {
+            New-Item -ItemType Directory -Path $script:backupDir -Force | Out-Null
+        }
+        
+        $scriptPath = Join-Path $script:backupDir "PrinterFixReapply.ps1"
         $fixScript = @'
 Set-ItemProperty "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC" -Name RpcUseNamedPipeProtocol -Value 1 -Type DWord -Force -EA SilentlyContinue
 Set-ItemProperty "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC" -Name ForceKerberosForRpc -Value 0 -Type DWord -Force -EA SilentlyContinue
@@ -279,8 +284,9 @@ Set-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP" -Na
 Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name LocalAccountTokenFilterPolicy -Value 1 -Type DWord -Force -EA SilentlyContinue
 Restart-Service spooler -Force -EA SilentlyContinue
 '@
-        $encodedScript = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($fixScript))
-        $cmd = "powershell.exe -WindowStyle Hidden -EncodedCommand $encodedScript"
+        Set-Content -Path $scriptPath -Value $fixScript -Encoding UTF8 -Force
+        
+        $cmd = "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`""
         
         & schtasks.exe /create /tn "PrinterFixPostUpdate" /tr $cmd /sc onstart /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
         if ($LASTEXITCODE -ne 0) { throw "schtasks ONSTART returned exit code $LASTEXITCODE" }
