@@ -273,44 +273,24 @@ Invoke-ps2exe -inputFile src\WindowsPrinterSharingFix.ps1 -outputFile release\Wi
 
 ## Testing & Verification
 
-You can verify that the background tasks are functioning correctly, test behavior in isolated environments, and check code integrity using the following validation procedures:
+For comprehensive validation of the project's codebase, interactive functions, and background tasks, testing is divided into **Project & Code Verification** and **Scheduled Tasks Verification**.
 
-### Test 1: SpoolerWatchdog Verification
-This task detects if the Print Spooler service stops and restarts it automatically:
-```powershell
-# 1. Stop the spooler service manually
-Stop-Service spooler -Force
+---
 
-# 2. Trigger the watchdog task immediately
-Start-ScheduledTask -TaskName "SpoolerWatchdog"
+### 🛠️ Project & Code Verification
 
-# 3. Check the service status (should be "Running")
-Get-Service spooler
-```
+These procedures verify the code integrity, syntax compilability, and interactive runtime of the main script in safe/isolated environments:
 
-### Test 2: PrinterFixPostUpdate Verification
-This task restores your configuration if registry values are tampered with or reset:
-```powershell
-# 1. Temporarily write a test value (0) to a sharing registry key
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes" -Value 0
-
-# 2. Trigger the reapply task immediately
-Start-ScheduledTask -TaskName "PrinterFixPostUpdate"
-
-# 3. Check the registry value again (should be restored to "1")
-Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes"
-```
-
-### Test 3: Windows Sandbox Isolation Testing
-To safely verify the interface rendering and registry modification steps on a clean machine without affecting your physical environment, you can run the tool in an isolated sandbox:
+#### Test 1: Windows Sandbox Isolation Testing
+To safely verify the interactive interface rendering and registry modification steps on a clean machine without affecting your physical environment:
 1. Make sure **Windows Sandbox** is enabled on your host machine.
 2. Copy `src/WindowsPrinterSharingFix.ps1` (or the compiled standalone `release/WindowsPrinterSharingFix.exe`).
 3. Open **Windows Sandbox** from your Start Menu.
 4. Paste the file directly onto the Sandbox desktop.
 5. Launch an elevated PowerShell console inside the Sandbox and run the script/executable to test interactions.
 
-### Test 4: PowerShell AST Syntax Validation
-Before releasing code changes, you can verify that the script is free of compilation errors, unclosed brackets, or invalid syntax using the PowerShell parser:
+#### Test 2: PowerShell AST Syntax Validation
+Before releasing code changes, you can programmatically verify that the script is free of compilation errors, unclosed brackets, or invalid syntax using the PowerShell parser:
 ```powershell
 $errors = $null
 [System.Management.Automation.Language.Parser]::ParseFile(
@@ -324,6 +304,51 @@ if ($errors) {
 } else {
     Write-Host "[SUCCESS] PowerShell script is syntax-clean (AST validation passed)." -ForegroundColor Green
 }
+```
+
+---
+
+### 📅 Scheduled Background Tasks Verification
+
+Verify that the three scheduled tasks registered by the script function correctly on your host system by executing the following commands in an elevated PowerShell console (run as Administrator):
+
+#### Task 1: SpoolerWatchdog Verification
+This task detects if the Print Spooler service stops and restarts it automatically:
+```powershell
+# 1. Stop the spooler service manually
+Stop-Service spooler -Force
+
+# 2. Trigger the watchdog task immediately
+Start-ScheduledTask -TaskName "SpoolerWatchdog"
+
+# 3. Check the service status (should be "Running")
+Get-Service spooler
+```
+
+#### Task 2: PrinterFixPostUpdate Verification
+This task automatically re-applies critical registry configurations immediately on system startup:
+```powershell
+# 1. Temporarily write a test value (0) to a sharing registry key
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes" -Value 0
+
+# 2. Trigger the startup reapply task immediately
+Start-ScheduledTask -TaskName "PrinterFixPostUpdate"
+
+# 3. Check the registry value again (should be restored to "1")
+Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes"
+```
+
+#### Task 3: PrinterFixDaily Verification
+This task daily re-applies critical registry configurations to prevent Windows Update from reverting changes:
+```powershell
+# 1. Temporarily write a test value (0) to a sharing registry key
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes" -Value 0
+
+# 2. Trigger the daily reapply task immediately
+Start-ScheduledTask -TaskName "PrinterFixDaily"
+
+# 3. Check the registry value again (should be restored to "1")
+Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name "RpcOverNamedPipes"
 ```
 
 ---
