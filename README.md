@@ -273,24 +273,26 @@ Invoke-ps2exe -inputFile src\WindowsPrinterSharingFix.ps1 -outputFile release\Wi
 
 ## Testing & Verification
 
-Testing is split into two parts: checking the main script/code, and verifying the scheduled background tasks.
+Testing is split into static code analysis, isolated execution tests, and scheduled tasks verification.
 
 ---
 
-### Project & Code Verification
+### Static Analysis & Shift-Left Validation
 
-Use these steps to verify that the script runs correctly and is free of syntax errors:
+These steps ensure the codebase is clean, follows styling standards, and is free of syntax errors before git commit:
 
-#### Test 1: Windows Sandbox Isolation Testing
-To safely verify the interactive interface rendering and registry modification steps on a clean machine without affecting your physical environment:
-1. Make sure **Windows Sandbox** is enabled on your host machine.
-2. Copy `src/WindowsPrinterSharingFix.ps1` (or the compiled standalone `release/WindowsPrinterSharingFix.exe`).
-3. Open **Windows Sandbox** from your Start Menu.
-4. Paste the file directly onto the Sandbox desktop.
-5. Launch an elevated PowerShell console inside the Sandbox and run the script/executable to test interactions.
+#### Test 1: PSScriptAnalyzer Pre-Commit Verification
+To run standard security and styling rule scans on the script:
+```powershell
+# Install the analyzer module if missing
+Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+
+# Run analysis against the script
+Invoke-ScriptAnalyzer -Path src/WindowsPrinterSharingFix.ps1
+```
 
 #### Test 2: PowerShell AST Syntax Validation
-Before releasing code changes, you can programmatically verify that the script is free of compilation errors, unclosed brackets, or invalid syntax using the PowerShell parser:
+Verify that the script compiles successfully without unclosed brackets or parse errors:
 ```powershell
 $errors = $null
 [System.Management.Automation.Language.Parser]::ParseFile(
@@ -299,11 +301,30 @@ $errors = $null
     [ref]$errors
 )
 if ($errors) {
-    Write-Host "[-] Syntax errors detected in script:" -ForegroundColor Red
+    Write-Host "[-] Syntax errors detected:" -ForegroundColor Red
     $errors | ForEach-Object { Write-Host "Line $($_.Extent.StartLineNumber): $($_.Message)" -ForegroundColor Red }
 } else {
-    Write-Host "[SUCCESS] PowerShell script is syntax-clean (AST validation passed)." -ForegroundColor Green
+    Write-Host "[SUCCESS] PowerShell script AST validation passed." -ForegroundColor Green
 }
+```
+
+---
+
+### Isolated Execution Testing
+
+To safely run the script in a clean, sandboxed workspace without affecting your host system:
+
+#### Test 3: Dev Containers & WSL Isolation
+For lightweight container testing, configure a development container using WSL or Docker:
+1. Make sure Docker Desktop and the VS Code Dev Containers extension are installed.
+2. Create a `.devcontainer` configuration referencing a PowerShell image.
+3. Reopen the project folder inside the container to run isolated manual tests.
+
+#### Test 4: Session-Level Constrained Language Mode (CLM)
+To verify that the script behaves correctly under constrained system environments, run a test session under CLM:
+```powershell
+# Start a new PowerShell session in Constrained Language Mode
+Powershell.exe -ValidationLvl Path -LanguageMode ConstrainedLanguage
 ```
 
 ---
