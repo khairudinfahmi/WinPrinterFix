@@ -277,7 +277,7 @@ For comprehensive validation of the project's codebase, interactive functions, a
 
 ---
 
-### 🛠️ Project & Code Verification
+### Project & Code Verification
 
 These procedures verify the code integrity, syntax compilability, and interactive runtime of the main script in safe/isolated environments:
 
@@ -308,7 +308,7 @@ if ($errors) {
 
 ---
 
-### 📅 Scheduled Background Tasks Verification
+### Scheduled Background Tasks Verification
 
 Verify that the three scheduled tasks registered by the script function correctly on your host system by executing the following commands in an elevated PowerShell console (run as Administrator):
 
