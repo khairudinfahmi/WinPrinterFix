@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2] - 2026-06-16
+
+### Security & Reliability Fixes (Audit Verification)
+- **Fixed WQL Injection (Bug #1 & #2)**: Safely escaped single quotes in printer names for `Force-PrinterOnline` and `Manage-DefaultPrinter` to prevent WQL syntax crashes.
+- **Fixed Unhandled Cast Crash (Bug #3)**: Added robust try-catch blocks around `[int]` casts in `Switch-DriverMode` and `Force-DefaultPrinterRegistry` to handle non-numeric user inputs gracefully.
+- **Fixed HTML Rendering (Bug #4)**: Implemented `[System.Net.WebUtility]::HtmlEncode()` in `Generate-HtmlLog` to prevent log text containing HTML special characters (`<`, `>`, `&`) from breaking the report structure.
+- **Fixed Input Validation (Bug #5)**: Added an empty input guard to `Test-Connectivity` to prevent `Test-Connection` from crashing on blank IP targets.
+- **Fixed Incomplete Registry Backup (Bug #6)**: Expanded `Backup-Registry` to include `LanmanServer\Parameters` and `Control\Lsa` (total 5 hives) to cover all changes made by the ALLFIX automated process. Added individual exit code checks per export.
+- **Fixed Incomplete Registry Rollback (Bug #7)**: Upgraded `Rollback-Registry` to process all 5 backed-up hives. Implemented per-file validation checks so the rollback only claims success for actually restored files rather than failing silently on missing files.
+- **Fixed Credential Validation (Bug #8a)**: Enforced `cmdkey.exe` exit code checking with `-PassThru` inside `Add-Credential` to accurately report injection failures to the user.
+- **Fixed RunOnce Plaintext Credential Exposure (Bug #8b)**: Refactored `Inject-CrossUserCredentials`. Instead of storing the password as plaintext in the registry, it now writes a temporary `.cmd` script into the target profile. The script automatically executes `cmdkey` and self-deletes, significantly minimizing the exposure window.
+
+---
+
 ## [2.3.1] - 2026-06-14
 
 ### Fixed
