@@ -2742,7 +2742,7 @@ function Show-Help {
         '89' = @("EXIT SCRIPT", "Exits the tool.", "When troubleshooting is complete.")
     }
 
-    if ($Topic -eq "" -or $Topic -eq "menu") {
+    if ($Topic -eq "" -or $Topic.ToLower() -eq "menu" -or $Topic.ToLower() -eq "help") {
         cls
         Write-Host ""
         Write-Host "  ======================================================================================" -ForegroundColor Cyan
