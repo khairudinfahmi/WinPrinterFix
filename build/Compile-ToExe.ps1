@@ -31,7 +31,7 @@ $ps2exeParams = @{
     requireAdmin = $true
     title       = "Windows Printer Sharing Fix"
     description = "Windows Printer Sharing Fix Tool"
-    version     = "2.3.1.0"
+    version     = "2.3.2.0"
     company     = "khairudinfahmi"
     copyright   = "2026 khairudinfahmi"
 }

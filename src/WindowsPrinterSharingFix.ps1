@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Windows Printer Sharing Fix - v2.3.1
+    Windows Printer Sharing Fix - v2.3.2
     @KHAIRUDINFAHMI
 
 .PARAMETER nuke
@@ -12,7 +12,7 @@ param(
     [switch]$nuke
 )
 
-$script:version    = "2.3.1"
+$script:version    = "2.3.2"
 $script:backupDir  = "C:\WindowsPrinterSharingFixBackup"
 $script:silentNuke = $nuke
 
@@ -511,11 +511,26 @@ function Open-Firewall {
 function Backup-Registry {
     Write-Log "Executing Printer Registry Backup..." -Type "INFO"
     try {
+        $backupCount = 0
+        $backupTotal = 5
+
         & reg export "HKLM\SYSTEM\CurrentControlSet\Control\Print" "$script:backupDir\Print.reg" /y > $null 2>&1
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "Warning: Failed to backup Print registry." -Type "WARNING" }
+
         & reg export "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers" "$script:backupDir\PrintersPolicy.reg" /y > $null 2>&1
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "Warning: Failed to backup PrintersPolicy registry." -Type "WARNING" }
+
         & reg export "HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" "$script:backupDir\LanmanWorkstation.reg" /y > $null 2>&1
-        Write-Log "Backup successful." -Type "SUCCESS"
-        Write-Host "  [+] Critical registry nodes backed up to $script:backupDir." -ForegroundColor Green
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "Warning: Failed to backup LanmanWorkstation registry." -Type "WARNING" }
+
+        & reg export "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" "$script:backupDir\LanmanServer.reg" /y > $null 2>&1
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "Warning: Failed to backup LanmanServer registry." -Type "WARNING" }
+
+        & reg export "HKLM\SYSTEM\CurrentControlSet\Control\Lsa" "$script:backupDir\Lsa.reg" /y > $null 2>&1
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "Warning: Failed to backup LSA registry." -Type "WARNING" }
+
+        Write-Log "Backup completed ($backupCount/$backupTotal hives)." -Type "SUCCESS"
+        Write-Host "  [+] Critical registry nodes backed up to $script:backupDir ($backupCount/$backupTotal hives)." -ForegroundColor Green
     }
     catch {
         Write-Log "Failed to backup registry: $($_.Exception.Message)" -Type "ERROR"
@@ -614,9 +629,14 @@ function Add-Credential {
     }
 
     try {
-        Start-Process -FilePath "cmdkey.exe" -ArgumentList "/add:$ip", "/user:$usr", "/pass:`"$pass`"" -WindowStyle Hidden -Wait
-        Write-Log "Credential for $ip injected." -Type "SUCCESS"
-        Write-Host "  [+] Credentials successfully committed to Windows Vault." -ForegroundColor Green
+        $proc = Start-Process -FilePath "cmdkey.exe" -ArgumentList "/add:$ip", "/user:$usr", "/pass:`"$pass`"" -WindowStyle Hidden -Wait -PassThru
+        if ($proc.ExitCode -eq 0) {
+            Write-Log "Credential for $ip injected." -Type "SUCCESS"
+            Write-Host "  [+] Credentials successfully committed to Windows Vault." -ForegroundColor Green
+        } else {
+            Write-Log "cmdkey returned exit code $($proc.ExitCode) for $ip." -Type "ERROR"
+            Write-Host "  [-] Credential injection failed (exit code $($proc.ExitCode))." -ForegroundColor Red
+        }
         Start-Sleep -Seconds 1
     }
     catch {
@@ -657,7 +677,8 @@ function Force-PrinterOnline {
     $pname = Read-Host "  [?] Input exact Printer Name (e.g., EPSON L120 Series)"
     if ($pname) {
         try {
-            $prn = Get-CimInstance Win32_Printer -Filter "Name='$pname'" -ErrorAction Stop
+            $safeName = $pname -replace "'", "''"
+            $prn = Get-CimInstance Win32_Printer -Filter "Name='$safeName'" -ErrorAction Stop
             if ($prn) {
                 $prn.WorkOffline = $false
                 Set-CimInstance -InputObject $prn -ErrorAction Stop
@@ -682,11 +703,30 @@ function Open-Services {
 function Rollback-Registry {
     Write-Log "Restoring Registry from Backup..." -Type "INFO"
     if (Test-Path "$script:backupDir\Print.reg") {
-        & reg import "$script:backupDir\Print.reg" > $null 2>&1
-        & reg import "$script:backupDir\PrintersPolicy.reg" > $null 2>&1
-        & reg import "$script:backupDir\LanmanWorkstation.reg" > $null 2>&1
-        Write-Log "Registry rollback successful!" -Type "SUCCESS"
-        Write-Host "  [+] Network and printer configurations successfully reverted." -ForegroundColor Green
+        $restoreCount = 0
+        $restoreFiles = @(
+            @{ File = "Print.reg"; Label = "Print" },
+            @{ File = "PrintersPolicy.reg"; Label = "PrintersPolicy" },
+            @{ File = "LanmanWorkstation.reg"; Label = "LanmanWorkstation" },
+            @{ File = "LanmanServer.reg"; Label = "LanmanServer" },
+            @{ File = "Lsa.reg"; Label = "LSA" }
+        )
+        foreach ($entry in $restoreFiles) {
+            $filePath = Join-Path $script:backupDir $entry.File
+            if (Test-Path $filePath) {
+                & reg import $filePath > $null 2>&1
+                if ($LASTEXITCODE -eq 0) {
+                    $restoreCount++
+                } else {
+                    Write-Log "Warning: Failed to restore $($entry.Label)." -Type "WARNING"
+                    Write-Host "  [!] Failed to restore $($entry.Label)." -ForegroundColor Yellow
+                }
+            } else {
+                Write-Host "  [*] Skipped $($entry.Label) (no backup file found)." -ForegroundColor Cyan
+            }
+        }
+        Write-Log "Registry rollback completed ($restoreCount files restored)." -Type "SUCCESS"
+        Write-Host "  [+] Registry rollback completed ($restoreCount file(s) restored from $script:backupDir)." -ForegroundColor Green
     }
     else {
         Write-Host "  [-] Failure: Backup files not detected in $script:backupDir." -ForegroundColor Red
@@ -708,6 +748,8 @@ function Disable-IPv6 {
 function Generate-HtmlLog {
     Write-Log "Generating HTML Diagnostic Report..." -Type "INFO"
     $htmlFile = "$script:backupDir\Report.html"
+    $rawLog = Get-Content $script:logFile -Raw -ErrorAction SilentlyContinue
+    $encodedLog = [System.Net.WebUtility]::HtmlEncode($rawLog)
     $htmlContent = @"
 <html>
 <head>
@@ -720,8 +762,8 @@ function Generate-HtmlLog {
 </head>
 <body>
     <h1>Windows Printer Sharing Fix Diagnostics Report</h1>
-    <p>Generation Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Target OS: $script:productName</p>
-    <pre>$(Get-Content $script:logFile -Raw)</pre>
+    <p>Generation Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Target OS: $([System.Net.WebUtility]::HtmlEncode($script:productName))</p>
+    <pre>$encodedLog</pre>
 </body>
 </html>
 "@
@@ -735,6 +777,11 @@ function Test-Connectivity {
     Write-Host "                 PING & NETWORK PORT DIAGNOSTICS"
     Write-Host "  ======================================================================"
     $ip = Read-Host "  [?] Input Target IP/Hostname"
+    if (-not $ip -or $ip.Trim() -eq '') {
+        Write-Host "  [-] Cancelled - no input provided." -ForegroundColor Red
+        return
+    }
+    $ip = $ip.Trim()
     if (Test-Connection $ip -Count 1 -Quiet) {
         Write-Host "  [+] PING SUCCESS: Host $ip is reachable." -ForegroundColor Green
 
@@ -1180,7 +1227,8 @@ function Manage-DefaultPrinter {
     $prn = Read-Host "  [?] Input exact Printer Name to be set as Default"
     if ($prn) {
         try {
-            $wmi = Get-CimInstance Win32_Printer -Filter "Name='$prn'" -ErrorAction Stop
+            $safeName = $prn -replace "'", "''"
+            $wmi = Get-CimInstance Win32_Printer -Filter "Name='$safeName'" -ErrorAction Stop
             if ($wmi) {
                 Invoke-CimMethod -InputObject $wmi -MethodName SetDefaultPrinter | Out-Null
                 Write-Log "Default forcefully set to $prn" -Type "SUCCESS"
@@ -1433,7 +1481,8 @@ function Switch-DriverMode {
             $idx++
         }
         $sel = Read-Host "`n  [?] Select printer number"
-        $selIdx = [int]$sel - 1
+        $selIdx = -1
+        try { $selIdx = [int]$sel - 1 } catch { Write-Host "  [-] Invalid input." -ForegroundColor Red; return }
         if ($selIdx -lt 0 -or $selIdx -ge $printers.Count) { Write-Host "  [-] Invalid selection." -ForegroundColor Red; return }
         $target = $printers[$selIdx]
         $allDrivers = Get-PrinterDriver -ErrorAction SilentlyContinue
@@ -1452,7 +1501,8 @@ function Switch-DriverMode {
             foreach ($d in $altDrivers) { Write-Host "  [$idx] $($d.Name)" -ForegroundColor Green; $idx++ }
             $drvSel = Read-Host "  [?] Select replacement driver number (0 to cancel)"
             if ($drvSel -ne '0') {
-                $drvIdx = [int]$drvSel - 1
+                $drvIdx = -1
+                try { $drvIdx = [int]$drvSel - 1 } catch { Write-Host "  [-] Invalid input." -ForegroundColor Red; return }
                 if ($drvIdx -ge 0 -and $drvIdx -lt $altDrivers.Count) {
                     Set-Printer -Name $target.Name -DriverName $altDrivers[$drvIdx].Name -ErrorAction Stop
                     Write-Log "Driver switched: $($target.Name) -> $($altDrivers[$drvIdx].Name)" -Type "SUCCESS"
@@ -1905,9 +1955,14 @@ function Inject-CrossUserCredentials {
                 $LASTEXITCODE = 0; & reg load "HKU\$sid" $ntuser > $null 2>&1
                 if ($LASTEXITCODE -eq 0) {
                     try {
-                        # Inject RunOnce command to execute cmdkey inside user's session at logon
+                        # Create self-deleting cmd script with credential command
+                        $credScript = Join-Path $profilePath "PrinterCredFix.cmd"
+                        $cmdContent = "@echo off`r`ncmdkey.exe /add:$ip /user:$usr /pass:`"$pass`"`r`ndel `"%~f0`""
+                        Set-Content -Path $credScript -Value $cmdContent -Encoding ASCII -Force -ErrorAction Stop
+
+                        # Inject RunOnce to execute the script (script self-deletes after running)
                         $runOncePath = "Registry::HKEY_USERS\$sid\Software\Microsoft\Windows\CurrentVersion\RunOnce"
-                        Set-ItemProperty -Path $runOncePath -Name "PrinterCredFix" -Value "cmdkey.exe /add:$ip /user:$usr /pass:`"$pass`"" -Force -ErrorAction Stop
+                        Set-ItemProperty -Path $runOncePath -Name "PrinterCredFix" -Value "`"$credScript`"" -Force -ErrorAction Stop
                         Write-Log "Injected RunOnce credential command for $userName." -Type "SUCCESS"
                     } catch {
                         Write-Log "Failed to write RunOnce registry for ${userName}: $($_.Exception.Message)" -Type "ERROR"
@@ -1955,7 +2010,8 @@ function Force-DefaultPrinterRegistry {
             $idx++
         }
         $sel = Read-Host "`n  [?] Select printer number to force as default"
-        $selIdx = [int]$sel - 1
+        $selIdx = -1
+        try { $selIdx = [int]$sel - 1 } catch { Write-Host "  [-] Invalid input." -ForegroundColor Red; return }
         if ($selIdx -lt 0 -or $selIdx -ge $printers.Count) { Write-Host "  [-] Invalid selection." -ForegroundColor Red; return }
         $target = $printers[$selIdx]
         $deviceStr = "$($target.Name),winspool,$($target.PortName):"
@@ -2816,7 +2872,7 @@ function Show-Menu {
     Write-Host "$env:COMPUTERNAME " -ForegroundColor Green -NoNewline
     Write-Host "| OS: " -NoNewline
     Write-Host "$winName " -ForegroundColor Blue -NoNewline
-    Write-Host "| Windows Printer Sharing Fix v2.3.1" -ForegroundColor Green
+    Write-Host "| Windows Printer Sharing Fix v2.3.2" -ForegroundColor Green
 
     Write-Host " TIME ZONE: " -NoNewline
     Write-Host "$(Get-TimeZone | Select-Object -ExpandProperty Id) | $(Get-Date -Format 'HH.mm.ss')" -ForegroundColor Red

@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2] - 2026-06-16
+
+### Security & Reliability Fixes
+- **Printer Name Error Prevention**: Fixed a crash (`WQL syntax error`) that frequently occurred when printer names contained a single quote (e.g., "Bob's Office") in the `Force-PrinterOnline` and `Manage-DefaultPrinter` features.
+- **Typo Crash Protection**: Added automatic protections to the menu selection. Accidentally typing letters instead of numbers will no longer crash the script.
+- **HTML Report Fix**: Updated the logging system so that special characters (`<`, `>`, `&`) no longer break the HTML diagnostic report's layout.
+- **IP Input Validation**: Fixed an issue in `Test-Connectivity` that caused the tool to crash if you pressed Enter without typing an IP address.
+- **Stronger Registry Backup**: The Backup function is now much more comprehensive (backing up 5 full hives). This ensures all critical system changes are safely backed up before AllFix runs.
+- **Flawless Registry Rollback**: Tightened the registry restore system. The Rollback feature now validates each restored file individually, preventing it from falsely reporting success if a file fails to restore.
+- **Accurate Credential Validation**: The `Add-Credential` feature can now accurately detect and report failures from `cmdkey` instead of always displaying a "Success" message.
+- **Improved Password Security**: Revamped the `Inject-CrossUserCredentials` system. Passwords are no longer stored permanently as plaintext in the Registry. It now uses a single-use script that automatically deletes itself immediately after execution.
+
+---
+
 ## [2.3.1] - 2026-06-14
 
 ### Fixed
