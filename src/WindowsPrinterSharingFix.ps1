@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+ï»¿#Requires -Version 5.1
 <#
 .SYNOPSIS
-    Windows ´òÓ¡»ú¹²ÏíĞŞ¸´¹¤¾ß - v2.3.2 (ºº»¯°æ)
-    Ô­×÷Õß: @KHAIRUDINFAHMI
+    Windows æ‰“å°æœºå…±äº«ä¿®å¤å·¥å…· - v2.3.2 (æ±‰åŒ–ç‰ˆ)
+    åŸä½œè€…: @KHAIRUDINFAHMI
 
 .PARAMETER nuke
-    ¾²Ä¬È«×Ô¶¯ĞŞ¸´Ä£Ê½ - ×Ô¶¯Ö´ĞĞËùÓĞ 50 ÏîĞŞ¸´È»ºó×Ô¶¯ÖØÆô¡£
+    é™é»˜å…¨è‡ªåŠ¨ä¿®å¤æ¨¡å¼ - è‡ªåŠ¨æ‰§è¡Œæ‰€æœ‰ 50 é¡¹ä¿®å¤ç„¶åè‡ªåŠ¨é‡å¯ã€‚
 #>
 
 param(
@@ -90,7 +90,7 @@ function Write-Log {
     }
 
     if ($Type -eq "ERROR") {
-        Write-Host "  [´íÎó] $Message" -ForegroundColor Red
+        Write-Host "  [é”™è¯¯] $Message" -ForegroundColor Red
     }
     elseif ($Type -eq "WARNING") {
         Write-Host "  [!] $Message" -ForegroundColor Yellow
@@ -110,8 +110,8 @@ function Test-Administrator {
 }
 
 function Restart-Elevated {
-    Write-Host "`n  [!] ÇëÉÔºò... ÕıÔÚÇëÇó¹ÜÀíÔ±È¨ÏŞ¡£" -ForegroundColor Yellow
-    Write-Host "  [!] ÇëÔÚµ¯³öµÄ UAC (ÓÃ»§ÕË»§¿ØÖÆ) ÌáÊ¾¿òÖĞµã»÷ 'ÊÇ'¡£" -ForegroundColor Yellow
+    Write-Host "`n  [!] è¯·ç¨å€™... æ­£åœ¨è¯·æ±‚ç®¡ç†å‘˜æƒé™ã€‚" -ForegroundColor Yellow
+    Write-Host "  [!] è¯·åœ¨å¼¹å‡ºçš„ UAC (ç”¨æˆ·è´¦æˆ·æ§åˆ¶) æç¤ºæ¡†ä¸­ç‚¹å‡» 'æ˜¯'ã€‚" -ForegroundColor Yellow
 
     $isExe = $false
     $exePath = [System.Diagnostics.Process]::GetCurrentProcess().MainModule.FileName
@@ -138,13 +138,13 @@ function Initialize-Log {
     }
     try {
         Add-Content -Path $script:logFile -Value ("=" * 60) -Encoding UTF8 -ErrorAction SilentlyContinue
-        Add-Content -Path $script:logFile -Value "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Windows ´òÓ¡»ú¹²ÏíĞŞ¸´ÈÕÖ¾" -Encoding UTF8 -ErrorAction SilentlyContinue
+        Add-Content -Path $script:logFile -Value "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Windows æ‰“å°æœºå…±äº«ä¿®å¤æ—¥å¿—" -Encoding UTF8 -ErrorAction SilentlyContinue
 
         if ($script:isARM64) {
-            Add-Content -Path $script:logFile -Value "[¼ì²âµ½ ARM64 ¼Ü¹¹]" -Encoding UTF8
+            Add-Content -Path $script:logFile -Value "[æ£€æµ‹åˆ° ARM64 æ¶æ„]" -Encoding UTF8
         }
         if ($script:isServer) {
-            Add-Content -Path $script:logFile -Value "[¼ì²âµ½ Windows Server ÏµÍ³]" -Encoding UTF8
+            Add-Content -Path $script:logFile -Value "[æ£€æµ‹åˆ° Windows Server ç³»ç»Ÿ]" -Encoding UTF8
         }
     }
     catch {}
@@ -156,19 +156,19 @@ if (-not (Test-Administrator)) {
 Initialize-Log
 
 function Fix-RpcAuthn0x0000011b {
-    Write-Log "ÕıÔÚĞŞ²¹´íÎó 0x0000011b (RpcAuthnLevelPrivacy)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¿®è¡¥é”™è¯¯ 0x0000011b (RpcAuthnLevelPrivacy)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Print" -Name RpcAuthnLevelPrivacyEnabled -Value 0 -Type DWord -Force -ErrorAction Stop
-        Write-Log "×¢²á±í 0x0000011b ĞŞ²¹³É¹¦¡£" -Type "SUCCESS"
-        Write-Host "  [+] RPC Éí·İÑéÖ¤¼¶±ğÒşË½ÒªÇóÒÑ½ûÓÃ¡£" -ForegroundColor Green
+        Write-Log "æ³¨å†Œè¡¨ 0x0000011b ä¿®è¡¥æˆåŠŸã€‚" -Type "SUCCESS"
+        Write-Host "  [+] RPC èº«ä»½éªŒè¯çº§åˆ«éšç§è¦æ±‚å·²ç¦ç”¨ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ĞŞ²¹ 0x0000011b Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ä¿®è¡¥ 0x0000011b å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-Deep0x00000709 {
-    Write-Log "Éî¶ÈĞŞ¸´ 0x00000709 ¡ª ÕıÔÚÓ¦ÓÃËùÓĞ RPC ²ã²¹¶¡..." -Type "INFO"
+    Write-Log "æ·±åº¦ä¿®å¤ 0x00000709 â€” æ­£åœ¨åº”ç”¨æ‰€æœ‰ RPC å±‚è¡¥ä¸..." -Type "INFO"
     try {
 
         $rpcPath = "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC"
@@ -193,9 +193,9 @@ function Fix-Deep0x00000709 {
         $deviceKey = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Windows"
         $deviceVal = (Get-ItemProperty $deviceKey -ErrorAction SilentlyContinue).Device
         if ($deviceVal) {
-            Write-Host "  [!] ÕıÔÚÇå³ı¾ÉµÄ Device ¼üÖµ: $deviceVal" -ForegroundColor Yellow
+            Write-Host "  [!] æ­£åœ¨æ¸…é™¤æ—§çš„ Device é”®å€¼: $deviceVal" -ForegroundColor Yellow
             Remove-ItemProperty -Path $deviceKey -Name "Device" -ErrorAction SilentlyContinue
-            Write-Log "HKCU Device ¼üÖµÒÑÇå³ı: $deviceVal" -Type "SUCCESS"
+            Write-Log "HKCU Device é”®å€¼å·²æ¸…é™¤: $deviceVal" -Type "SUCCESS"
         }
 
         Set-ItemProperty -Path $deviceKey -Name LegacyDefaultPrinterMode -Value 1 -Type DWord -Force
@@ -210,17 +210,17 @@ function Fix-Deep0x00000709 {
 
         Restart-Service spooler -Force -ErrorAction SilentlyContinue
 
-        Write-Log "Éî¶ÈĞŞ¸´ 0x00000709 Íê³É¡£¸Ã²Ù×÷±ØĞëÔÚÖ÷»úÉÏÒ²Ö´ĞĞÒ»´Î¡£" -Type "SUCCESS"
-        Write-Host "  [+] ËùÓĞ 0x00000709 ²ãÃæµÄ²¹¶¡ÒÑÓ¦ÓÃ¡£" -ForegroundColor Green
-        Write-Host "  [!] ÖØÒªÌáÊ¾: ÇëÈ·±£ÔÚÖ÷»ú(Ö±Á¬´òÓ¡»úµÄÄÇÌ¨µçÄÔ)ÉÏÒ²ÔËĞĞ´Ë½Å±¾£¡" -ForegroundColor Red
+        Write-Log "æ·±åº¦ä¿®å¤ 0x00000709 å®Œæˆã€‚è¯¥æ“ä½œå¿…é¡»åœ¨ä¸»æœºä¸Šä¹Ÿæ‰§è¡Œä¸€æ¬¡ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] æ‰€æœ‰ 0x00000709 å±‚é¢çš„è¡¥ä¸å·²åº”ç”¨ã€‚" -ForegroundColor Green
+        Write-Host "  [!] é‡è¦æç¤º: è¯·ç¡®ä¿åœ¨ä¸»æœº(ç›´è¿æ‰“å°æœºçš„é‚£å°ç”µè„‘)ä¸Šä¹Ÿè¿è¡Œæ­¤è„šæœ¬ï¼" -ForegroundColor Red
     }
     catch {
-        Write-Log "Éî¶ÈĞŞ¸´ 0x00000709 Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "æ·±åº¦ä¿®å¤ 0x00000709 å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-CrossSignedDriverPolicy {
-    Write-Log "ÕıÔÚÈÆ¹ı KB5089549 ½»²æÇ©ÃûÇı¶¯³ÌĞòÇ¿ÖÆ²ßÂÔ (½ûÓÃÉóºËÄ£Ê½)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç»•è¿‡ KB5089549 äº¤å‰ç­¾åé©±åŠ¨ç¨‹åºå¼ºåˆ¶ç­–ç•¥ (ç¦ç”¨å®¡æ ¸æ¨¡å¼)..." -Type "INFO"
     try {
 
         $ciPath = "HKLM:\SYSTEM\CurrentControlSet\Control\CI\Config"
@@ -233,16 +233,16 @@ function Fix-CrossSignedDriverPolicy {
         if (-not (Test-Path $polPath)) { New-Item -Path $polPath -Force | Out-Null }
         Set-ItemProperty -Path $polPath `
             -Name VerifiedAndReputablePolicyState -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
-        Write-Log "½»²æÇ©ÃûÇı¶¯Ç¿ÖÆ²ßÂÔÒÑÉèÎª¿íÈİÄ£Ê½ (KB5089549 ĞŞ¸´)." -Type "SUCCESS"
-        Write-Host "  [+] KB5089549 Çı¶¯²ßÂÔÇ¿ÖÆÒÑÖĞºÍ¡£" -ForegroundColor Green
+        Write-Log "äº¤å‰ç­¾åé©±åŠ¨å¼ºåˆ¶ç­–ç•¥å·²è®¾ä¸ºå®½å®¹æ¨¡å¼ (KB5089549 ä¿®å¤)." -Type "SUCCESS"
+        Write-Host "  [+] KB5089549 é©±åŠ¨ç­–ç•¥å¼ºåˆ¶å·²ä¸­å’Œã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ĞŞ¸´½»²æÇ©ÃûÇı¶¯²ßÂÔÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ä¿®å¤äº¤å‰ç­¾åé©±åŠ¨ç­–ç•¥å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-HKCU-PrinterKeyPerms {
-    Write-Log "ÕıÔÚĞŞ¸´ HKCU Windows ×¢²á±í¼üÈ¨ÏŞ£¬ÒÔÔÊĞíĞ´Èë´òÓ¡»úÉè±¸..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¿®å¤ HKCU Windows æ³¨å†Œè¡¨é”®æƒé™ï¼Œä»¥å…è®¸å†™å…¥æ‰“å°æœºè®¾å¤‡..." -Type "INFO"
     try {
 
         $regKey = "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Windows"
@@ -257,16 +257,16 @@ function Fix-HKCU-PrinterKeyPerms {
         )
         $acl.SetAccessRule($rule)
         Set-Acl -Path $regKey -AclObject $acl -ErrorAction Stop
-        Write-Log "HKCU Windows ¼ü: ÒÑÊÚÓè Everyone (S-1-1-0) ÍêÈ«¿ØÖÆÈ¨ÏŞ¡£" -Type "SUCCESS"
-        Write-Host "  [+] ×¢²á±íÈ¨ÏŞĞŞ¸´ÒÑÓ¦ÓÃ (Everyone = ´òÓ¡»úÉè±¸¼üÍêÈ«¿ØÖÆ)¡£" -ForegroundColor Green
+        Write-Log "HKCU Windows é”®: å·²æˆäºˆ Everyone (S-1-1-0) å®Œå…¨æ§åˆ¶æƒé™ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] æ³¨å†Œè¡¨æƒé™ä¿®å¤å·²åº”ç”¨ (Everyone = æ‰“å°æœºè®¾å¤‡é”®å®Œå…¨æ§åˆ¶)ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ĞŞ¸´ HKCU ´òÓ¡»ú¼üÈ¨ÏŞÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ä¿®å¤ HKCU æ‰“å°æœºé”®æƒé™å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Set-PostPatchTuesdayTask {
-    Write-Log "ÕıÔÚ²¿Êğ Windows ¸üĞÂºóµÄ×Ô¶¯ÖØĞÂÓ¦ÓÃÈÎÎñ..." -Type "INFO"
+    Write-Log "æ­£åœ¨éƒ¨ç½² Windows æ›´æ–°åçš„è‡ªåŠ¨é‡æ–°åº”ç”¨ä»»åŠ¡..." -Type "INFO"
     try {
         if (-not (Test-Path $script:backupDir)) {
             New-Item -ItemType Directory -Path $script:backupDir -Force | Out-Null
@@ -289,29 +289,29 @@ Restart-Service spooler -Force -EA SilentlyContinue
         $cmd = "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$scriptPath`""
         
         & schtasks.exe /create /tn "PrinterFixPostUpdate" /tr $cmd /sc onstart /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
-        if ($LASTEXITCODE -ne 0) { throw "schtasks ONSTART ·µ»ØÍË³ö´úÂë $LASTEXITCODE" }
+        if ($LASTEXITCODE -ne 0) { throw "schtasks ONSTART è¿”å›é€€å‡ºä»£ç  $LASTEXITCODE" }
         
         & schtasks.exe /create /tn "PrinterFixDaily" /tr $cmd /sc daily /st 10:00 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
-        if ($LASTEXITCODE -ne 0) { throw "schtasks DAILY ·µ»ØÍË³ö´úÂë $LASTEXITCODE" }
+        if ($LASTEXITCODE -ne 0) { throw "schtasks DAILY è¿”å›é€€å‡ºä»£ç  $LASTEXITCODE" }
 
-        # ÅäÖÃÈÎÎñÔÚµç³Ø¹©µçÊ±ÔËĞĞ (±ÜÃâ±Ê¼Ç±¾ÉÏµÄ 0x800710E0 ´íÎó)
+        # é…ç½®ä»»åŠ¡åœ¨ç”µæ± ä¾›ç”µæ—¶è¿è¡Œ (é¿å…ç¬”è®°æœ¬ä¸Šçš„ 0x800710E0 é”™è¯¯)
         try {
             $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
             Set-ScheduledTask -TaskName "PrinterFixPostUpdate" -Settings $settings -ErrorAction SilentlyContinue | Out-Null
             Set-ScheduledTask -TaskName "PrinterFixDaily" -Settings $settings -ErrorAction SilentlyContinue | Out-Null
         } catch {}
 
-        Write-Log "¸üĞÂºó×Ô¶¯Ó¦ÓÃÈÎÎñ²¿Êğ³É¹¦¡£" -Type "SUCCESS"
-        Write-Host "  [+] ×Ô¶¯ÖØĞÂÓ¦ÓÃÈÎÎñÒÑ²¿Êğ¡£Ã¿´ÎÖØÆô»ò¸üĞÂºó»á×Ô¶¯Ó¦ÓÃ×¢²á±íĞŞ¸´¡£" -ForegroundColor Green
-        Write-Host "  [+] ÈÎÎñ: 'PrinterFixPostUpdate' & 'PrinterFixDaily' ÔÚÈÎÎñ¼Æ»®³ÌĞòÖĞ´¦ÓÚ»î¶¯×´Ì¬¡£" -ForegroundColor Cyan
+        Write-Log "æ›´æ–°åè‡ªåŠ¨åº”ç”¨ä»»åŠ¡éƒ¨ç½²æˆåŠŸã€‚" -Type "SUCCESS"
+        Write-Host "  [+] è‡ªåŠ¨é‡æ–°åº”ç”¨ä»»åŠ¡å·²éƒ¨ç½²ã€‚æ¯æ¬¡é‡å¯æˆ–æ›´æ–°åä¼šè‡ªåŠ¨åº”ç”¨æ³¨å†Œè¡¨ä¿®å¤ã€‚" -ForegroundColor Green
+        Write-Host "  [+] ä»»åŠ¡: 'PrinterFixPostUpdate' & 'PrinterFixDaily' åœ¨ä»»åŠ¡è®¡åˆ’ç¨‹åºä¸­å¤„äºæ´»åŠ¨çŠ¶æ€ã€‚" -ForegroundColor Cyan
     }
     catch {
-        Write-Log "²¿Êğ¸üĞÂºóÈÎÎñÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "éƒ¨ç½²æ›´æ–°åä»»åŠ¡å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-Discovery0x00000bc4 {
-    Write-Log "ÕıÔÚÈÆ¹ı´íÎó 0x00000bc4 (ÕÒ²»µ½´òÓ¡»ú)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç»•è¿‡é”™è¯¯ 0x00000bc4 (æ‰¾ä¸åˆ°æ‰“å°æœº)..." -Type "INFO"
     try {
         $path = "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\RPC"
         if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
@@ -321,16 +321,16 @@ function Fix-Discovery0x00000bc4 {
         Set-ItemProperty -Path $path -Name RpcProtocols -Value 0x7 -Type DWord -Force -ErrorAction Stop
         Set-ItemProperty -Path $path -Name ForceSetup -Value 1 -Type DWord -Force -ErrorAction Stop
 
-        Write-Log "ÒÑÇ¿ÖÆ RPC ÖÕ½áµãÓ³ÉäÆ÷Ê¹ÓÃÃüÃû¹ÜµÀºÍ TCP¡£" -Type "SUCCESS"
-        Write-Host "  [+] RPC ´òÓ¡»ú·¢ÏÖÒÑÃ÷È·Â·ÓÉÖÁÃüÃû¹ÜµÀ¡£" -ForegroundColor Green
+        Write-Log "å·²å¼ºåˆ¶ RPC ç»ˆç»“ç‚¹æ˜ å°„å™¨ä½¿ç”¨å‘½åç®¡é“å’Œ TCPã€‚" -Type "SUCCESS"
+        Write-Host "  [+] RPC æ‰“å°æœºå‘ç°å·²æ˜ç¡®è·¯ç”±è‡³å‘½åç®¡é“ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÈÆ¹ı 0x00000bc4 Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç»•è¿‡ 0x00000bc4 å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-NetworkServices {
-    Write-Log "ÕıÔÚĞŞ¸´´íÎó 0x80070035 (Æô¶¯ WSD, SMB, NetBIOS ·şÎñ)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¿®å¤é”™è¯¯ 0x80070035 (å¯åŠ¨ WSD, SMB, NetBIOS æœåŠ¡)..." -Type "INFO"
     $services = @("nlasvc", "Dnscache", "LanmanServer", "LanmanWorkstation", "lmhosts", "fdPHost", "FDResPub", "SSDPSRV", "upnphost", "WdiSystemHost", "WdiServiceHost")
 
     foreach ($svc in $services) {
@@ -339,39 +339,39 @@ function Fix-NetworkServices {
             Start-Service -Name $svc -ErrorAction SilentlyContinue
         }
         catch {
-            Write-Log "¾¯¸æ: ÎŞ·¨ÅäÖÃ·şÎñ $svc." -Type "WARNING"
+            Write-Log "è­¦å‘Š: æ— æ³•é…ç½®æœåŠ¡ $svc." -Type "WARNING"
         }
     }
-    Write-Log "ÍøÂçºÍ WSD ·şÎñÒÑÅäÖÃÎª×Ô¶¯Æô¶¯¡£" -Type "SUCCESS"
-    Write-Host "  [+] ËùÓĞÍøÂç·şÎñÕı³£ÔËĞĞ¡£" -ForegroundColor Green
+    Write-Log "ç½‘ç»œå’Œ WSD æœåŠ¡å·²é…ç½®ä¸ºè‡ªåŠ¨å¯åŠ¨ã€‚" -Type "SUCCESS"
+    Write-Host "  [+] æ‰€æœ‰ç½‘ç»œæœåŠ¡æ­£å¸¸è¿è¡Œã€‚" -ForegroundColor Green
 }
 
 function Fix-CSR {
-    Write-Log "ÕıÔÚ½ûÓÃ¿Í»§¶ËäÖÈ¾ (´íÎó 0x000006d1)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç¦ç”¨å®¢æˆ·ç«¯æ¸²æŸ“ (é”™è¯¯ 0x000006d1)..." -Type "INFO"
     try {
         $path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"
         if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
 
         Set-ItemProperty -Path $path -Name DisableClientSideRendering -Value 1 -Type DWord -Force -ErrorAction Stop
-        Write-Log "¿Í»§¶ËäÖÈ¾ (CSR) ³É¹¦½ûÓÃ¡£" -Type "SUCCESS"
-        Write-Host "  [+] ¿Í»§¶ËäÖÈ¾ÒÑ½ûÓÃ£»Ö÷»ú½«´¦Àí´òÓ¡ÈÎÎñ¡£" -ForegroundColor Green
+        Write-Log "å®¢æˆ·ç«¯æ¸²æŸ“ (CSR) æˆåŠŸç¦ç”¨ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] å®¢æˆ·ç«¯æ¸²æŸ“å·²ç¦ç”¨ï¼›ä¸»æœºå°†å¤„ç†æ‰“å°ä»»åŠ¡ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "½ûÓÃ¿Í»§¶ËäÖÈ¾Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç¦ç”¨å®¢æˆ·ç«¯æ¸²æŸ“å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Reset-Spooler {
-    Write-Log "ÕıÔÚÖÕÖ¹´òÓ¡ºóÌ¨´¦Àí³ÌĞò (Print Spooler) ²¢Çå¿Õ¶ÓÁĞ..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç»ˆæ­¢æ‰“å°åå°å¤„ç†ç¨‹åº (Print Spooler) å¹¶æ¸…ç©ºé˜Ÿåˆ—..." -Type "INFO"
     try {
         Stop-Service spooler -Force -ErrorAction SilentlyContinue
 
-        Write-Log "È·±£Ïà¹Ø½ø³Ì (splwow64, printfilter) ÒÑÖÕÖ¹..." -Type "INFO"
+        Write-Log "ç¡®ä¿ç›¸å…³è¿›ç¨‹ (splwow64, printfilter) å·²ç»ˆæ­¢..." -Type "INFO"
         Get-Process -Name "printfilterpipelinesvc", "splwow64" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 
         Start-Sleep -Seconds 1
 
-        Write-Log "ÕıÔÚÇå³ı¾ÉµÄ´òÓ¡¼ÙÍÑ»úÎÄ¼ş..." -Type "INFO"
+        Write-Log "æ­£åœ¨æ¸…é™¤æ—§çš„æ‰“å°å‡è„±æœºæ–‡ä»¶..." -Type "INFO"
         Remove-Item -Path "$env:SystemRoot\System32\Spool\Printers\*" -Force -Recurse -ErrorAction SilentlyContinue
 
         Start-Sleep -Seconds 1
@@ -379,16 +379,16 @@ function Reset-Spooler {
         Set-Service spooler -StartupType Automatic -ErrorAction SilentlyContinue
         Start-Service spooler -ErrorAction Stop
 
-        Write-Log "Spooler Ë¢ĞÂ³É¹¦£¡" -Type "SUCCESS"
-        Write-Host "  [+] ´òÓ¡·şÎñ»º´æÒÑ³É¹¦Çå¿Õ²¢ÉèÎª×Ô¶¯Æô¶¯ (Ó²ÖØÖÃ)¡£" -ForegroundColor Green
+        Write-Log "Spooler åˆ·æ–°æˆåŠŸï¼" -Type "SUCCESS"
+        Write-Host "  [+] æ‰“å°æœåŠ¡ç¼“å­˜å·²æˆåŠŸæ¸…ç©ºå¹¶è®¾ä¸ºè‡ªåŠ¨å¯åŠ¨ (ç¡¬é‡ç½®)ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÖØÖÃ Spooler Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "é‡ç½® Spooler å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Enable-SMBGuest {
-    Write-Log "ÕıÔÚÆôÓÃ SMB ·Ã¿Í·ÃÎÊ (LanmanWorkstation & LanmanServer)..." -Type "INFO"
+    Write-Log "æ­£åœ¨å¯ç”¨ SMB è®¿å®¢è®¿é—® (LanmanWorkstation & LanmanServer)..." -Type "INFO"
     try {
         $path = "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters"
         Set-ItemProperty -Path $path -Name AllowInsecureGuestAuth -Value 1 -Type DWord -Force -ErrorAction Stop
@@ -396,16 +396,16 @@ function Enable-SMBGuest {
         $pathServer = "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"
         Set-ItemProperty -Path $pathServer -Name EnableSecuritySignature -Value 0 -Type DWord -Force -ErrorAction Stop
 
-        Write-Log "·Ã¿Í·ÃÎÊÒÑÆôÓÃ¡£" -Type "SUCCESS"
-        Write-Host "  [+] SMB Æ¾Ö¤±£»¤ÒÑ½µµÍ£¬ÔÊĞí·Ã¿Í·ÃÎÊ¡£" -ForegroundColor Green
+        Write-Log "è®¿å®¢è®¿é—®å·²å¯ç”¨ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] SMB å‡­è¯ä¿æŠ¤å·²é™ä½ï¼Œå…è®¸è®¿å®¢è®¿é—®ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÆôÓÃ SMB ·Ã¿ÍÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "å¯ç”¨ SMB è®¿å®¢å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Reset-Network {
-    Write-Log "ÕıÔÚ½øĞĞÈ«ÃæÍøÂçÖØÖÃ (Çå¿Õ DNS, NetBIOS, Winsock)..." -Type "INFO"
+    Write-Log "æ­£åœ¨è¿›è¡Œå…¨é¢ç½‘ç»œé‡ç½® (æ¸…ç©º DNS, NetBIOS, Winsock)..." -Type "INFO"
     try {
         $LASTEXITCODE = 0; ipconfig /flushdns > $null 2>&1
         Clear-DnsClientCache -ErrorAction SilentlyContinue
@@ -413,16 +413,16 @@ function Reset-Network {
         $LASTEXITCODE = 0; & netsh int ip reset > $null 2>&1
         $LASTEXITCODE = 0; nbtstat -RR > $null 2>&1
 
-        Write-Log "ÍøÂçÅäÖÃÒÑÖØÖÃ¡£" -Type "SUCCESS"
-        Write-Host "  [+] ÍøÂç»º´æÒÑ³É¹¦Ë¢ĞÂ¡£" -ForegroundColor Green
+        Write-Log "ç½‘ç»œé…ç½®å·²é‡ç½®ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] ç½‘ç»œç¼“å­˜å·²æˆåŠŸåˆ·æ–°ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÍøÂçÖØÖÃÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç½‘ç»œé‡ç½®å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Set-NetworkPrivate {
-    Write-Log "ÕıÔÚ¸ü¸ÄÍøÂçÅäÖÃÎÄ¼ş (´Ó¹«ÓÃ¸ÄÎª×¨ÓÃ£¬Ìø¹ıÓò)..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ›´æ”¹ç½‘ç»œé…ç½®æ–‡ä»¶ (ä»å…¬ç”¨æ”¹ä¸ºä¸“ç”¨ï¼Œè·³è¿‡åŸŸ)..." -Type "INFO"
     try {
         $nla = Get-Service nlasvc -ErrorAction SilentlyContinue
         if ($nla -and $nla.Status -ne 'Running') { Start-Service nlasvc -ErrorAction SilentlyContinue }
@@ -436,7 +436,7 @@ function Set-NetworkPrivate {
                     $success = $true
                 }
                 catch {
-                    Write-Log "¸ü¸ÄÅäÖÃÎÄ¼ş $($profile.InterfaceAlias) Ê§°Ü¡£" -Type "WARNING"
+                    Write-Log "æ›´æ”¹é…ç½®æ–‡ä»¶ $($profile.InterfaceAlias) å¤±è´¥ã€‚" -Type "WARNING"
                 }
             }
             elseif ($profile.NetworkCategory -eq 'Private' -or $profile.NetworkCategory -eq 'DomainAuthenticated') {
@@ -445,32 +445,32 @@ function Set-NetworkPrivate {
         }
 
         if ($success) {
-            Write-Log "×¨ÓÃÍøÂçÅäÖÃÒÑ°²È«Ç¿ÖÆÖ´ĞĞ¡£" -Type "SUCCESS"
-            Write-Host "  [+] ÍøÂçÒÑÇ¿ÖÆÉèÎª×¨ÓÃ£»ÍøÂç·¢ÏÖÀ¹½ØÒÑ½â³ı¡£" -ForegroundColor Green
+            Write-Log "ä¸“ç”¨ç½‘ç»œé…ç½®å·²å®‰å…¨å¼ºåˆ¶æ‰§è¡Œã€‚" -Type "SUCCESS"
+            Write-Host "  [+] ç½‘ç»œå·²å¼ºåˆ¶è®¾ä¸ºä¸“ç”¨ï¼›ç½‘ç»œå‘ç°æ‹¦æˆªå·²è§£é™¤ã€‚" -ForegroundColor Green
         }
     }
     catch {
-        Write-Log "¸ü¸ÄÍøÂçÅäÖÃÎÄ¼şÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "æ›´æ”¹ç½‘ç»œé…ç½®æ–‡ä»¶å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Disable-PasswordSharing {
-    Write-Log "ÕıÔÚ½ûÓÃÃÜÂë±£»¤µÄ¹²Ïí..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç¦ç”¨å¯†ç ä¿æŠ¤çš„å…±äº«..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name limitblankpassworduse -Value 0 -Type DWord -Force -ErrorAction Stop
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name everyoneincludesanonymous -Value 1 -Type DWord -Force -ErrorAction Stop
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name restrictnullsessaccess -Value 0 -Type DWord -Force -ErrorAction Stop
 
-        Write-Log "ÃÜÂë±£»¤µÄ¹²ÏíÒÑ½ûÓÃ¡£" -Type "SUCCESS"
-        Write-Host "  [+] ÍøÂç¹²ÏíÒÑ¿ª·Å (Everyone = Anonymous)¡£" -ForegroundColor Green
+        Write-Log "å¯†ç ä¿æŠ¤çš„å…±äº«å·²ç¦ç”¨ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] ç½‘ç»œå…±äº«å·²å¼€æ”¾ (Everyone = Anonymous)ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "½ûÓÃÃÜÂë±£»¤¹²ÏíÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç¦ç”¨å¯†ç ä¿æŠ¤å…±äº«å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-NamedPipes {
-    Write-Log "ÕıÔÚ¼¤»î RPC ÃüÃû¹ÜµÀ..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ¿€æ´» RPC å‘½åç®¡é“..." -Type "INFO"
     try {
         $rpcPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC"
         if (-not (Test-Path $rpcPath)) { New-Item -Path $rpcPath -Force | Out-Null }
@@ -484,199 +484,199 @@ function Fix-NamedPipes {
         Set-ItemProperty -Path $printPath -Name RpcOverNamedPipes -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path $printPath -Name RpcOverTcp -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
 
-        Write-Log "ÃüÃû¹ÜµÀÒÑ¼¤»î¡£" -Type "SUCCESS"
-        Write-Host "  [+] RPC ÃüÃû¹ÜµÀ´òÓ¡´¦ÀíÂ·¾¶ÒÑ¾ÀÕı¡£" -ForegroundColor Green
+        Write-Log "å‘½åç®¡é“å·²æ¿€æ´»ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] RPC å‘½åç®¡é“æ‰“å°å¤„ç†è·¯å¾„å·²çº æ­£ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "¸ü¸ÄÃüÃû¹ÜµÀÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "æ›´æ”¹å‘½åç®¡é“å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Open-Firewall {
-    Write-Log "ÕıÔÚÎªÎÄ¼şºÍ´òÓ¡»ú¹²Ïí¿ªÆô·À»ğÇ½..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¸ºæ–‡ä»¶å’Œæ‰“å°æœºå…±äº«å¼€å¯é˜²ç«å¢™..." -Type "INFO"
     try {
         Enable-NetFirewallRule -Group "@FirewallAPI.dll,-28502" -ErrorAction SilentlyContinue | Out-Null
         Enable-NetFirewallRule -Group "@FirewallAPI.dll,-28509" -ErrorAction SilentlyContinue | Out-Null
-        Enable-NetFirewallRule -DisplayGroup "*ÎÄ¼ş*´òÓ¡»ú*" -ErrorAction SilentlyContinue | Out-Null
+        Enable-NetFirewallRule -DisplayGroup "*æ–‡ä»¶*æ‰“å°æœº*" -ErrorAction SilentlyContinue | Out-Null
         Enable-NetFirewallRule -DisplayGroup "*File*Printer*" -ErrorAction SilentlyContinue | Out-Null
-        Enable-NetFirewallRule -DisplayGroup "*ÍøÂç·¢ÏÖ*" -ErrorAction SilentlyContinue | Out-Null
+        Enable-NetFirewallRule -DisplayGroup "*ç½‘ç»œå‘ç°*" -ErrorAction SilentlyContinue | Out-Null
         Enable-NetFirewallRule -DisplayGroup "*Network Discovery*" -ErrorAction SilentlyContinue | Out-Null
 
-        Write-Log "·À»ğÇ½¶Ë¿ÚÒÑ¿ª·Å¡£" -Type "SUCCESS"
-        Write-Host "  [+] Windows Defender ·À»ğÇ½ÒÑÅäÖÃÎªÔÊĞí¹²Ïí¡£" -ForegroundColor Green
+        Write-Log "é˜²ç«å¢™ç«¯å£å·²å¼€æ”¾ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] Windows Defender é˜²ç«å¢™å·²é…ç½®ä¸ºå…è®¸å…±äº«ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "¸ü¸Ä·À»ğÇ½¹æÔòÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "æ›´æ”¹é˜²ç«å¢™è§„åˆ™å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Backup-Registry {
-    Write-Log "ÕıÔÚÖ´ĞĞ´òÓ¡»ú×¢²á±í±¸·İ..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰§è¡Œæ‰“å°æœºæ³¨å†Œè¡¨å¤‡ä»½..." -Type "INFO"
     try {
         $backupCount = 0
         $backupTotal = 5
 
         & reg export "HKLM\SYSTEM\CurrentControlSet\Control\Print" "$script:backupDir\Print.reg" /y > $null 2>&1
-        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "¾¯¸æ: ±¸·İ Print ×¢²á±íÊ§°Ü¡£" -Type "WARNING" }
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "è­¦å‘Š: å¤‡ä»½ Print æ³¨å†Œè¡¨å¤±è´¥ã€‚" -Type "WARNING" }
 
         & reg export "HKLM\SOFTWARE\Policies\Microsoft\Windows NT\Printers" "$script:backupDir\PrintersPolicy.reg" /y > $null 2>&1
-        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "¾¯¸æ: ±¸·İ PrintersPolicy ×¢²á±íÊ§°Ü¡£" -Type "WARNING" }
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "è­¦å‘Š: å¤‡ä»½ PrintersPolicy æ³¨å†Œè¡¨å¤±è´¥ã€‚" -Type "WARNING" }
 
         & reg export "HKLM\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" "$script:backupDir\LanmanWorkstation.reg" /y > $null 2>&1
-        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "¾¯¸æ: ±¸·İ LanmanWorkstation ×¢²á±íÊ§°Ü¡£" -Type "WARNING" }
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "è­¦å‘Š: å¤‡ä»½ LanmanWorkstation æ³¨å†Œè¡¨å¤±è´¥ã€‚" -Type "WARNING" }
 
         & reg export "HKLM\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" "$script:backupDir\LanmanServer.reg" /y > $null 2>&1
-        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "¾¯¸æ: ±¸·İ LanmanServer ×¢²á±íÊ§°Ü¡£" -Type "WARNING" }
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "è­¦å‘Š: å¤‡ä»½ LanmanServer æ³¨å†Œè¡¨å¤±è´¥ã€‚" -Type "WARNING" }
 
         & reg export "HKLM\SYSTEM\CurrentControlSet\Control\Lsa" "$script:backupDir\Lsa.reg" /y > $null 2>&1
-        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "¾¯¸æ: ±¸·İ LSA ×¢²á±íÊ§°Ü¡£" -Type "WARNING" }
+        if ($LASTEXITCODE -eq 0) { $backupCount++ } else { Write-Log "è­¦å‘Š: å¤‡ä»½ LSA æ³¨å†Œè¡¨å¤±è´¥ã€‚" -Type "WARNING" }
 
-        Write-Log "±¸·İÍê³É ($backupCount/$backupTotal ¸öÅäÖÃµ¥Ôª)¡£" -Type "SUCCESS"
-        Write-Host "  [+] ¹Ø¼ü×¢²á±í½ÚµãÒÑ±¸·İÖÁ $script:backupDir ($backupCount/$backupTotal ¸öÅäÖÃµ¥Ôª)¡£" -ForegroundColor Green
+        Write-Log "å¤‡ä»½å®Œæˆ ($backupCount/$backupTotal ä¸ªé…ç½®å•å…ƒ)ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] å…³é”®æ³¨å†Œè¡¨èŠ‚ç‚¹å·²å¤‡ä»½è‡³ $script:backupDir ($backupCount/$backupTotal ä¸ªé…ç½®å•å…ƒ)ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "±¸·İ×¢²á±íÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "å¤‡ä»½æ³¨å†Œè¡¨å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Check-RPC {
-    Write-Log "ÕıÔÚÉóºË RPC & DCOM ·şÎñ×´Ì¬..." -Type "INFO"
+    Write-Log "æ­£åœ¨å®¡æ ¸ RPC & DCOM æœåŠ¡çŠ¶æ€..." -Type "INFO"
     $rpc = Get-Service -Name RpcSs -ErrorAction SilentlyContinue
     if ($rpc.Status -ne 'Running') {
         Start-Service RpcSs -ErrorAction SilentlyContinue
-        Write-Host "  [*] RpcSs Î´ÔËĞĞ¡£ÕıÔÚÖØĞÂ³õÊ¼»¯¸Ã·şÎñ¡£" -ForegroundColor Yellow
+        Write-Host "  [*] RpcSs æœªè¿è¡Œã€‚æ­£åœ¨é‡æ–°åˆå§‹åŒ–è¯¥æœåŠ¡ã€‚" -ForegroundColor Yellow
     }
     else {
-        Write-Host "  [+] RpcSs Õı³£ÔËĞĞ¡£" -ForegroundColor Green
+        Write-Host "  [+] RpcSs æ­£å¸¸è¿è¡Œã€‚" -ForegroundColor Green
     }
 
     $dcom = Get-Service -Name DcomLaunch -ErrorAction SilentlyContinue
     if ($dcom.Status -ne 'Running') {
         Start-Service DcomLaunch -ErrorAction SilentlyContinue
-        Write-Host "  [*] DcomLaunch Î´ÔËĞĞ¡£ÕıÔÚÖØĞÂ³õÊ¼»¯¸Ã·şÎñ¡£" -ForegroundColor Yellow
+        Write-Host "  [*] DcomLaunch æœªè¿è¡Œã€‚æ­£åœ¨é‡æ–°åˆå§‹åŒ–è¯¥æœåŠ¡ã€‚" -ForegroundColor Yellow
     }
     else {
-        Write-Host "  [+] DcomLaunch Õı³£ÔËĞĞ¡£" -ForegroundColor Green
+        Write-Host "  [+] DcomLaunch æ­£å¸¸è¿è¡Œã€‚" -ForegroundColor Green
     }
 }
 
 function Run-SfcDism {
-    Write-Log "ÕıÔÚÆô¶¯ SFC ºÍ DISM ĞŞ¸´³ÌĞò..." -Type "INFO"
-    Write-Host "`n  [!] ÇëÉÔºò£¬´Ë²Ù×÷ĞèÒª½Ï³¤Ê±¼ä..." -ForegroundColor Yellow
-    Write-Host "  [*] [1/2] ÕıÔÚÖ´ĞĞ SFC Scannow (ÏµÍ³ÎÄ¼ş¼ì²é)..." -ForegroundColor Cyan
+    Write-Log "æ­£åœ¨å¯åŠ¨ SFC å’Œ DISM ä¿®å¤ç¨‹åº..." -Type "INFO"
+    Write-Host "`n  [!] è¯·ç¨å€™ï¼Œæ­¤æ“ä½œéœ€è¦è¾ƒé•¿æ—¶é—´..." -ForegroundColor Yellow
+    Write-Host "  [*] [1/2] æ­£åœ¨æ‰§è¡Œ SFC Scannow (ç³»ç»Ÿæ–‡ä»¶æ£€æŸ¥)..." -ForegroundColor Cyan
     & sfc /scannow
-    Write-Host "  [*] [2/2] ÕıÔÚÖ´ĞĞ DISM RestoreHealth (ÏµÍ³Ó³Ïñ»Ö¸´)..." -ForegroundColor Cyan
+    Write-Host "  [*] [2/2] æ­£åœ¨æ‰§è¡Œ DISM RestoreHealth (ç³»ç»Ÿæ˜ åƒæ¢å¤)..." -ForegroundColor Cyan
     & dism /online /cleanup-image /restorehealth
-    Write-Log "SFC & DISM ĞŞ¸´³ÌĞòÒÑÍê³É¡£" -Type "SUCCESS"
-    Write-Host "  [+] ²Ù×÷ÏµÍ³ÎÄ¼şÍêÕûĞÔÑéÖ¤ÒÑ½áÊø¡£" -ForegroundColor Green
+    Write-Log "SFC & DISM ä¿®å¤ç¨‹åºå·²å®Œæˆã€‚" -Type "SUCCESS"
+    Write-Host "  [+] æ“ä½œç³»ç»Ÿæ–‡ä»¶å®Œæ•´æ€§éªŒè¯å·²ç»“æŸã€‚" -ForegroundColor Green
 }
 
 function Manage-Drivers {
-    Write-Log "ÕıÔÚÆô¶¯´òÓ¡»ú·şÎñÆ÷ÊôĞÔ..." -Type "INFO"
-    Write-Host "  [!] ´òÓ¡·şÎñÆ÷ÊôĞÔ¶Ô»°¿òÒÑ´ò¿ª¡£ÇëÊÖ¶¯Çå³ıÒì³£Çı¶¯³ÌĞò¡£" -ForegroundColor Yellow
+    Write-Log "æ­£åœ¨å¯åŠ¨æ‰“å°æœºæœåŠ¡å™¨å±æ€§..." -Type "INFO"
+    Write-Host "  [!] æ‰“å°æœåŠ¡å™¨å±æ€§å¯¹è¯æ¡†å·²æ‰“å¼€ã€‚è¯·æ‰‹åŠ¨æ¸…é™¤å¼‚å¸¸é©±åŠ¨ç¨‹åºã€‚" -ForegroundColor Yellow
     Start-Process printui -ArgumentList '/s /t2' -NoNewWindow
 }
 
 function Reset-SpoolerPerm {
-    Write-Log "ÕıÔÚÖØÖÃ Spooler Ä¿Â¼ ACL È¨ÏŞ..." -Type "INFO"
+    Write-Log "æ­£åœ¨é‡ç½® Spooler ç›®å½• ACL æƒé™..." -Type "INFO"
     try {
         & icacls "$env:SystemRoot\System32\Spool\Printers" /reset /t /c /q > $null 2>&1
         & icacls "$env:SystemRoot\System32\Spool\Printers" /grant "*S-1-1-0:(OI)(CI)F" /T /C /Q > $null 2>&1
-        Write-Log "Spooler ACL ÖØÖÃÍê±Ï²¢ÊÚÓè Everyone (S-1-1-0) È¨ÏŞ¡£" -Type "SUCCESS"
-        Write-Host "  [+] ´òÓ¡¶ÓÁĞÄ¿Â¼È¨ÏŞÒÑÖØÖÃ£¬²¢ÊÚÓè Everyone ÍêÈ«¿ØÖÆ¡£" -ForegroundColor Green
+        Write-Log "Spooler ACL é‡ç½®å®Œæ¯•å¹¶æˆäºˆ Everyone (S-1-1-0) æƒé™ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] æ‰“å°é˜Ÿåˆ—ç›®å½•æƒé™å·²é‡ç½®ï¼Œå¹¶æˆäºˆ Everyone å®Œå…¨æ§åˆ¶ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÖØÖÃ ACL Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "é‡ç½® ACL å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Manage-SMB1 {
     Write-Host "`n  ======================================================================"
-    Write-Host "                 SMB 1.0 Ğ­Òé¹ÜÀí (¾É°æ)"
+    Write-Host "                 SMB 1.0 åè®®ç®¡ç† (æ—§ç‰ˆ)"
     Write-Host "  ======================================================================"
-    Write-Host "  [!] ¾¯¸æ: SMB 1.0 ·Ç³£ÈİÒ×ÊÜµ½ÀÕË÷Èí¼ş¹¥»÷¡£"
-    Write-Host "  [1] ÆôÓÃ SMB1 (½ô¼±Çé¿ö) `n  [2] ½ûÓÃ SMB1 (ÍÆ¼ö)"
-    $smbopt = Read-Host "  ÇëÑ¡Ôñ²Ù×÷ (1/2)"
+    Write-Host "  [!] è­¦å‘Š: SMB 1.0 éå¸¸å®¹æ˜“å—åˆ°å‹’ç´¢è½¯ä»¶æ”»å‡»ã€‚"
+    Write-Host "  [1] å¯ç”¨ SMB1 (ç´§æ€¥æƒ…å†µ) `n  [2] ç¦ç”¨ SMB1 (æ¨è)"
+    $smbopt = Read-Host "  è¯·é€‰æ‹©æ“ä½œ (1/2)"
     if ($smbopt -eq '1') {
         try {
-            Write-Log "ÕıÔÚÆôÓÃ SMB 1.0 Ğ­Òé..." -Type "INFO"
+            Write-Log "æ­£åœ¨å¯ç”¨ SMB 1.0 åè®®..." -Type "INFO"
             Enable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction Stop | Out-Null
-            Write-Host "  [+] SMB 1.0 Ğ­ÒéÒÑÆôÓÃ¡£" -ForegroundColor Green
+            Write-Host "  [+] SMB 1.0 åè®®å·²å¯ç”¨ã€‚" -ForegroundColor Green
         } catch {
-            Write-Log "ÆôÓÃ SMB1 Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "å¯ç”¨ SMB1 å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
     if ($smbopt -eq '2') {
         try {
-            Write-Log "ÕıÔÚ½ûÓÃ SMB 1.0 Ğ­Òé..." -Type "INFO"
+            Write-Log "æ­£åœ¨ç¦ç”¨ SMB 1.0 åè®®..." -Type "INFO"
             Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol -NoRestart -ErrorAction Stop | Out-Null
-            Write-Host "  [+] ³öÓÚ°²È«¿¼ÂÇ£¬SMB 1.0 Ğ­ÒéÒÑ³É¹¦½ûÓÃ¡£" -ForegroundColor Green
+            Write-Host "  [+] å‡ºäºå®‰å…¨è€ƒè™‘ï¼ŒSMB 1.0 åè®®å·²æˆåŠŸç¦ç”¨ã€‚" -ForegroundColor Green
         } catch {
-            Write-Log "½ûÓÃ SMB1 Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "ç¦ç”¨ SMB1 å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
 }
 
 function Add-Credential {
-    Write-Host "`n  ×¢Èë WINDOWS Æ¾¾İ"
-    $ip = Read-Host "  [?] Ä¿±ê IP/Ö÷»úÃû (ÀıÈç: 192.168.1.10)"
+    Write-Host "`n  æ³¨å…¥ WINDOWS å‡­æ®"
+    $ip = Read-Host "  [?] ç›®æ ‡ IP/ä¸»æœºå (ä¾‹å¦‚: 192.168.1.10)"
     if ($null -ne $ip) { $ip = $ip.Trim() }
-    $usr = Read-Host "  [?] Ä¿±êÖ÷»úÉÏµÄÓÃ»§Ãû"
+    $usr = Read-Host "  [?] ç›®æ ‡ä¸»æœºä¸Šçš„ç”¨æˆ·å"
     if ($null -ne $usr) { $usr = $usr.Trim() }
-    $pass = Read-Host "  [?] Ä¿±êÖ÷»úÉÏµÄÃÜÂë (Ã÷ÎÄÏÔÊ¾)"
+    $pass = Read-Host "  [?] ç›®æ ‡ä¸»æœºä¸Šçš„å¯†ç  (æ˜æ–‡æ˜¾ç¤º)"
 
     if (-not $ip -or -not $usr) {
-        Write-Host "  [-] ÒÑÈ¡Ïû - ±ØĞëÌá¹©Ä¿±êÖ÷»úºÍÓÃ»§Ãû¡£" -ForegroundColor Red
+        Write-Host "  [-] å·²å–æ¶ˆ - å¿…é¡»æä¾›ç›®æ ‡ä¸»æœºå’Œç”¨æˆ·åã€‚" -ForegroundColor Red
         return
     }
 
     try {
         $proc = Start-Process -FilePath "cmdkey.exe" -ArgumentList "/add:$ip", "/user:$usr", "/pass:`"$pass`"" -WindowStyle Hidden -Wait -PassThru
         if ($proc.ExitCode -eq 0) {
-            Write-Log "Ä¿±ê $ip µÄÆ¾¾İÒÑ×¢Èë¡£" -Type "SUCCESS"
-            Write-Host "  [+] Æ¾¾İÒÑ³É¹¦±£´æµ½ Windows Æ¾¾İ¹ÜÀíÆ÷¡£" -ForegroundColor Green
+            Write-Log "ç›®æ ‡ $ip çš„å‡­æ®å·²æ³¨å…¥ã€‚" -Type "SUCCESS"
+            Write-Host "  [+] å‡­æ®å·²æˆåŠŸä¿å­˜åˆ° Windows å‡­æ®ç®¡ç†å™¨ã€‚" -ForegroundColor Green
         } else {
-            Write-Log "cmdkey ×¢Èë $ip µÄÆ¾¾İÊ§°Ü£¬ÍË³ö´úÂë $($proc.ExitCode)¡£" -Type "ERROR"
-            Write-Host "  [-] Æ¾¾İ×¢ÈëÊ§°Ü (ÍË³ö´úÂë $($proc.ExitCode))¡£" -ForegroundColor Red
+            Write-Log "cmdkey æ³¨å…¥ $ip çš„å‡­æ®å¤±è´¥ï¼Œé€€å‡ºä»£ç  $($proc.ExitCode)ã€‚" -Type "ERROR"
+            Write-Host "  [-] å‡­æ®æ³¨å…¥å¤±è´¥ (é€€å‡ºä»£ç  $($proc.ExitCode))ã€‚" -ForegroundColor Red
         }
         Start-Sleep -Seconds 1
     }
     catch {
-        Write-Log "×¢ÈëÆ¾¾İÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "æ³¨å…¥å‡­æ®å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
     $pass = ""
 }
 
 function Clean-Credential {
-    Write-Host "`n  Çå³ıÊ§Ğ§µÄ WINDOWS Æ¾¾İ"
+    Write-Host "`n  æ¸…é™¤å¤±æ•ˆçš„ WINDOWS å‡­æ®"
     & cmdkey /list | Select-String "Target:" | ForEach-Object { Write-Host "  $_" -ForegroundColor Cyan }
-    $del = Read-Host "`n  [?] ÊäÈëÒªÇå³ıµÄÄ¿±ê (Áô¿ÕÒÔÈ¡Ïû)"
+    $del = Read-Host "`n  [?] è¾“å…¥è¦æ¸…é™¤çš„ç›®æ ‡ (ç•™ç©ºä»¥å–æ¶ˆ)"
     if ($del) {
         $del = $del -replace '(?i)^\s*Target:\s*', ''
         try {
             $proc = Start-Process -FilePath "cmdkey.exe" -ArgumentList "/delete:`"$del`"" -WindowStyle Hidden -Wait -PassThru
             if ($proc.ExitCode -eq 0) {
-                Write-Log "Æ¾¾İ $del ÒÑÇå³ı¡£" -Type "SUCCESS"
-                Write-Host "  [+] Æ¾¾İ $del ³É¹¦Çå³ı¡£" -ForegroundColor Green
+                Write-Log "å‡­æ® $del å·²æ¸…é™¤ã€‚" -Type "SUCCESS"
+                Write-Host "  [+] å‡­æ® $del æˆåŠŸæ¸…é™¤ã€‚" -ForegroundColor Green
             } else {
-                Write-Log "Çå³ıÆ¾¾İ $del Ê§°Ü¡£ÇëÑéÖ¤Ä¿±êÃû³Æ¡£" -Type "ERROR"
-                Write-Host "  [-] Çå³ıÆ¾¾İ $del Ê§°Ü¡£ÇëÑéÖ¤Ä¿±êÃû³Æ¡£" -ForegroundColor Red
+                Write-Log "æ¸…é™¤å‡­æ® $del å¤±è´¥ã€‚è¯·éªŒè¯ç›®æ ‡åç§°ã€‚" -Type "ERROR"
+                Write-Host "  [-] æ¸…é™¤å‡­æ® $del å¤±è´¥ã€‚è¯·éªŒè¯ç›®æ ‡åç§°ã€‚" -ForegroundColor Red
             }
         }
         catch {
-            Write-Log "Çå³ıÆ¾¾İÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "æ¸…é™¤å‡­æ®å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
 }
 
 function Start-Troubleshooter {
-    Write-Log "ÕıÔÚÖ´ĞĞÔ­Éú Windows ÒÉÄÑ½â´ğ..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰§è¡ŒåŸç”Ÿ Windows ç–‘éš¾è§£ç­”..." -Type "INFO"
     Start-Process msdt -ArgumentList '/id PrinterDiagnostic' -NoNewWindow
 }
 
 function Force-PrinterOnline {
-    Write-Log "ÕıÔÚÇ¿ÖÆ´òÓ¡»úÉèÎªÁª»ú×´Ì¬..." -Type "INFO"
-    $pname = Read-Host "  [?] ÊäÈëÍêÈ«Ò»ÖÂµÄ´òÓ¡»úÃû³Æ (ÀıÈç: EPSON L120 Series)"
+    Write-Log "æ­£åœ¨å¼ºåˆ¶æ‰“å°æœºè®¾ä¸ºè”æœºçŠ¶æ€..." -Type "INFO"
+    $pname = Read-Host "  [?] è¾“å…¥å®Œå…¨ä¸€è‡´çš„æ‰“å°æœºåç§° (ä¾‹å¦‚: EPSON L120 Series)"
     if ($pname) {
         try {
             $safeName = $pname -replace "'", "''"
@@ -684,26 +684,26 @@ function Force-PrinterOnline {
             if ($prn) {
                 $prn.WorkOffline = $false
                 Set-CimInstance -InputObject $prn -ErrorAction Stop
-                Write-Log "´òÓ¡»ú $pname ×´Ì¬ÒÑÇ¿ÖÆÁª»ú¡£" -Type "SUCCESS"
-                Write-Host "  [+] Ç¿ÖÆÁª»úÖ¸ÁîÒÑ·¢ËÍÖÁ $pname¡£" -ForegroundColor Green
+                Write-Log "æ‰“å°æœº $pname çŠ¶æ€å·²å¼ºåˆ¶è”æœºã€‚" -Type "SUCCESS"
+                Write-Host "  [+] å¼ºåˆ¶è”æœºæŒ‡ä»¤å·²å‘é€è‡³ $pnameã€‚" -ForegroundColor Green
             }
             else {
-                Write-Host "  [-] ±¾»úÎ´¼ì²âµ½´òÓ¡»ú $pname¡£" -ForegroundColor Red
+                Write-Host "  [-] æœ¬æœºæœªæ£€æµ‹åˆ°æ‰“å°æœº $pnameã€‚" -ForegroundColor Red
             }
         }
         catch {
-            Write-Log "Ç¿ÖÆ´òÓ¡»úÁª»ú×´Ì¬Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "å¼ºåˆ¶æ‰“å°æœºè”æœºçŠ¶æ€å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
 }
 
 function Open-Services {
-    Write-Log "ÕıÔÚÆô¶¯ Services.msc (·şÎñ¹ÜÀí)..." -Type "INFO"
+    Write-Log "æ­£åœ¨å¯åŠ¨ Services.msc (æœåŠ¡ç®¡ç†)..." -Type "INFO"
     Start-Process services.msc
 }
 
 function Rollback-Registry {
-    Write-Log "ÕıÔÚ´Ó±¸·İ»Ö¸´×¢²á±í..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä»å¤‡ä»½æ¢å¤æ³¨å†Œè¡¨..." -Type "INFO"
     if (Test-Path "$script:backupDir\Print.reg") {
         $restoreCount = 0
         $restoreFiles = @(
@@ -720,42 +720,42 @@ function Rollback-Registry {
                 if ($LASTEXITCODE -eq 0) {
                     $restoreCount++
                 } else {
-                    Write-Log "¾¯¸æ: »Ö¸´ $($entry.Label) Ê§°Ü¡£" -Type "WARNING"
-                    Write-Host "  [!] »Ö¸´ $($entry.Label) Ê§°Ü¡£" -ForegroundColor Yellow
+                    Write-Log "è­¦å‘Š: æ¢å¤ $($entry.Label) å¤±è´¥ã€‚" -Type "WARNING"
+                    Write-Host "  [!] æ¢å¤ $($entry.Label) å¤±è´¥ã€‚" -ForegroundColor Yellow
                 }
             } else {
-                Write-Host "  [*] Ìø¹ı $($entry.Label) (Î´ÕÒµ½±¸·İÎÄ¼ş)¡£" -ForegroundColor Cyan
+                Write-Host "  [*] è·³è¿‡ $($entry.Label) (æœªæ‰¾åˆ°å¤‡ä»½æ–‡ä»¶)ã€‚" -ForegroundColor Cyan
             }
         }
-        Write-Log "×¢²á±í»Ø¹öÍê³É (ÒÑ»Ö¸´ $restoreCount ¸öÎÄ¼ş)¡£" -Type "SUCCESS"
-        Write-Host "  [+] ×¢²á±í»Ø¹öÍê³É (´Ó $script:backupDir »Ö¸´ÁË $restoreCount ¸öÎÄ¼ş)¡£" -ForegroundColor Green
+        Write-Log "æ³¨å†Œè¡¨å›æ»šå®Œæˆ (å·²æ¢å¤ $restoreCount ä¸ªæ–‡ä»¶)ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] æ³¨å†Œè¡¨å›æ»šå®Œæˆ (ä» $script:backupDir æ¢å¤äº† $restoreCount ä¸ªæ–‡ä»¶)ã€‚" -ForegroundColor Green
     }
     else {
-        Write-Host "  [-] Ê§°Ü: ÔÚ $script:backupDir ÖĞÎ´¼ì²âµ½±¸·İÎÄ¼ş¡£" -ForegroundColor Red
+        Write-Host "  [-] å¤±è´¥: åœ¨ $script:backupDir ä¸­æœªæ£€æµ‹åˆ°å¤‡ä»½æ–‡ä»¶ã€‚" -ForegroundColor Red
     }
 }
 
 function Disable-IPv6 {
-    Write-Log "ÕıÔÚ½ûÓÃ IPv6 Ğ­ÒéÕ»..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç¦ç”¨ IPv6 åè®®æ ˆ..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters" -Name DisabledComponents -Value 0xffffffff -Type DWord -Force -ErrorAction Stop
-        Write-Log "IPv6 ÒÑÍ¨¹ı×¢²á±íĞŞ¸Ä½ûÓÃ¡£" -Type "SUCCESS"
-        Write-Host "  [+] IPv6 ÒÑ½ûÓÃÒÔ·ÀÖ¹Â·ÓÉ³åÍ»¡£ĞèÒªÖØÆôÏµÍ³ÉúĞ§¡£" -ForegroundColor Green
+        Write-Log "IPv6 å·²é€šè¿‡æ³¨å†Œè¡¨ä¿®æ”¹ç¦ç”¨ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] IPv6 å·²ç¦ç”¨ä»¥é˜²æ­¢è·¯ç”±å†²çªã€‚éœ€è¦é‡å¯ç³»ç»Ÿç”Ÿæ•ˆã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "½ûÓÃ IPv6 Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç¦ç”¨ IPv6 å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Generate-HtmlLog {
-    Write-Log "ÕıÔÚÉú³É HTML Õï¶Ï±¨¸æ..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç”Ÿæˆ HTML è¯Šæ–­æŠ¥å‘Š..." -Type "INFO"
     $htmlFile = "$script:backupDir\Report.html"
     $rawLog = Get-Content $script:logFile -Raw -ErrorAction SilentlyContinue
     $encodedLog = [System.Net.WebUtility]::HtmlEncode($rawLog)
     $htmlContent = @"
 <html>
 <head>
-    <title>Windows ´òÓ¡»ú¹²ÏíĞŞ¸´ - ÈÕÖ¾</title>
+    <title>Windows æ‰“å°æœºå…±äº«ä¿®å¤ - æ—¥å¿—</title>
     <style>
         body { font-family: 'Courier New', monospace; background: #0b0f19; color: #00ffcc; padding: 20px; }
         h1 { color: #ff0055; border-bottom: 2px solid #333; padding-bottom: 10px; }
@@ -763,118 +763,118 @@ function Generate-HtmlLog {
     </style>
 </head>
 <body>
-    <h1>Windows ´òÓ¡»ú¹²ÏíĞŞ¸´Õï¶Ï±¨¸æ</h1>
-    <p>Éú³ÉÊ±¼ä: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Ä¿±êÏµÍ³: $([System.Net.WebUtility]::HtmlEncode($script:productName))</p>
+    <h1>Windows æ‰“å°æœºå…±äº«ä¿®å¤è¯Šæ–­æŠ¥å‘Š</h1>
+    <p>ç”Ÿæˆæ—¶é—´: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | ç›®æ ‡ç³»ç»Ÿ: $([System.Net.WebUtility]::HtmlEncode($script:productName))</p>
     <pre>$encodedLog</pre>
 </body>
 </html>
 "@
     $htmlContent | Out-File $htmlFile -Encoding UTF8
-    Write-Log "HTML ÈÕÖ¾ÒÑÉú³ÉÖÁ $htmlFile." -Type "SUCCESS"
+    Write-Log "HTML æ—¥å¿—å·²ç”Ÿæˆè‡³ $htmlFile." -Type "SUCCESS"
     Start-Process $htmlFile
 }
 
 function Test-Connectivity {
     Write-Host "`n  ======================================================================"
-    Write-Host "                 PING & ÍøÂç¶Ë¿ÚÕï¶Ï"
+    Write-Host "                 PING & ç½‘ç»œç«¯å£è¯Šæ–­"
     Write-Host "  ======================================================================"
-    $ip = Read-Host "  [?] ÊäÈëÄ¿±ê IP/Ö÷»úÃû"
+    $ip = Read-Host "  [?] è¾“å…¥ç›®æ ‡ IP/ä¸»æœºå"
     if (-not $ip -or $ip.Trim() -eq '') {
-        Write-Host "  [-] ÒÑÈ¡Ïû - Î´Ìá¹©ÊäÈë¡£" -ForegroundColor Red
+        Write-Host "  [-] å·²å–æ¶ˆ - æœªæä¾›è¾“å…¥ã€‚" -ForegroundColor Red
         return
     }
     $ip = $ip.Trim()
     if (Test-Connection $ip -Count 1 -Quiet) {
-        Write-Host "  [+] PING ³É¹¦: Ö÷»ú $ip ¿ÉÒÔ·ÃÎÊ¡£" -ForegroundColor Green
+        Write-Host "  [+] PING æˆåŠŸ: ä¸»æœº $ip å¯ä»¥è®¿é—®ã€‚" -ForegroundColor Green
 
         $port445 = Test-NetConnection $ip -Port 445 -WarningAction SilentlyContinue
-        if ($port445.TcpTestSucceeded) { Write-Host "  [+] ¶Ë¿Ú 445 (SMB): ¿ªÆô" -ForegroundColor Green }
-        else { Write-Host "  [-] ¶Ë¿Ú 445 (SMB): ¹Ø±Õ (¿ÉÄÜ±»·À»ğÇ½À¹½Ø)" -ForegroundColor Red }
+        if ($port445.TcpTestSucceeded) { Write-Host "  [+] ç«¯å£ 445 (SMB): å¼€å¯" -ForegroundColor Green }
+        else { Write-Host "  [-] ç«¯å£ 445 (SMB): å…³é—­ (å¯èƒ½è¢«é˜²ç«å¢™æ‹¦æˆª)" -ForegroundColor Red }
 
         $port135 = Test-NetConnection $ip -Port 135 -WarningAction SilentlyContinue
-        if ($port135.TcpTestSucceeded) { Write-Host "  [+] ¶Ë¿Ú 135 (RPC): ¿ªÆô" -ForegroundColor Green }
-        else { Write-Host "  [-] ¶Ë¿Ú 135 (RPC): ¹Ø±Õ (¿ÉÄÜ±»·À»ğÇ½À¹½Ø)" -ForegroundColor Red }
+        if ($port135.TcpTestSucceeded) { Write-Host "  [+] ç«¯å£ 135 (RPC): å¼€å¯" -ForegroundColor Green }
+        else { Write-Host "  [-] ç«¯å£ 135 (RPC): å…³é—­ (å¯èƒ½è¢«é˜²ç«å¢™æ‹¦æˆª)" -ForegroundColor Red }
     }
     else {
-        Write-Host "  [-] PING Ê§°Ü: Ä¿±êÖ÷»ú²»¿É´ï»òÒÑÏÔÊ½×èÖ¹ ICMP (Ping)¡£" -ForegroundColor Red
-        Write-Host "  [*] ÕıÔÚ³¢ÊÔÖ±½Ó¼ì²é TCP ¶Ë¿Ú 445 ºÍ 135..." -ForegroundColor Cyan
+        Write-Host "  [-] PING å¤±è´¥: ç›®æ ‡ä¸»æœºä¸å¯è¾¾æˆ–å·²æ˜¾å¼é˜»æ­¢ ICMP (Ping)ã€‚" -ForegroundColor Red
+        Write-Host "  [*] æ­£åœ¨å°è¯•ç›´æ¥æ£€æŸ¥ TCP ç«¯å£ 445 å’Œ 135..." -ForegroundColor Cyan
         
         $port445 = Test-NetConnection $ip -Port 445 -WarningAction SilentlyContinue
-        if ($port445.TcpTestSucceeded) { Write-Host "  [+] ¶Ë¿Ú 445 (SMB): ¿ªÆô (Ping ±»×èÖ¹£¬µ«Ö÷»úÔÚÏß)" -ForegroundColor Green }
-        else { Write-Host "  [-] ¶Ë¿Ú 445 (SMB): ¹Ø±Õ" -ForegroundColor Red }
+        if ($port445.TcpTestSucceeded) { Write-Host "  [+] ç«¯å£ 445 (SMB): å¼€å¯ (Ping è¢«é˜»æ­¢ï¼Œä½†ä¸»æœºåœ¨çº¿)" -ForegroundColor Green }
+        else { Write-Host "  [-] ç«¯å£ 445 (SMB): å…³é—­" -ForegroundColor Red }
 
         $port135 = Test-NetConnection $ip -Port 135 -WarningAction SilentlyContinue
-        if ($port135.TcpTestSucceeded) { Write-Host "  [+] ¶Ë¿Ú 135 (RPC): ¿ªÆô (Ping ±»×èÖ¹£¬µ«Ö÷»úÔÚÏß)" -ForegroundColor Green }
-        else { Write-Host "  [-] ¶Ë¿Ú 135 (RPC): ¹Ø±Õ" -ForegroundColor Red }
+        if ($port135.TcpTestSucceeded) { Write-Host "  [+] ç«¯å£ 135 (RPC): å¼€å¯ (Ping è¢«é˜»æ­¢ï¼Œä½†ä¸»æœºåœ¨çº¿)" -ForegroundColor Green }
+        else { Write-Host "  [-] ç«¯å£ 135 (RPC): å…³é—­" -ForegroundColor Red }
     }
 }
 
 function Scan-RemotePrinter {
-    Write-Host "`n  Ô¶³ÌÍøÂç´òÓ¡»ú·¢ÏÖ"
-    $ip = Read-Host "  [?] Ä¿±ê IP/Ö÷»úÃû"
-    Write-Host "  [*] ÕıÔÚÉ¨Ãè $ip..." -ForegroundColor Cyan
+    Write-Host "`n  è¿œç¨‹ç½‘ç»œæ‰“å°æœºå‘ç°"
+    $ip = Read-Host "  [?] ç›®æ ‡ IP/ä¸»æœºå"
+    Write-Host "  [*] æ­£åœ¨æ‰«æ $ip..." -ForegroundColor Cyan
     try {
         $prn = Get-Printer -ComputerName $ip -ErrorAction Stop | Where-Object Shared -eq $true
         if ($prn) {
             $prn | Format-Table Name, ShareName, PortName, PrinterStatus -AutoSize
         }
         else {
-            Write-Host "  [-] ÔÚÄ¿±êÖ÷»úÉÏÎ´¼ì²âµ½¹²Ïí´òÓ¡»ú¡£" -ForegroundColor Yellow
+            Write-Host "  [-] åœ¨ç›®æ ‡ä¸»æœºä¸Šæœªæ£€æµ‹åˆ°å…±äº«æ‰“å°æœºã€‚" -ForegroundColor Yellow
         }
     }
     catch {
-        Write-Host "  [-] RPC Á¬½ÓÊ§°Ü¡£ÇëÑéÖ¤ÊÇ·ñ¾ßÓĞ·ÃÎÊ $ip µÄ¹ÜÀíÔ±/·Ã¿ÍÈ¨ÏŞ¡£" -ForegroundColor Red
+        Write-Host "  [-] RPC è¿æ¥å¤±è´¥ã€‚è¯·éªŒè¯æ˜¯å¦å…·æœ‰è®¿é—® $ip çš„ç®¡ç†å‘˜/è®¿å®¢æƒé™ã€‚" -ForegroundColor Red
     }
 }
 
 function Remote-SpoolerReset {
     Write-Host "`n  ======================================================================"
-    Write-Host "               Ô¶³Ì´òÓ¡ºóÌ¨´¦Àí·şÎñÖØÖÃ"
+    Write-Host "               è¿œç¨‹æ‰“å°åå°å¤„ç†æœåŠ¡é‡ç½®"
     Write-Host "  ======================================================================"
-    Write-Host "  [!] ĞèÒªÄ¿±ê»úÆ÷ÉÏµÄ¹ÜÀíÔ±È¨ÏŞ¡£" -ForegroundColor Yellow
-    $target = Read-Host "  [?] Ä¿±êÖ÷»úÃû»ò IP (ÀıÈç: 192.168.1.10)"
-    if (-not $target) { Write-Host "  [-] ÒÑÈ¡Ïû - ÊäÈëÎª¿Õ¡£" -ForegroundColor Red; return }
+    Write-Host "  [!] éœ€è¦ç›®æ ‡æœºå™¨ä¸Šçš„ç®¡ç†å‘˜æƒé™ã€‚" -ForegroundColor Yellow
+    $target = Read-Host "  [?] ç›®æ ‡ä¸»æœºåæˆ– IP (ä¾‹å¦‚: 192.168.1.10)"
+    if (-not $target) { Write-Host "  [-] å·²å–æ¶ˆ - è¾“å…¥ä¸ºç©ºã€‚" -ForegroundColor Red; return }
 
-    Write-Log "Ô¶³Ì Spooler ÖØÖÃÄ¿±ê: $target" -Type "INFO"
+    Write-Log "è¿œç¨‹ Spooler é‡ç½®ç›®æ ‡: $target" -Type "INFO"
     try {
-        Write-Host "  [*] ÕıÔÚ Ping $target..." -ForegroundColor Cyan
+        Write-Host "  [*] æ­£åœ¨ Ping $target..." -ForegroundColor Cyan
         if (-not (Test-Connection $target -Count 1 -Quiet)) {
-            Write-Host "  [-] Ö÷»ú²»¿É´ï¡£Çë¼ì²éÍøÂçºÍ·À»ğÇ½¡£" -ForegroundColor Red
-            Write-Log "Remote-SpoolerReset: $target ²»¿É´ï¡£" -Type "ERROR"
+            Write-Host "  [-] ä¸»æœºä¸å¯è¾¾ã€‚è¯·æ£€æŸ¥ç½‘ç»œå’Œé˜²ç«å¢™ã€‚" -ForegroundColor Red
+            Write-Log "Remote-SpoolerReset: $target ä¸å¯è¾¾ã€‚" -Type "ERROR"
             return
         }
-        Write-Host "  [+] Ö÷»ú¿É·ÃÎÊ¡£" -ForegroundColor Green
+        Write-Host "  [+] ä¸»æœºå¯è®¿é—®ã€‚" -ForegroundColor Green
 
-        Write-Host "  [*] ÕıÔÚÍ£Ö¹ $target ÉÏµÄ Spooler ·şÎñ..." -ForegroundColor Cyan
+        Write-Host "  [*] æ­£åœ¨åœæ­¢ $target ä¸Šçš„ Spooler æœåŠ¡..." -ForegroundColor Cyan
         $stopResult = & sc.exe \\$target stop spooler 2>&1
         Start-Sleep -Seconds 3
 
-        Write-Host "  [*] ÕıÔÚÆô¶¯ $target ÉÏµÄ Spooler ·şÎñ..." -ForegroundColor Cyan
+        Write-Host "  [*] æ­£åœ¨å¯åŠ¨ $target ä¸Šçš„ Spooler æœåŠ¡..." -ForegroundColor Cyan
         $startResult = & sc.exe \\$target start spooler 2>&1
         Start-Sleep -Seconds 2
 
         $queryResult = & sc.exe \\$target query spooler 2>&1
         if ($queryResult -match 'RUNNING') {
-            Write-Log "$target ÉÏµÄÔ¶³Ì Spooler ÖØÆô³É¹¦¡£" -Type "SUCCESS"
-            Write-Host "  [+] $target ÉÏµÄ Print Spooler ·şÎñÕıÔÚÔËĞĞ (RUNNING)¡£" -ForegroundColor Green
+            Write-Log "$target ä¸Šçš„è¿œç¨‹ Spooler é‡å¯æˆåŠŸã€‚" -Type "SUCCESS"
+            Write-Host "  [+] $target ä¸Šçš„ Print Spooler æœåŠ¡æ­£åœ¨è¿è¡Œ (RUNNING)ã€‚" -ForegroundColor Green
         } else {
-            Write-Log "$target ÉÏµÄÔ¶³Ì Spooler ¿ÉÄÜÎ´ÖØÆô£¬ÇëÊÖ¶¯¼ì²é¡£" -Type "WARNING"
-            Write-Host "  [!] Spooler ×´Ì¬²»È·¶¨¡£ÇëÔÚ $target ÉÏÊÖ¶¯ÑéÖ¤¡£" -ForegroundColor Yellow
+            Write-Log "$target ä¸Šçš„è¿œç¨‹ Spooler å¯èƒ½æœªé‡å¯ï¼Œè¯·æ‰‹åŠ¨æ£€æŸ¥ã€‚" -Type "WARNING"
+            Write-Host "  [!] Spooler çŠ¶æ€ä¸ç¡®å®šã€‚è¯·åœ¨ $target ä¸Šæ‰‹åŠ¨éªŒè¯ã€‚" -ForegroundColor Yellow
         }
     } catch {
-        Write-Log "Remote-SpoolerReset Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
-        Write-Host "  [-] Ê§°Ü: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "  [!] ÇëÈ·±£¿ÉÒÔ·ÃÎÊ¹ÜÀíÔ±¹²Ïí (C$) ÒÔ¼° RPC (¶Ë¿Ú 135/445)¡£" -ForegroundColor Yellow
+        Write-Log "Remote-SpoolerReset å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
+        Write-Host "  [-] å¤±è´¥: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "  [!] è¯·ç¡®ä¿å¯ä»¥è®¿é—®ç®¡ç†å‘˜å…±äº« (C$) ä»¥åŠ RPC (ç«¯å£ 135/445)ã€‚" -ForegroundColor Yellow
     }
 }
 
 function Log-Manager {
-    Write-Log "ÕıÔÚÊ¹ÓÃ¼ÇÊÂ±¾´ò¿ªÈÕÖ¾¹ÜÀíÆ÷..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä½¿ç”¨è®°äº‹æœ¬æ‰“å¼€æ—¥å¿—ç®¡ç†å™¨..." -Type "INFO"
     notepad $script:logFile
 }
 
 function Print-Migration {
-    Write-Log "ÕıÔÚÆô¶¯ PrintBRM Ç¨ÒÆ¹¤¾ß..." -Type "INFO"
+    Write-Log "æ­£åœ¨å¯åŠ¨ PrintBRM è¿ç§»å·¥å…·..." -Type "INFO"
 
     $brmPath = Join-Path $env:SystemRoot "System32\spool\tools\PrintBrm.exe"
     if (-not (Test-Path $brmPath)) {
@@ -882,67 +882,67 @@ function Print-Migration {
     }
 
     if (-not (Test-Path $brmPath)) {
-        Write-Log "±¾»úÎ´¼ì²âµ½ PrintBrm.exe¡£" -Type "ERROR"
-        Write-Host "  [-] ´íÎó: ´òÓ¡Ç¨ÒÆ¹¤¾ß (PrintBrm.exe) È±Ê§¡£" -ForegroundColor Red
-        Write-Host "  [!] ×¢Òâ: ´Ë¹¦ÄÜÍ¨³£½öÔÚ Windows Pro(×¨Òµ°æ)¡¢ÆóÒµ°æ»ò·şÎñÆ÷°æÖĞ¿ÉÓÃ¡£" -ForegroundColor Yellow
-        Write-Host "  [!] ÄãµÄÏµÍ³: $script:productName" -ForegroundColor Cyan
+        Write-Log "æœ¬æœºæœªæ£€æµ‹åˆ° PrintBrm.exeã€‚" -Type "ERROR"
+        Write-Host "  [-] é”™è¯¯: æ‰“å°è¿ç§»å·¥å…· (PrintBrm.exe) ç¼ºå¤±ã€‚" -ForegroundColor Red
+        Write-Host "  [!] æ³¨æ„: æ­¤åŠŸèƒ½é€šå¸¸ä»…åœ¨ Windows Pro(ä¸“ä¸šç‰ˆ)ã€ä¼ä¸šç‰ˆæˆ–æœåŠ¡å™¨ç‰ˆä¸­å¯ç”¨ã€‚" -ForegroundColor Yellow
+        Write-Host "  [!] ä½ çš„ç³»ç»Ÿ: $script:productName" -ForegroundColor Cyan
         return
     }
 
-    Write-Host "  [*] ÕıÔÚ³£×¤ÃüÁîÌáÊ¾·û´°¿ÚÖĞÆô¶¯ PrintBrm.exe..." -ForegroundColor Cyan
+    Write-Host "  [*] æ­£åœ¨å¸¸é©»å‘½ä»¤æç¤ºç¬¦çª—å£ä¸­å¯åŠ¨ PrintBrm.exe..." -ForegroundColor Cyan
     try {
-        Start-Process cmd.exe -ArgumentList "/k cd /d `"$env:SystemRoot\System32\spool\tools\`" & title ´òÓ¡»úÇ¨ÒÆ¹¤¾ß (PrintBRM) & `"$brmPath`" /?"
-        Write-Log "PrintBRM ÌáÊ¾·ûÆô¶¯³É¹¦¡£" -Type "SUCCESS"
-        Write-Host "  [+] PrintBRM ÌáÊ¾·ûÆô¶¯³É¹¦£¡ÄãÏÖÔÚ¿ÉÒÔÖ´ĞĞ±¸·İ/»Ö¸´ÃüÁî¡£" -ForegroundColor Green
+        Start-Process cmd.exe -ArgumentList "/k cd /d `"$env:SystemRoot\System32\spool\tools\`" & title æ‰“å°æœºè¿ç§»å·¥å…· (PrintBRM) & `"$brmPath`" /?"
+        Write-Log "PrintBRM æç¤ºç¬¦å¯åŠ¨æˆåŠŸã€‚" -Type "SUCCESS"
+        Write-Host "  [+] PrintBRM æç¤ºç¬¦å¯åŠ¨æˆåŠŸï¼ä½ ç°åœ¨å¯ä»¥æ‰§è¡Œå¤‡ä»½/æ¢å¤å‘½ä»¤ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Æô¶¯ PrintBRM Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "å¯åŠ¨ PrintBRM å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Uninstall-Printer {
-    $up = Read-Host "`n  [?] ÊäÈëÒªÇ¿ÖÆĞ¶ÔØµÄ´òÓ¡»úÈ·ÇĞÃû³Æ"
+    $up = Read-Host "`n  [?] è¾“å…¥è¦å¼ºåˆ¶å¸è½½çš„æ‰“å°æœºç¡®åˆ‡åç§°"
     if ($up) {
         try {
             & printui.exe /dl /n "$up"
-            Write-Log "ÒÑÏò $up ·¢³öĞ¶ÔØÖ¸Áî¡£" -Type "SUCCESS"
+            Write-Log "å·²å‘ $up å‘å‡ºå¸è½½æŒ‡ä»¤ã€‚" -Type "SUCCESS"
         }
         catch {
-            Write-Log "Ğ¶ÔØ $up Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "å¸è½½ $up å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
 }
 
 function Fix-SMBSigning {
-    Write-Log "ÕıÔÚ½ûÓÃ SMB Ç©ÃûÇ¿ÖÆÒªÇó¼°Ë«ÏòÉí·İÑéÖ¤..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç¦ç”¨ SMB ç­¾åå¼ºåˆ¶è¦æ±‚åŠåŒå‘èº«ä»½éªŒè¯..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name RequireSecuritySignature -Value 0 -Type DWord -Force -ErrorAction Stop
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name RequireSecuritySignature -Value 0 -Type DWord -Force -ErrorAction Stop
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name RequireMutualAuthentication -Value 0 -Type DWord -Force -ErrorAction Stop
 
-        Write-Log "SMB Ç©ÃûÇ¿ÖÆÒªÇóÒÑ½ûÓÃ¡£" -Type "SUCCESS"
-        Write-Host "  [+] SMB Ç©ÃûÒªÇóÒÑÈ¡Ïû (½â¾öÁË Win 11 Á¬½Ó NAS/¾É°æÉè±¸µÄÎÊÌâ)¡£" -ForegroundColor Green
+        Write-Log "SMB ç­¾åå¼ºåˆ¶è¦æ±‚å·²ç¦ç”¨ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] SMB ç­¾åè¦æ±‚å·²å–æ¶ˆ (è§£å†³äº† Win 11 è¿æ¥ NAS/æ—§ç‰ˆè®¾å¤‡çš„é—®é¢˜)ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "½ûÓÃ SMB Ç©ÃûÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç¦ç”¨ SMB ç­¾åå¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-UWPPrinting {
-    Write-Log "ÕıÔÚÎª Microsoft Edge ÈÆ¹ı UWP AppContainer ¸ôÀë..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¸º Microsoft Edge ç»•è¿‡ UWP AppContainer éš”ç¦»..." -Type "INFO"
     try {
         & CheckNetIsolation.exe LoopbackExempt -a -n="microsoft.windows.printdialog_cw5n1h2txyewy" 2>&1 | Out-Null
         & CheckNetIsolation.exe LoopbackExempt -a -n="microsoft.microsoftedge_8wekyb3d8bbwe" 2>&1 | Out-Null
-        Write-Log "»·»Ø¸ôÀëÒÑÏÔÊ½ÊÚÈ¨»íÃâ¡£" -Type "SUCCESS"
-        Write-Host "  [+] Edge ºÍ UWP Ó¦ÓÃµÄ»·»ØÍøÂç¸ôÀëÒÑ½ûÓÃ¡£" -ForegroundColor Green
+        Write-Log "ç¯å›éš”ç¦»å·²æ˜¾å¼æˆæƒè±å…ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] Edge å’Œ UWP åº”ç”¨çš„ç¯å›ç½‘ç»œéš”ç¦»å·²ç¦ç”¨ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÈÆ¹ı UWP »·»ØÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç»•è¿‡ UWP ç¯å›å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-mDNS {
-    Write-Log "ÕıÔÚÆôÓÃ mDNS & LLMNR ·¢ÏÖĞ­Òé..." -Type "INFO"
+    Write-Log "æ­£åœ¨å¯ç”¨ mDNS & LLMNR å‘ç°åè®®..." -Type "INFO"
     try {
         $dnsPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient"
         if (-not (Test-Path $dnsPath)) { New-Item -Path $dnsPath -Force | Out-Null }
@@ -952,15 +952,15 @@ function Fix-mDNS {
         if (-not (Test-Path $dnsCachePath)) { New-Item -Path $dnsCachePath -Force | Out-Null }
         Set-ItemProperty -Path $dnsCachePath -Name EnableMDNS -Value 1 -Type DWord -Force -ErrorAction Stop
 
-        Write-Log "mDNS/LLMNR Ğ­ÒéÒÑ¼¤»î¡£" -Type "SUCCESS"
+        Write-Log "mDNS/LLMNR åè®®å·²æ¿€æ´»ã€‚" -Type "SUCCESS"
     }
     catch {
-        Write-Log "ÅäÖÃ mDNS Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "é…ç½® mDNS å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-WSDFirewall {
-    Write-Log "È·±£ÎŞÌõ¼ş¿ª·Å WSD (3702) & mDNS (5353) ¶Ë¿Ú..." -Type "INFO"
+    Write-Log "ç¡®ä¿æ— æ¡ä»¶å¼€æ”¾ WSD (3702) & mDNS (5353) ç«¯å£..." -Type "INFO"
     try {
         Remove-NetFirewallRule -DisplayName "Printer WSD (UDP 3702 Inbound)" -ErrorAction SilentlyContinue | Out-Null
         Remove-NetFirewallRule -DisplayName "Printer mDNS (UDP 5353 Inbound)" -ErrorAction SilentlyContinue | Out-Null
@@ -968,59 +968,59 @@ function Fix-WSDFirewall {
         New-NetFirewallRule -DisplayName "Printer WSD (UDP 3702 Inbound)" -Direction Inbound -Action Allow -Protocol UDP -LocalPort 3702 -ErrorAction SilentlyContinue | Out-Null
         New-NetFirewallRule -DisplayName "Printer mDNS (UDP 5353 Inbound)" -Direction Inbound -Action Allow -Protocol UDP -LocalPort 5353 -ErrorAction SilentlyContinue | Out-Null
 
-        Write-Log "WSD ·À»ğÇ½¹æÔò¸üĞÂ³É¹¦¡£" -Type "SUCCESS"
-        Write-Host "  [+] UDP ¶Ë¿Ú 3702 ºÍ 5353 ÒÑÔÚ·À»ğÇ½ÖĞÏÔÊ½¿ªÆô¡£" -ForegroundColor Green
+        Write-Log "WSD é˜²ç«å¢™è§„åˆ™æ›´æ–°æˆåŠŸã€‚" -Type "SUCCESS"
+        Write-Host "  [+] UDP ç«¯å£ 3702 å’Œ 5353 å·²åœ¨é˜²ç«å¢™ä¸­æ˜¾å¼å¼€å¯ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÅäÖÃ WSD ·À»ğÇ½Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "é…ç½® WSD é˜²ç«å¢™å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-LSAProtection {
-    Write-Log "ÕıÔÚ½µ¼¶ LSA ±£»¤ (ÔÊĞíÊ¹ÓÃ¾É°æÉí·İÑéÖ¤)..." -Type "INFO"
+    Write-Log "æ­£åœ¨é™çº§ LSA ä¿æŠ¤ (å…è®¸ä½¿ç”¨æ—§ç‰ˆèº«ä»½éªŒè¯)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name RunAsPPL -Value 0 -Type DWord -Force -ErrorAction Stop
-        Write-Log "LSA PPL Ç¿ÖÆÒÑ½µ¼¶¡£" -Type "SUCCESS"
-        Write-Host "  [+] LSA ±£»¤ÒÑ½µ¼¶¡£" -ForegroundColor Green
+        Write-Log "LSA PPL å¼ºåˆ¶å·²é™çº§ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] LSA ä¿æŠ¤å·²é™çº§ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Fix-LSAProtection Ê§°Ü: $($_.Exception.Message) (¿ÉÄÜÊÜ°²È«Æô¶¯»ò Credential Guard Ç¿ÖÆ±£»¤)" -Type "WARNING"
-        Write-Host "  [!] ÎŞ·¨¸ü¸Ä LSA ±£»¤ - ÏµÍ³°²È«²ßÂÔ¿ÉÄÜÕıÔÚÇ¿ÖÆÖ´ĞĞËü¡£" -ForegroundColor Yellow
+        Write-Log "Fix-LSAProtection å¤±è´¥: $($_.Exception.Message) (å¯èƒ½å—å®‰å…¨å¯åŠ¨æˆ– Credential Guard å¼ºåˆ¶ä¿æŠ¤)" -Type "WARNING"
+        Write-Host "  [!] æ— æ³•æ›´æ”¹ LSA ä¿æŠ¤ - ç³»ç»Ÿå®‰å…¨ç­–ç•¥å¯èƒ½æ­£åœ¨å¼ºåˆ¶æ‰§è¡Œå®ƒã€‚" -ForegroundColor Yellow
     }
 }
 
 function Fix-SAC {
-    Write-Log "ÕıÔÚÎª´òÓ¡Çı¶¯×¢ÈëÈÆ¹ıÖÇÄÜÓ¦ÓÃ¿ØÖÆ (SAC)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¸ºæ‰“å°é©±åŠ¨æ³¨å…¥ç»•è¿‡æ™ºèƒ½åº”ç”¨æ§åˆ¶ (SAC)..." -Type "INFO"
     try {
         $path = "HKLM:\SYSTEM\CurrentControlSet\Control\CI\Policy"
         if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
         Set-ItemProperty -Path $path -Name VerifiedAndReputablePolicyState -Value 0 -Type DWord -Force -ErrorAction Stop
-        Write-Log "SAC ÈÆ¹ıÒÑ²¿Êğ¡£" -Type "SUCCESS"
-        Write-Host "  [+] ÖÇÄÜÓ¦ÓÃ¿ØÖÆ (SAC) ÒÑ±»ÈÆ¹ı¡£" -ForegroundColor Green
+        Write-Log "SAC ç»•è¿‡å·²éƒ¨ç½²ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] æ™ºèƒ½åº”ç”¨æ§åˆ¶ (SAC) å·²è¢«ç»•è¿‡ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Fix-SAC Ê§°Ü: $($_.Exception.Message) (SAC ¿ÉÄÜÊÜ UEFI/²ßÂÔÇ¿ÖÆ±£»¤)" -Type "WARNING"
-        Write-Host "  [!] SAC ÈÆ¹ıÊ§°Ü - ¿ÉÄÜĞèÒªÔÚ Windows °²È«ÖĞĞÄÉèÖÃÖĞÊÖ¶¯¸ü¸Ä¡£" -ForegroundColor Yellow
+        Write-Log "Fix-SAC å¤±è´¥: $($_.Exception.Message) (SAC å¯èƒ½å— UEFI/ç­–ç•¥å¼ºåˆ¶ä¿æŠ¤)" -Type "WARNING"
+        Write-Host "  [!] SAC ç»•è¿‡å¤±è´¥ - å¯èƒ½éœ€è¦åœ¨ Windows å®‰å…¨ä¸­å¿ƒè®¾ç½®ä¸­æ‰‹åŠ¨æ›´æ”¹ã€‚" -ForegroundColor Yellow
     }
 }
 
 function Fix-IPPSharing {
-    Write-Log "ÕıÔÚÆôÓÃ»¥ÁªÍø´òÓ¡Ğ­Òé (IPP & Mopria)..." -Type "INFO"
+    Write-Log "æ­£åœ¨å¯ç”¨äº’è”ç½‘æ‰“å°åè®® (IPP & Mopria)..." -Type "INFO"
     try {
         if ((Get-WindowsOptionalFeature -Online -FeatureName "Printing-Foundation-Features" -ErrorAction SilentlyContinue)) {
             Enable-WindowsOptionalFeature -Online -FeatureName "Printing-Foundation-Features" -NoRestart -ErrorAction SilentlyContinue | Out-Null
             Enable-WindowsOptionalFeature -Online -FeatureName "Printing-Foundation-InternetPrinting-Client" -NoRestart -ErrorAction SilentlyContinue | Out-Null
-            Write-Log "IPP »ù´¡¹¦ÄÜ³É¹¦ÆôÓÃ¡£" -Type "SUCCESS"
-            Write-Host "  [+] Windows ¹¦ÄÜ: »¥ÁªÍø´òÓ¡¿Í»§¶ËÒÑ¼¤»î¡£" -ForegroundColor Green
+            Write-Log "IPP åŸºç¡€åŠŸèƒ½æˆåŠŸå¯ç”¨ã€‚" -Type "SUCCESS"
+            Write-Host "  [+] Windows åŠŸèƒ½: äº’è”ç½‘æ‰“å°å®¢æˆ·ç«¯å·²æ¿€æ´»ã€‚" -ForegroundColor Green
         }
     }
     catch {
-        Write-Log "ÅäÖÃ IPP Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "é…ç½® IPP å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-AdvancedPointAndPrint {
-    Write-Log "ÕıÔÚÈÆ¹ı¸ß¼¶µãºÍ´òÓ¡(Point & Print)²ßÂÔ¼° PrintNightmare ÏŞÖÆ..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç»•è¿‡é«˜çº§ç‚¹å’Œæ‰“å°(Point & Print)ç­–ç•¥åŠ PrintNightmare é™åˆ¶..." -Type "INFO"
     try {
         $path = "HKLM:\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint"
         if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
@@ -1037,67 +1037,67 @@ function Fix-AdvancedPointAndPrint {
         if (-not (Test-Path $pkgPath)) { New-Item -Path $pkgPath -Force | Out-Null }
         Set-ItemProperty -Path $pkgPath -Name PackagePointAndPrintServerList -Value 1 -Type DWord -Force -ErrorAction Stop
 
-        Write-Log "Point & Print ÏŞÖÆ¼° PrintNightmare Â©¶´²¹¶¡ÏŞÖÆ±»ÍêÈ«ÈÆ¹ı¡£" -Type "SUCCESS"
-        Write-Host "  [+] PrintNightmare ÌáÈ¨ÏŞÖÆ¼°µãºÍ´òÓ¡(Point & Print)²ßÂÔÒÑ±»ÍêÈ«ÖĞºÍ¡£" -ForegroundColor Green
+        Write-Log "Point & Print é™åˆ¶åŠ PrintNightmare æ¼æ´è¡¥ä¸é™åˆ¶è¢«å®Œå…¨ç»•è¿‡ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] PrintNightmare ææƒé™åˆ¶åŠç‚¹å’Œæ‰“å°(Point & Print)ç­–ç•¥å·²è¢«å®Œå…¨ä¸­å’Œã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Fix-AdvancedPointAndPrint Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
-        Write-Host "  [-] Point & Print ÈÆ¹ıÊ§°Ü: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Log "Fix-AdvancedPointAndPrint å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
+        Write-Host "  [-] Point & Print ç»•è¿‡å¤±è´¥: $($_.Exception.Message)" -ForegroundColor Red
     }
 }
 
 function Fix-ModernSMB {
-    Write-Log "ÕıÔÚÇ¿ÖÆÊ¹ÓÃÏÖ´ú SMB2/SMB3 ·şÎñÆ÷ÅäÖÃ..." -Type "INFO"
+    Write-Log "æ­£åœ¨å¼ºåˆ¶ä½¿ç”¨ç°ä»£ SMB2/SMB3 æœåŠ¡å™¨é…ç½®..." -Type "INFO"
     try {
         Set-SmbServerConfiguration -EnableSMB2Protocol $true -Force -ErrorAction Stop
-        Write-Log "SMB2/SMB3 ÍØÆËÒÑ¼¤»î¡£" -Type "SUCCESS"
-        Write-Host "  [+] SMB2/SMB3 Ğ­ÒéÒÑÇ¿ÖÆÖ´ĞĞ¡£" -ForegroundColor Green
+        Write-Log "SMB2/SMB3 æ‹“æ‰‘å·²æ¿€æ´»ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] SMB2/SMB3 åè®®å·²å¼ºåˆ¶æ‰§è¡Œã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Fix-ModernSMB Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "Fix-ModernSMB å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Set-SpoolerRecovery {
-    Write-Log "ÕıÔÚÅäÖÃ Print Spooler ±ÀÀ£ºó×Ô¶¯ÖØÆô»Ö¸´»úÖÆ..." -Type "INFO"
+    Write-Log "æ­£åœ¨é…ç½® Print Spooler å´©æºƒåè‡ªåŠ¨é‡å¯æ¢å¤æœºåˆ¶..." -Type "INFO"
     try {
         & sc.exe failure spooler reset= 0 actions= restart/60000/restart/60000/restart/60000 > $null 2>&1
-        if ($LASTEXITCODE -ne 0) { throw "sc.exe ·µ»ØÍË³ö´úÂë $LASTEXITCODE" }
-        Write-Log "Spooler ×Ô¶¯ÖØÆô»Ö¸´ÒÑÅäÖÃ¡£" -Type "SUCCESS"
-        Write-Host "  [+] ÒÑÅäÖÃÔÚ Spooler ±ÀÀ£ºó×Ô¶¯ÖØĞÂÆô¶¯·şÎñ¡£" -ForegroundColor Green
+        if ($LASTEXITCODE -ne 0) { throw "sc.exe è¿”å›é€€å‡ºä»£ç  $LASTEXITCODE" }
+        Write-Log "Spooler è‡ªåŠ¨é‡å¯æ¢å¤å·²é…ç½®ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] å·²é…ç½®åœ¨ Spooler å´©æºƒåè‡ªåŠ¨é‡æ–°å¯åŠ¨æœåŠ¡ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Set-SpoolerRecovery Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "Set-SpoolerRecovery å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-UACTokenFilter {
-    Write-Log "ÕıÔÚÈÆ¹ı UAC ÍøÂç¹ÜÀíÔ±ÏŞÖÆ..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç»•è¿‡ UAC ç½‘ç»œç®¡ç†å‘˜é™åˆ¶..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name LocalAccountTokenFilterPolicy -Value 1 -Type DWord -Force -ErrorAction Stop
-        Write-Log "LocalAccountTokenFilterPolicy ÉèÎª 1¡£" -Type "SUCCESS"
-        Write-Host "  [+] UAC ÍøÂç¹ÜÀíÁîÅÆ¹ıÂËÒÑ½ûÓÃ¡£" -ForegroundColor Green
+        Write-Log "LocalAccountTokenFilterPolicy è®¾ä¸º 1ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] UAC ç½‘ç»œç®¡ç†ä»¤ç‰Œè¿‡æ»¤å·²ç¦ç”¨ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Fix-UACTokenFilter Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "Fix-UACTokenFilter å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Reset-SpoolerDependency {
-    Write-Log "ÕıÔÚÇå³ıµÚÈı·½ Spooler ÒÀÀµÏî..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ¸…é™¤ç¬¬ä¸‰æ–¹ Spooler ä¾èµ–é¡¹..." -Type "INFO"
     try {
         & sc.exe config spooler depend= RPCSS/http > $null 2>&1
-        if ($LASTEXITCODE -ne 0) { throw "sc.exe ·µ»ØÍË³ö´úÂë $LASTEXITCODE" }
-        Write-Log "ÒÀÀµÏîÒÑÃ÷È·ÖØÖÃÎª RPCSS ºÍ http (¼æÈİ IPP)¡£" -Type "SUCCESS"
-        Write-Host "  [+] Print Spooler ÒÀÀµÏîÒÑĞŞ¸´£¬ÒÔÖ§³ÖÏÖ´ú IPP¡£" -ForegroundColor Green
+        if ($LASTEXITCODE -ne 0) { throw "sc.exe è¿”å›é€€å‡ºä»£ç  $LASTEXITCODE" }
+        Write-Log "ä¾èµ–é¡¹å·²æ˜ç¡®é‡ç½®ä¸º RPCSS å’Œ http (å…¼å®¹ IPP)ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] Print Spooler ä¾èµ–é¡¹å·²ä¿®å¤ï¼Œä»¥æ”¯æŒç°ä»£ IPPã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Reset-SpoolerDependency Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "Reset-SpoolerDependency å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-ProviderOrder {
-    Write-Log "ÕıÔÚÍøÂçÌá¹©ÉÌË³ĞòÖĞÓÅÏÈ¿¼ÂÇ SMB (LanmanWorkstation)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç½‘ç»œæä¾›å•†é¡ºåºä¸­ä¼˜å…ˆè€ƒè™‘ SMB (LanmanWorkstation)..." -Type "INFO"
     try {
         $path = "HKLM:\SYSTEM\CurrentControlSet\Control\NetworkProvider\Order"
         $currentOrder = (Get-ItemProperty -Path $path -Name ProviderOrder -ErrorAction SilentlyContinue).ProviderOrder
@@ -1105,276 +1105,276 @@ function Fix-ProviderOrder {
             $arr = $currentOrder -split "," | Where-Object { $_ -ne "LanmanWorkstation" -and $_ -ne "" }
             $newOrder = "LanmanWorkstation," + ($arr -join ",")
             Set-ItemProperty -Path $path -Name ProviderOrder -Value $newOrder -Force
-            Write-Log "ÒÑÏÔÊ½¸üĞÂÌá¹©ÉÌË³Ğò (LanmanWorkstation ÓÅÏÈ¼¶×î¸ß)¡£" -Type "SUCCESS"
+            Write-Log "å·²æ˜¾å¼æ›´æ–°æä¾›å•†é¡ºåº (LanmanWorkstation ä¼˜å…ˆçº§æœ€é«˜)ã€‚" -Type "SUCCESS"
         }
     }
     catch {
-        Write-Log "ÅäÖÃ Provider Order Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "é…ç½® Provider Order å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-NTLMv2 {
-    Write-Log "ÕıÔÚÇ¿ÖÆÊ¹ÓÃÑÏ¸ñµÄ NTLMv2 ÏìÓ¦ (¼æÈİ NAS ºÍ Samba)..." -Type "INFO"
+    Write-Log "æ­£åœ¨å¼ºåˆ¶ä½¿ç”¨ä¸¥æ ¼çš„ NTLMv2 å“åº” (å…¼å®¹ NAS å’Œ Samba)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LmCompatibilityLevel -Value 3 -Type DWord -Force -ErrorAction Stop
-        Write-Log "ÑÏ¸ñµÄ NTLMv2 Ç¿ÖÆÖ´ĞĞ³É¹¦¡£" -Type "SUCCESS"
-        Write-Host "  [+] ÒÑÇ¿ÖÆÖ´ĞĞÑÏ¸ñµÄ NTLMv2 (¼¶±ğ 3)¡£ NAS ¼°ÏÖ´ú´òÓ¡»ú¹²ÏíÁ¬½ÓÒÑ»ñµÃ±£ÕÏ¡£" -ForegroundColor Green
+        Write-Log "ä¸¥æ ¼çš„ NTLMv2 å¼ºåˆ¶æ‰§è¡ŒæˆåŠŸã€‚" -Type "SUCCESS"
+        Write-Host "  [+] å·²å¼ºåˆ¶æ‰§è¡Œä¸¥æ ¼çš„ NTLMv2 (çº§åˆ« 3)ã€‚ NAS åŠç°ä»£æ‰“å°æœºå…±äº«è¿æ¥å·²è·å¾—ä¿éšœã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Fix-NTLMv2 Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "Fix-NTLMv2 å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-Network0x00000040 {
-    Write-Log "ÕıÔÚĞŞ¸´´íÎó 0x00000040 (ÍøÂçÁ¬½Ó³¬Ê±)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¿®å¤é”™è¯¯ 0x00000040 (ç½‘ç»œè¿æ¥è¶…æ—¶)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters" -Name KeepConn -Value 65535 -Type DWord -Force -ErrorAction Stop
         try {
             Restart-Service LanmanWorkstation -Force -ErrorAction Stop
         } catch {
-            Write-Log "LanmanWorkstation ÖØÆô³¬Ê±»òÊ§°Ü: $($_.Exception.Message)" -Type "WARNING"
+            Write-Log "LanmanWorkstation é‡å¯è¶…æ—¶æˆ–å¤±è´¥: $($_.Exception.Message)" -Type "WARNING"
         }
-        Write-Log "KeepConn SMB ÒÑÉèÎª×î´óÖµ¡£" -Type "SUCCESS"
-        Write-Host "  [+] SMB Á¬½Ó³¬Ê±ÒÑÑÓ³¤£¬ÒÔ»º½â²»ÎÈ¶¨µÄÍøÂçÍØÆËÎÊÌâ¡£" -ForegroundColor Green
+        Write-Log "KeepConn SMB å·²è®¾ä¸ºæœ€å¤§å€¼ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] SMB è¿æ¥è¶…æ—¶å·²å»¶é•¿ï¼Œä»¥ç¼“è§£ä¸ç¨³å®šçš„ç½‘ç»œæ‹“æ‰‘é—®é¢˜ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ĞŞ¸´ 0x00000040 Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ä¿®å¤ 0x00000040 å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-DriverCopy0x00000002 {
-    Write-Log "ÕıÔÚĞŞ¸´´íÎó 0x00000002 (Driver CopyFilesPolicy)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¿®å¤é”™è¯¯ 0x00000002 (Driver CopyFilesPolicy)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name CopyFilesPolicy -Value 1 -Type DWord -Force -ErrorAction Stop
-        Write-Log "CopyFilesPolicy ÒÑ¼¤»î¡£" -Type "SUCCESS"
-        Write-Host "  [+] CopyFilesPolicy ÔÊĞí²Ù×÷ÏµÍ³´ÓÖ÷»ú»ñÈ¡È±ÉÙµÄÇı¶¯³ÌĞò¡£" -ForegroundColor Green
+        Write-Log "CopyFilesPolicy å·²æ¿€æ´»ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] CopyFilesPolicy å…è®¸æ“ä½œç³»ç»Ÿä»ä¸»æœºè·å–ç¼ºå°‘çš„é©±åŠ¨ç¨‹åºã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ĞŞ¸´ 0x00000002 Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ä¿®å¤ 0x00000002 å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-RpcBitness0x0000007e {
-    Write-Log "ÕıÔÚĞŞ¸´´íÎó 0x0000007e (RPC Bitness/Éí·İÑéÖ¤´íÎó)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¿®å¤é”™è¯¯ 0x0000007e (RPC Bitness/èº«ä»½éªŒè¯é”™è¯¯)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC" -Name RpcAuthenticationLevel -Value 0 -Type DWord -Force -ErrorAction Stop
-        Write-Log "RPC Éí·İÑéÖ¤ÒÑ½µ¼¶¡£" -Type "SUCCESS"
-        Write-Host "  [+] RPC ÈÏÖ¤ÏŞÖÆÒÑÒÆ³ı£¬ÒÔ±ã¿çÏµÍ³¼Ü¹¹Í¨ĞÅ¡£" -ForegroundColor Green
+        Write-Log "RPC èº«ä»½éªŒè¯å·²é™çº§ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] RPC è®¤è¯é™åˆ¶å·²ç§»é™¤ï¼Œä»¥ä¾¿è·¨ç³»ç»Ÿæ¶æ„é€šä¿¡ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ĞŞ¸´ 0x0000007e Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ä¿®å¤ 0x0000007e å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Manage-WPP {
     Write-Host "`n  ======================================================================"
-    Write-Host "             Windows ÊÜ±£»¤µÄ´òÓ¡ (WPP) ¹ÜÀí"
+    Write-Host "             Windows å—ä¿æŠ¤çš„æ‰“å° (WPP) ç®¡ç†"
     Write-Host "  ======================================================================"
-    Write-Host "  [!] ÕâÊÇ Win 11 24H2+ ĞÂÌØĞÔ£¬Ìá¹©ÑÏ¸ñ°²È«ĞÔ£¬µ«»áÆÁ±Î"
-    Write-Host "      ËùÓĞ²»Ö§³Ö Mopria Ğ­ÒéµÄ´«Í³/×Ô¶¨Òå´òÓ¡»ú¡£"
-    Write-Host "  [1] ÆôÓÃ WPP (´«Í³´òÓ¡»úºÜ¿ÉÄÜÊ§°Ü)"
-    Write-Host "  [2] ½ûÓÃ WPP (¶Ô´«Í³¾ÖÓòÍø¹²Ïí°²È« - ÍÆ¼ö)"
-    $opt = Read-Host "  ÇëÑ¡Ôñ²Ù×÷ (1/2)"
+    Write-Host "  [!] è¿™æ˜¯ Win 11 24H2+ æ–°ç‰¹æ€§ï¼Œæä¾›ä¸¥æ ¼å®‰å…¨æ€§ï¼Œä½†ä¼šå±è”½"
+    Write-Host "      æ‰€æœ‰ä¸æ”¯æŒ Mopria åè®®çš„ä¼ ç»Ÿ/è‡ªå®šä¹‰æ‰“å°æœºã€‚"
+    Write-Host "  [1] å¯ç”¨ WPP (ä¼ ç»Ÿæ‰“å°æœºå¾ˆå¯èƒ½å¤±è´¥)"
+    Write-Host "  [2] ç¦ç”¨ WPP (å¯¹ä¼ ç»Ÿå±€åŸŸç½‘å…±äº«å®‰å…¨ - æ¨è)"
+    $opt = Read-Host "  è¯·é€‰æ‹©æ“ä½œ (1/2)"
     $wppPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP"
     if (-not (Test-Path $wppPath)) { New-Item -Path $wppPath -Force | Out-Null }
     if ($opt -eq '1') {
         try {
-            Write-Log "ÕıÔÚÆôÓÃ WPP Ä£Ê½..." -Type "INFO"
+            Write-Log "æ­£åœ¨å¯ç”¨ WPP æ¨¡å¼..." -Type "INFO"
             Set-ItemProperty -Path $wppPath -Name Enabled -Value 1 -Type DWord -Force -ErrorAction Stop
-            Write-Host "  [+] WPP ÒÑÆôÓÃ¡£" -ForegroundColor Yellow
+            Write-Host "  [+] WPP å·²å¯ç”¨ã€‚" -ForegroundColor Yellow
         } catch {
-            Write-Log "ÆôÓÃ WPP Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "å¯ç”¨ WPP å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
     if ($opt -eq '2') {
         try {
-            Write-Log "ÕıÔÚ½ûÓÃ WPP Ä£Ê½..." -Type "INFO"
+            Write-Log "æ­£åœ¨ç¦ç”¨ WPP æ¨¡å¼..." -Type "INFO"
             Set-ItemProperty -Path $wppPath -Name Enabled -Value 0 -Type DWord -Force -ErrorAction Stop
-            Write-Host "  [+] WPP ÒÑ³É¹¦½ûÓÃ (´¦ÓÚ¼æÈİÄ£Ê½)¡£" -ForegroundColor Green
+            Write-Host "  [+] WPP å·²æˆåŠŸç¦ç”¨ (å¤„äºå…¼å®¹æ¨¡å¼)ã€‚" -ForegroundColor Green
         } catch {
-            Write-Log "½ûÓÃ WPP Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "ç¦ç”¨ WPP å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
 }
 
 function Scan-PrintEventLog {
-    Write-Log "ÕıÔÚ¶ÁÈ¡×î½ü 20 Ìõ Printer Service ÈÕÖ¾..." -Type "INFO"
-    Write-Host "`n  --- MICROSOFT ´òÓ¡·şÎñÊÂ¼şÈÕÖ¾´íÎóÀúÊ· ---" -ForegroundColor Cyan
+    Write-Log "æ­£åœ¨è¯»å–æœ€è¿‘ 20 æ¡ Printer Service æ—¥å¿—..." -Type "INFO"
+    Write-Host "`n  --- MICROSOFT æ‰“å°æœåŠ¡äº‹ä»¶æ—¥å¿—é”™è¯¯å†å² ---" -ForegroundColor Cyan
     $events = Get-WinEvent -LogName "Microsoft-Windows-PrintService/Admin" -MaxEvents 20 -ErrorAction SilentlyContinue
     if ($events) {
         $events | Select-Object TimeCreated, Id, Message | Format-Table -AutoSize
     }
     else {
-        Write-Host "  [+] ÍêÃÀ£¡Î´¼ÇÂ¼ÈÎºÎÀúÊ·¹ÊÕÏ¡£" -ForegroundColor Green
+        Write-Host "  [+] å®Œç¾ï¼æœªè®°å½•ä»»ä½•å†å²æ•…éšœã€‚" -ForegroundColor Green
     }
 }
 
 function Manage-TCPPort {
-    Write-Host "`n  ÊÖ¶¯´´½¨ TCP/IP ¶Ë¿Ú"
-    $ip = Read-Host "  [?] ÎïÀí´òÓ¡»ú IP (ÀıÈç: 192.168.1.100)"
+    Write-Host "`n  æ‰‹åŠ¨åˆ›å»º TCP/IP ç«¯å£"
+    $ip = Read-Host "  [?] ç‰©ç†æ‰“å°æœº IP (ä¾‹å¦‚: 192.168.1.100)"
     if ($ip) {
         try {
             Add-PrinterPort -Name "IP_$ip" -PrinterHostAddress $ip -ErrorAction Stop
-            Write-Log "³É¹¦´´½¨ TCP/IP ¶Ë¿Ú IP_$ip¡£" -Type "SUCCESS"
-            Write-Host "  [+] ¶Ë¿Ú [IP_$ip] ÒÑ³É¹¦×¢Èëµ½ÏµÍ³ÖĞ¡£" -ForegroundColor Green
+            Write-Log "æˆåŠŸåˆ›å»º TCP/IP ç«¯å£ IP_$ipã€‚" -Type "SUCCESS"
+            Write-Host "  [+] ç«¯å£ [IP_$ip] å·²æˆåŠŸæ³¨å…¥åˆ°ç³»ç»Ÿä¸­ã€‚" -ForegroundColor Green
         }
         catch {
-            Write-Log "´´½¨¶Ë¿ÚÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "åˆ›å»ºç«¯å£å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
 }
 
 function Manage-DefaultPrinter {
-    Write-Host "`n  Ç¿ÖÆÉèÖÃÓÀ¾ÃÄ¬ÈÏ´òÓ¡»ú"
-    $prn = Read-Host "  [?] ÊäÈëÈ·ÇĞµÄ´òÓ¡»úÃû³ÆÒÔÉèÎªÄ¬ÈÏ"
+    Write-Host "`n  å¼ºåˆ¶è®¾ç½®æ°¸ä¹…é»˜è®¤æ‰“å°æœº"
+    $prn = Read-Host "  [?] è¾“å…¥ç¡®åˆ‡çš„æ‰“å°æœºåç§°ä»¥è®¾ä¸ºé»˜è®¤"
     if ($prn) {
         try {
             $safeName = $prn -replace "'", "''"
             $wmi = Get-CimInstance Win32_Printer -Filter "Name='$safeName'" -ErrorAction Stop
             if ($wmi) {
                 Invoke-CimMethod -InputObject $wmi -MethodName SetDefaultPrinter | Out-Null
-                Write-Log "ÒÑ½« $prn Ç¿ÖÆÉèÎªÄ¬ÈÏ" -Type "SUCCESS"
-                Write-Host "  [+] ²Ù×÷ÏµÍ³ÒÑÇ¿ÖÆ½« $prn ÉèÎªÖ÷ÒªÄ¬ÈÏ´òÓ¡»ú¡£" -ForegroundColor Green
+                Write-Log "å·²å°† $prn å¼ºåˆ¶è®¾ä¸ºé»˜è®¤" -Type "SUCCESS"
+                Write-Host "  [+] æ“ä½œç³»ç»Ÿå·²å¼ºåˆ¶å°† $prn è®¾ä¸ºä¸»è¦é»˜è®¤æ‰“å°æœºã€‚" -ForegroundColor Green
             }
             else {
-                Write-Host "  [-] Î´¼ì²âµ½´òÓ¡»ú¡£" -ForegroundColor Red
+                Write-Host "  [-] æœªæ£€æµ‹åˆ°æ‰“å°æœºã€‚" -ForegroundColor Red
             }
         }
         catch {
-            Write-Log "ÉèÖÃÄ¬ÈÏ´òÓ¡»úÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+            Write-Log "è®¾ç½®é»˜è®¤æ‰“å°æœºå¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
         }
     }
 }
 
 function Set-SpoolerWatchdog {
-    Write-Log "ÕıÔÚ×¢Èë Spooler ¿´ÃÅ¹·ÈÎÎñ..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ³¨å…¥ Spooler çœ‹é—¨ç‹—ä»»åŠ¡..." -Type "INFO"
     try {
         $cmd = "powershell.exe -WindowStyle Hidden -Command \`"if((Get-Service spooler).Status -ne 'Running'){ Start-Service spooler }\`""
         & schtasks.exe /create /tn "SpoolerWatchdog" /tr $cmd /sc minute /mo 5 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
-        if ($LASTEXITCODE -ne 0) { throw "schtasks ·µ»ØÍË³ö´úÂë $LASTEXITCODE" }
+        if ($LASTEXITCODE -ne 0) { throw "schtasks è¿”å›é€€å‡ºä»£ç  $LASTEXITCODE" }
         
-        # ÅäÖÃÈÎÎñÔÚµç³Ø¹©µçÊ±ÔËĞĞ (±ÜÃâ±Ê¼Ç±¾ÉÏµÄ 0x800710E0 ´íÎó)
+        # é…ç½®ä»»åŠ¡åœ¨ç”µæ± ä¾›ç”µæ—¶è¿è¡Œ (é¿å…ç¬”è®°æœ¬ä¸Šçš„ 0x800710E0 é”™è¯¯)
         try {
             $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
             Set-ScheduledTask -TaskName "SpoolerWatchdog" -Settings $settings -ErrorAction SilentlyContinue | Out-Null
         } catch {}
 
-        Write-Log "Spooler ¿´ÃÅ¹·ÒÑ²¿Êğ (ÎŞÏŞÑ­»·£¬Ã¿5·ÖÖÓÔËĞĞ)¡£" -Type "SUCCESS"
-        Write-Host "  [+] Spooler ¿´ÃÅ¹·ÒÑ¼¤»î¡£Ã¿¸ô 5 ·ÖÖÓÖ´ĞĞÒ»´ÎÉó²éÒÔ·ÀÍ£Ö¹¡£" -ForegroundColor Green
+        Write-Log "Spooler çœ‹é—¨ç‹—å·²éƒ¨ç½² (æ— é™å¾ªç¯ï¼Œæ¯5åˆ†é’Ÿè¿è¡Œ)ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] Spooler çœ‹é—¨ç‹—å·²æ¿€æ´»ã€‚æ¯éš” 5 åˆ†é’Ÿæ‰§è¡Œä¸€æ¬¡å®¡æŸ¥ä»¥é˜²åœæ­¢ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "²¿Êğ¿´ÃÅ¹·Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "éƒ¨ç½²çœ‹é—¨ç‹—å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-RDPPrinter {
-    Write-Log "ÕıÔÚĞŞ¸´ RDP ´òÓ¡»úÖÕ¶Ë·şÎñÖØ¶¨Ïò..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¿®å¤ RDP æ‰“å°æœºç»ˆç«¯æœåŠ¡é‡å®šå‘..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name fDisableCpm -Value 0 -Type DWord -Force -ErrorAction Stop
         Set-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services" -Name fEnablePrintRDR -Value 1 -Type DWord -Force -ErrorAction Stop
-        Write-Log "RDP ÖØ¶¨ÏòÒÑ¼¤»î¡£" -Type "SUCCESS"
-        Write-Host "  [+] Ô¶³Ì×ÀÃæ (RDP) »á»°ÆÚ¼ä±¾µØ´òÓ¡»úÏÖÔÚ¿É¼ûÁË¡£" -ForegroundColor Green
+        Write-Log "RDP é‡å®šå‘å·²æ¿€æ´»ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] è¿œç¨‹æ¡Œé¢ (RDP) ä¼šè¯æœŸé—´æœ¬åœ°æ‰“å°æœºç°åœ¨å¯è§äº†ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ĞŞ¸´ RDP Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ä¿®å¤ RDP å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-HyperVConflict {
-    Write-Log "ÕıÔÚĞŞ¸´ Hyper-V/WSL ÍøÂç·¢ÏÖ³åÍ»..." -Type "INFO"
+    Write-Log "æ­£åœ¨ä¿®å¤ Hyper-V/WSL ç½‘ç»œå‘ç°å†²çª..." -Type "INFO"
     try {
         $adapters = Get-NetAdapter | Where-Object { $_.InterfaceDescription -match "Virtual" -or $_.InterfaceDescription -match "Hyper-V" -or $_.InterfaceDescription -match "WSL" }
         if ($adapters) {
             foreach ($adp in $adapters) {
                 Set-NetIPInterface -InterfaceAlias $adp.Name -InterfaceMetric 99 -ErrorAction SilentlyContinue
             }
-            Write-Log "ĞéÄâ½»»»»úÓÅÏÈ¼¶ (Metric) ³É¹¦½µµÍ¡£" -Type "SUCCESS"
-            Write-Host "  [+] Hyper-V/WSL ĞéÄâÊÊÅäÆ÷µÄÓÅÏÈ¼¶ÒÑ½µµÍ£¬ÒÔ·À×èÈûÔ­Éú LAN/Wi-Fi¡£" -ForegroundColor Green
+            Write-Log "è™šæ‹Ÿäº¤æ¢æœºä¼˜å…ˆçº§ (Metric) æˆåŠŸé™ä½ã€‚" -Type "SUCCESS"
+            Write-Host "  [+] Hyper-V/WSL è™šæ‹Ÿé€‚é…å™¨çš„ä¼˜å…ˆçº§å·²é™ä½ï¼Œä»¥é˜²é˜»å¡åŸç”Ÿ LAN/Wi-Fiã€‚" -ForegroundColor Green
         }
         else {
-            Write-Host "  [*] Î´¼ì²âµ½·¢Éú³åÍ»µÄĞéÄâÊÊÅäÆ÷¡£" -ForegroundColor Cyan
+            Write-Host "  [*] æœªæ£€æµ‹åˆ°å‘ç”Ÿå†²çªçš„è™šæ‹Ÿé€‚é…å™¨ã€‚" -ForegroundColor Cyan
         }
     }
     catch {
-        Write-Log "ĞŞ¸´ Hyper-V Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ä¿®å¤ Hyper-V å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Manage-LPR {
-    Write-Log "ÕıÔÚ°²×°¾É°æ LPR/LPD Ğ­Òé..." -Type "INFO"
+    Write-Log "æ­£åœ¨å®‰è£…æ—§ç‰ˆ LPR/LPD åè®®..." -Type "INFO"
     try {
         Enable-WindowsOptionalFeature -Online -FeatureName "Printing-Foundation-LPRPortMonitor" -NoRestart -ErrorAction Stop | Out-Null
-        Write-Log "LPR ¶Ë¿Ú¼àÊÓÆ÷ÒÑ°²×°¡£" -Type "SUCCESS"
+        Write-Log "LPR ç«¯å£ç›‘è§†å™¨å·²å®‰è£…ã€‚" -Type "SUCCESS"
     } catch {
-        Write-Log "°²×° LPR ¶Ë¿Ú¼àÊÓÆ÷Ê§°Ü: $($_.Exception.Message)" -Type "WARNING"
+        Write-Log "å®‰è£… LPR ç«¯å£ç›‘è§†å™¨å¤±è´¥: $($_.Exception.Message)" -Type "WARNING"
     }
 
     try {
         Enable-WindowsOptionalFeature -Online -FeatureName "Printing-Foundation-LPDPrintService" -NoRestart -ErrorAction Stop | Out-Null
-        Write-Log "LPD ´òÓ¡·şÎñÒÑ°²×°¡£" -Type "SUCCESS"
+        Write-Log "LPD æ‰“å°æœåŠ¡å·²å®‰è£…ã€‚" -Type "SUCCESS"
     } catch {
-        Write-Log "°²×° LPD ·şÎñÊ§°Ü: $($_.Exception.Message) (×îĞÂµÄ Win 11 °æ±¾¿ÉÄÜÒÑÆúÓÃ)" -Type "WARNING"
+        Write-Log "å®‰è£… LPD æœåŠ¡å¤±è´¥: $($_.Exception.Message) (æœ€æ–°çš„ Win 11 ç‰ˆæœ¬å¯èƒ½å·²å¼ƒç”¨)" -Type "WARNING"
     }
 
-    Write-Host "  [+] LPR/LPD °²×°Íê³É¡£Èç¹ûÌáÊ¾Ê§°Ü£¬ËµÃ÷¸Ã¹¦ÄÜÔÚÄãµÄ Windows °æ±¾ÖĞ¿ÉÄÜÒÑÆúÓÃ¡£" -ForegroundColor Green
+    Write-Host "  [+] LPR/LPD å®‰è£…å®Œæˆã€‚å¦‚æœæç¤ºå¤±è´¥ï¼Œè¯´æ˜è¯¥åŠŸèƒ½åœ¨ä½ çš„ Windows ç‰ˆæœ¬ä¸­å¯èƒ½å·²å¼ƒç”¨ã€‚" -ForegroundColor Green
 }
 
 function Fix-PrintToPDF {
-    Write-Log "ÖØĞÂ°²×° / Ë¢ĞÂ Microsoft Print to PDF & XPS..." -Type "INFO"
-    Write-Host "  [*] ´Ë¹ı³Ì´óÔ¼ĞèÒª 10-30 Ãë..." -ForegroundColor Cyan
+    Write-Log "é‡æ–°å®‰è£… / åˆ·æ–° Microsoft Print to PDF & XPS..." -Type "INFO"
+    Write-Host "  [*] æ­¤è¿‡ç¨‹å¤§çº¦éœ€è¦ 10-30 ç§’..." -ForegroundColor Cyan
     try {
         Disable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -ErrorAction Stop | Out-Null
         Start-Sleep -Seconds 2
         Enable-WindowsOptionalFeature -Online -FeatureName "Printing-PrintToPDFServices-Features" -NoRestart -ErrorAction Stop | Out-Null
-        Write-Log "Print to PDF Ë¢ĞÂ³É¹¦¡£" -Type "SUCCESS"
-        Write-Host "  [+] Microsoft Print to PDF Çı¶¯³ÌĞòÒÑ»Ö¸´¡£½¨ÒéÖØÆôÏµÍ³¡£" -ForegroundColor Green
+        Write-Log "Print to PDF åˆ·æ–°æˆåŠŸã€‚" -Type "SUCCESS"
+        Write-Host "  [+] Microsoft Print to PDF é©±åŠ¨ç¨‹åºå·²æ¢å¤ã€‚å»ºè®®é‡å¯ç³»ç»Ÿã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Ë¢ĞÂ PrintToPDF Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "åˆ·æ–° PrintToPDF å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Fix-CredentialGuard {
-    Write-Log "ÕıÔÚÈÆ¹ı Credential Guard ÏŞÖÆ (ÑÏ¸ñ NTLM)..." -Type "INFO"
+    Write-Log "æ­£åœ¨ç»•è¿‡ Credential Guard é™åˆ¶ (ä¸¥æ ¼ NTLM)..." -Type "INFO"
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name LsaCfgFlags -Value 0 -Type DWord -Force -ErrorAction Stop
-        Write-Log "Credential Guard ±£»¤ (LsaCfgFlags) ÒÑ½ûÓÃ¡£" -Type "SUCCESS"
-        Write-Host "  [+] Win 11 ×¨Òµ°æ/ÆóÒµ°æÖĞÑÏ¸ñµÄ NTLM ·âËøÒÑ½â³ı¡£" -ForegroundColor Green
+        Write-Log "Credential Guard ä¿æŠ¤ (LsaCfgFlags) å·²ç¦ç”¨ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] Win 11 ä¸“ä¸šç‰ˆ/ä¼ä¸šç‰ˆä¸­ä¸¥æ ¼çš„ NTLM å°é”å·²è§£é™¤ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÈÆ¹ı Credential Guard Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç»•è¿‡ Credential Guard å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Manage-BITS {
-    Write-Log "ÕıÔÚÖØÆô BITS ·şÎñ..." -Type "INFO"
+    Write-Log "æ­£åœ¨é‡å¯ BITS æœåŠ¡..." -Type "INFO"
     try {
         Restart-Service BITS -Force -ErrorAction Stop
-        Write-Log "ºóÌ¨ÖÇÄÜ´«Êä·şÎñ (BITS) ÒÑÖØÆô¡£" -Type "SUCCESS"
-        Write-Host "  [+] BITS ·şÎñÒÑÖØÆô¡£" -ForegroundColor Green
+        Write-Log "åå°æ™ºèƒ½ä¼ è¾“æœåŠ¡ (BITS) å·²é‡å¯ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] BITS æœåŠ¡å·²é‡å¯ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "ÖØÆô BITS Ê§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "é‡å¯ BITS å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Create-RestorePoint {
-    Write-Log "ÕıÔÚÉú³ÉÏµÍ³»¹Ô­µã..." -Type "INFO"
-    Write-Host "  [*] ÕıÔÚµ÷ÓÃÏµÍ³±£»¤ (ÇëÉÔµÈ)..." -ForegroundColor Cyan
+    Write-Log "æ­£åœ¨ç”Ÿæˆç³»ç»Ÿè¿˜åŸç‚¹..." -Type "INFO"
+    Write-Host "  [*] æ­£åœ¨è°ƒç”¨ç³»ç»Ÿä¿æŠ¤ (è¯·ç¨ç­‰)..." -ForegroundColor Cyan
     try {
         Enable-ComputerRestore -Drive "C:\" -ErrorAction SilentlyContinue
         Checkpoint-Computer -Description "WinPrinterSharingFix-SafetyBackup" -RestorePointType "MODIFY_SETTINGS" -ErrorAction Stop
-        Write-Log "ÏµÍ³»¹Ô­µãÉú³É³É¹¦¡£" -Type "SUCCESS"
-        Write-Host "  [+] Windows »¹Ô­µã½¨Á¢Íê±Ï¡£" -ForegroundColor Green
+        Write-Log "ç³»ç»Ÿè¿˜åŸç‚¹ç”ŸæˆæˆåŠŸã€‚" -Type "SUCCESS"
+        Write-Host "  [+] Windows è¿˜åŸç‚¹å»ºç«‹å®Œæ¯•ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Log "Éú³É»¹Ô­µãÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "ç”Ÿæˆè¿˜åŸç‚¹å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Run-QuickDiagnostics {
     Write-Host "`n  ======================================================================"
-    Write-Host "                 ÏµÍ³Õï¶Ï"
+    Write-Host "                 ç³»ç»Ÿè¯Šæ–­"
     Write-Host "  ======================================================================"
 
     $spool = (Get-Service spooler -ErrorAction SilentlyContinue).Status
@@ -1392,18 +1392,18 @@ function Run-QuickDiagnostics {
     $net = Get-NetConnectionProfile -ErrorAction SilentlyContinue | Select-Object -ExpandProperty NetworkCategory
     $netStr = ($net -join ", ")
     if ($netStr -match "Public") { $ntc = "Red" } else { $ntc = "Green" }
-    Write-Host "  [+] ÍøÂçÅäÖÃÎÄ¼ş  : " -NoNewline; Write-Host $netStr -ForegroundColor $ntc
+    Write-Host "  [+] ç½‘ç»œé…ç½®æ–‡ä»¶  : " -NoNewline; Write-Host $netStr -ForegroundColor $ntc
 
-    Write-Host "  [+] ²Ù×÷ÏµÍ³ÀàĞÍ  : " -NoNewline; Write-Host $script:productName -ForegroundColor Cyan
-    if ($script:isARM64) { Write-Host "  [+] ¼Ü¹¹          : ARM64 (Snapdragon / Apple M ÏµÁĞ VM)" -ForegroundColor Cyan }
+    Write-Host "  [+] æ“ä½œç³»ç»Ÿç±»å‹  : " -NoNewline; Write-Host $script:productName -ForegroundColor Cyan
+    if ($script:isARM64) { Write-Host "  [+] æ¶æ„          : ARM64 (Snapdragon / Apple M ç³»åˆ— VM)" -ForegroundColor Cyan }
 
     Write-Host "  ======================================================================"
 }
 
 function Fix-V4ClassDriver {
-    Write-Log "ÕıÔÚÉ¨ÃèÍ¨ÓÃ´òÓ¡ÀàÇı¶¯ (V4) ÊÇ·ñËğ»µ..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰«æé€šç”¨æ‰“å°ç±»é©±åŠ¨ (V4) æ˜¯å¦æŸå..." -Type "INFO"
     Write-Host "`n  ======================================================================"
-    Write-Host "               Í¨ÓÃ´òÓ¡ÀàÇı¶¯ V4 ĞŞ¸´"
+    Write-Host "               é€šç”¨æ‰“å°ç±»é©±åŠ¨ V4 ä¿®å¤"
     Write-Host "  ======================================================================"
     try {
         $v4Path = "HKLM:\SYSTEM\CurrentControlSet\Control\Print\Environments\Windows x64\Drivers\Version-4"
@@ -1430,127 +1430,127 @@ function Fix-V4ClassDriver {
             }
         }
         if ($corrupted.Count -gt 0) {
-            Write-Host "  [!] ¼ì²âµ½Ëğ»µµÄ V4 Çı¶¯: $($corrupted.Count)" -ForegroundColor Red
+            Write-Host "  [!] æ£€æµ‹åˆ°æŸåçš„ V4 é©±åŠ¨: $($corrupted.Count)" -ForegroundColor Red
             foreach ($c in $corrupted) { Write-Host "      - $c" -ForegroundColor Yellow }
-            Write-Host "  [*] ÕıÔÚ³¢ÊÔÍ¨¹ı DriverStore ÖØĞÂ×¢²á½øĞĞĞŞ¸´..." -ForegroundColor Cyan
+            Write-Host "  [*] æ­£åœ¨å°è¯•é€šè¿‡ DriverStore é‡æ–°æ³¨å†Œè¿›è¡Œä¿®å¤..." -ForegroundColor Cyan
             $prnmsDir = Get-ChildItem "$env:SystemRoot\System32\DriverStore\FileRepository\prnms*" -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
             if ($prnmsDir) {
                 $goodDll = Get-ChildItem $prnmsDir.FullName -Filter "PrintConfig.dll" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
                 if ($goodDll) {
-                    Write-Host "  [+] ÕÒµ½ÍêºÃµÄ PrintConfig.dll£¬Î»ÓÚ $($goodDll.FullName)" -ForegroundColor Green
-                    Write-Log "ÒÑÕÒµ½ PrintConfig.dll Ô´: $($goodDll.FullName)" -Type "SUCCESS"
+                    Write-Host "  [+] æ‰¾åˆ°å®Œå¥½çš„ PrintConfig.dllï¼Œä½äº $($goodDll.FullName)" -ForegroundColor Green
+                    Write-Log "å·²æ‰¾åˆ° PrintConfig.dll æº: $($goodDll.FullName)" -Type "SUCCESS"
                     
-                    # ¸´ÖÆÍêºÃµÄ PrintConfig.dll ĞŞ¸´Ã¿¸öËğ»µµÄÄ¿Â¼
+                    # å¤åˆ¶å®Œå¥½çš„ PrintConfig.dll ä¿®å¤æ¯ä¸ªæŸåçš„ç›®å½•
                     for ($i = 0; $i -lt $corrupted.Count; $i++) {
                         $destDir = $corruptedDirs[$i]
                         $destFile = Join-Path $destDir "PrintConfig.dll"
                         try {
                             Copy-Item -Path $goodDll.FullName -Destination $destFile -Force -ErrorAction Stop
-                            Write-Host "  [+] ÒÑ½« PrintConfig.dll »Ö¸´ÖÁ $destDir" -ForegroundColor Green
-                            Write-Log "»Ö¸´ PrintConfig.dll ÖÁ $destDir" -Type "SUCCESS"
+                            Write-Host "  [+] å·²å°† PrintConfig.dll æ¢å¤è‡³ $destDir" -ForegroundColor Green
+                            Write-Log "æ¢å¤ PrintConfig.dll è‡³ $destDir" -Type "SUCCESS"
                         } catch {
-                            Write-Host "  [-] »Ö¸´µ½ $destDir Ê§°Ü : $($_.Exception.Message)" -ForegroundColor Red
-                            Write-Log "¸´ÖÆ PrintConfig.dll ÖÁ $destDir Ê§°Ü : $($_.Exception.Message)" -Type "ERROR"
+                            Write-Host "  [-] æ¢å¤åˆ° $destDir å¤±è´¥ : $($_.Exception.Message)" -ForegroundColor Red
+                            Write-Log "å¤åˆ¶ PrintConfig.dll è‡³ $destDir å¤±è´¥ : $($_.Exception.Message)" -Type "ERROR"
                         }
                     }
                 }
             }
             & pnputil /scan-devices > $null 2>&1
-            Write-Log "V4 Çı¶¯É¨ÃèÍê³É¡£¹²´¦ÀíÁË $($corrupted.Count) ¸öËğ»µÏî¡£" -Type "WARNING"
+            Write-Log "V4 é©±åŠ¨æ‰«æå®Œæˆã€‚å…±å¤„ç†äº† $($corrupted.Count) ä¸ªæŸåé¡¹ã€‚" -Type "WARNING"
         }
         else {
-            Write-Host "  [+] ËùÓĞ V4 ´òÓ¡ÀàÇı¶¯ÍêºÃÎŞËğ¡£" -ForegroundColor Green
-            Write-Log "V4 Çı¶¯×´Ì¬½¡¿µ¡£" -Type "SUCCESS"
+            Write-Host "  [+] æ‰€æœ‰ V4 æ‰“å°ç±»é©±åŠ¨å®Œå¥½æ— æŸã€‚" -ForegroundColor Green
+            Write-Log "V4 é©±åŠ¨çŠ¶æ€å¥åº·ã€‚" -Type "SUCCESS"
         }
     }
     catch {
-        Write-Log "V4 É¨ÃèÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
+        Write-Log "V4 æ‰«æå¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
     }
 }
 
 function Switch-DriverMode {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ÇĞ»» PCL Óë POSTSCRIPT Çı¶¯Ä£Ê½"
+    Write-Host "               åˆ‡æ¢ PCL ä¸ POSTSCRIPT é©±åŠ¨æ¨¡å¼"
     Write-Host "  ======================================================================"
-    Write-Log "Æô¶¯ PCL/PostScript Çı¶¯ÇĞ»»..." -Type "INFO"
+    Write-Log "å¯åŠ¨ PCL/PostScript é©±åŠ¨åˆ‡æ¢..." -Type "INFO"
     try {
         $printers = Get-Printer -ErrorAction Stop
-        if (-not $printers) { Write-Host "  [-] Î´°²×°ÈÎºÎ´òÓ¡»ú¡£" -ForegroundColor Red; return }
+        if (-not $printers) { Write-Host "  [-] æœªå®‰è£…ä»»ä½•æ‰“å°æœºã€‚" -ForegroundColor Red; return }
         Write-Host ""
         $idx = 1
         foreach ($p in $printers) {
-            Write-Host "  [$idx] $($p.Name) | Çı¶¯: $($p.DriverName)" -ForegroundColor Cyan
+            Write-Host "  [$idx] $($p.Name) | é©±åŠ¨: $($p.DriverName)" -ForegroundColor Cyan
             $idx++
         }
-        $sel = Read-Host "`n  [?] ÇëÑ¡Ôñ´òÓ¡»ú±àºÅ"
+        $sel = Read-Host "`n  [?] è¯·é€‰æ‹©æ‰“å°æœºç¼–å·"
         $selIdx = -1
-        try { $selIdx = [int]$sel - 1 } catch { Write-Host "  [-] ÊäÈëÎŞĞ§¡£" -ForegroundColor Red; return }
-        if ($selIdx -lt 0 -or $selIdx -ge $printers.Count) { Write-Host "  [-] Ñ¡ÔñÎŞĞ§¡£" -ForegroundColor Red; return }
+        try { $selIdx = [int]$sel - 1 } catch { Write-Host "  [-] è¾“å…¥æ— æ•ˆã€‚" -ForegroundColor Red; return }
+        if ($selIdx -lt 0 -or $selIdx -ge $printers.Count) { Write-Host "  [-] é€‰æ‹©æ— æ•ˆã€‚" -ForegroundColor Red; return }
         $target = $printers[$selIdx]
         $allDrivers = Get-PrinterDriver -ErrorAction SilentlyContinue
         $currentDriver = $target.DriverName
-        Write-Host "`n  µ±Ç°Çı¶¯: $currentDriver" -ForegroundColor Yellow
+        Write-Host "`n  å½“å‰é©±åŠ¨: $currentDriver" -ForegroundColor Yellow
         if ($currentDriver -match 'PCL') {
             $altDrivers = $allDrivers | Where-Object { $_.Name -match 'PS|PostScript' }
-            Write-Host "  [*] ÕıÔÚÑ°ÕÒ PostScript Ìæ´úÇı¶¯..." -ForegroundColor Cyan
+            Write-Host "  [*] æ­£åœ¨å¯»æ‰¾ PostScript æ›¿ä»£é©±åŠ¨..." -ForegroundColor Cyan
         }
         else {
             $altDrivers = $allDrivers | Where-Object { $_.Name -match 'PCL' }
-            Write-Host "  [*] ÕıÔÚÑ°ÕÒ PCL Ìæ´úÇı¶¯..." -ForegroundColor Cyan
+            Write-Host "  [*] æ­£åœ¨å¯»æ‰¾ PCL æ›¿ä»£é©±åŠ¨..." -ForegroundColor Cyan
         }
         if ($altDrivers) {
             $idx = 1
             foreach ($d in $altDrivers) { Write-Host "  [$idx] $($d.Name)" -ForegroundColor Green; $idx++ }
-            $drvSel = Read-Host "  [?] Ñ¡ÔñÒªÌæ»»µÄÇı¶¯±àºÅ (ÊäÈë 0 È¡Ïû)"
+            $drvSel = Read-Host "  [?] é€‰æ‹©è¦æ›¿æ¢çš„é©±åŠ¨ç¼–å· (è¾“å…¥ 0 å–æ¶ˆ)"
             if ($drvSel -ne '0') {
                 $drvIdx = -1
-                try { $drvIdx = [int]$drvSel - 1 } catch { Write-Host "  [-] ÊäÈëÎŞĞ§¡£" -ForegroundColor Red; return }
+                try { $drvIdx = [int]$drvSel - 1 } catch { Write-Host "  [-] è¾“å…¥æ— æ•ˆã€‚" -ForegroundColor Red; return }
                 if ($drvIdx -ge 0 -and $drvIdx -lt $altDrivers.Count) {
                     Set-Printer -Name $target.Name -DriverName $altDrivers[$drvIdx].Name -ErrorAction Stop
-                    Write-Log "Çı¶¯ÒÑÇĞ»»: $($target.Name) -> $($altDrivers[$drvIdx].Name)" -Type "SUCCESS"
-                    Write-Host "  [+] Çı¶¯ÇĞ»»³É¹¦£¡" -ForegroundColor Green
+                    Write-Log "é©±åŠ¨å·²åˆ‡æ¢: $($target.Name) -> $($altDrivers[$drvIdx].Name)" -Type "SUCCESS"
+                    Write-Host "  [+] é©±åŠ¨åˆ‡æ¢æˆåŠŸï¼" -ForegroundColor Green
                 }
             }
         }
         else {
-            Write-Host "  [-] Î´ÕÒµ½Ìæ´úÇı¶¯¡£ÇëÏÈ°²×°Ä¿±êÇı¶¯¡£" -ForegroundColor Red
+            Write-Host "  [-] æœªæ‰¾åˆ°æ›¿ä»£é©±åŠ¨ã€‚è¯·å…ˆå®‰è£…ç›®æ ‡é©±åŠ¨ã€‚" -ForegroundColor Red
         }
     }
-    catch { Write-Log "Çı¶¯ÇĞ»»Ê§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "é©±åŠ¨åˆ‡æ¢å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Manage-WindowsUpdate {
     Write-Host "`n  ======================================================================"
-    Write-Host "                  WINDOWS ¸üĞÂ¼°À¹½ØÆ÷¹ÜÀí"
+    Write-Host "                  WINDOWS æ›´æ–°åŠæ‹¦æˆªå™¨ç®¡ç†"
     Write-Host "  ======================================================================"
-    Write-Host "  [1] Ğ¶ÔØÖ¸¶¨µÄ KB ¸üĞÂ"
-    Write-Host "  [2] ÔİÍ£ Windows ¸üĞÂ 35 Ìì"
-    Write-Host "  [3] ÓÀ¾Ã½ûÓÃ Windows ¸üĞÂ·şÎñ (·ÀÖ¹ĞŞ¸´±»»¹Ô­)"
-    Write-Host "  [4] ÖØĞÂÆôÓÃ Windows ¸üĞÂ·şÎñ (»Ö¸´Ä¬ÈÏ)"
-    Write-Host "  [5] È¡Ïû"
-    $opt = Read-Host "  ÇëÑ¡Ôñ²Ù×÷ (1-5)"
+    Write-Host "  [1] å¸è½½æŒ‡å®šçš„ KB æ›´æ–°"
+    Write-Host "  [2] æš‚åœ Windows æ›´æ–° 35 å¤©"
+    Write-Host "  [3] æ°¸ä¹…ç¦ç”¨ Windows æ›´æ–°æœåŠ¡ (é˜²æ­¢ä¿®å¤è¢«è¿˜åŸ)"
+    Write-Host "  [4] é‡æ–°å¯ç”¨ Windows æ›´æ–°æœåŠ¡ (æ¢å¤é»˜è®¤)"
+    Write-Host "  [5] å–æ¶ˆ"
+    $opt = Read-Host "  è¯·é€‰æ‹©æ“ä½œ (1-5)"
 
     switch ($opt) {
         '1' {
-            Write-Log "ÕıÔÚÆô¶¯ KB ¸üĞÂĞ¶ÔØ³ÌĞò..." -Type "INFO"
+            Write-Log "æ­£åœ¨å¯åŠ¨ KB æ›´æ–°å¸è½½ç¨‹åº..." -Type "INFO"
             try {
-                Write-Host "  [!] ÒÑÖª»áÆÆ»µ´òÓ¡»úµÄ KB (2025-2026):" -ForegroundColor Red
-                Write-Host "      KB5065426 (2025Äê9ÔÂ) - ×èÖ¹´òÓ¡¹²Ïí (SID¼ì²é)" -ForegroundColor Yellow
-                Write-Host "      KB5066835 (2025Äê10ÔÂ) - ÑÏÖØµÄ´òÓ¡»ú¹²ÏíÆÆ»µÕß" -ForegroundColor Yellow
-                Write-Host "      KB5068661 (2025Äê11ÔÂ) - ÆÆ»µ´òÓ¡»úºÍÍøÂç¹²Ïí" -ForegroundColor Yellow
-                Write-Host "      KB5089549 (2026Äê5ÔÂ) - ½»²æÇ©ÃûÇı¶¯³ÌĞòÇ¿ÖÆÑéÖ¤" -ForegroundColor Yellow
+                Write-Host "  [!] å·²çŸ¥ä¼šç ´åæ‰“å°æœºçš„ KB (2025-2026):" -ForegroundColor Red
+                Write-Host "      KB5065426 (2025å¹´9æœˆ) - é˜»æ­¢æ‰“å°å…±äº« (SIDæ£€æŸ¥)" -ForegroundColor Yellow
+                Write-Host "      KB5066835 (2025å¹´10æœˆ) - ä¸¥é‡çš„æ‰“å°æœºå…±äº«ç ´åè€…" -ForegroundColor Yellow
+                Write-Host "      KB5068661 (2025å¹´11æœˆ) - ç ´åæ‰“å°æœºå’Œç½‘ç»œå…±äº«" -ForegroundColor Yellow
+                Write-Host "      KB5089549 (2026å¹´5æœˆ) - äº¤å‰ç­¾åé©±åŠ¨ç¨‹åºå¼ºåˆ¶éªŒè¯" -ForegroundColor Yellow
 
-                Write-Host "  [*] ÕıÔÚÃ¶¾Ù½üÆÚµÄ Windows ¸üĞÂ..." -ForegroundColor Cyan
+                Write-Host "  [*] æ­£åœ¨æšä¸¾è¿‘æœŸçš„ Windows æ›´æ–°..." -ForegroundColor Cyan
                 $updates = Get-HotFix -ErrorAction SilentlyContinue | Sort-Object InstalledOn -Descending | Select-Object -First 20
                 if ($updates) { $updates | Format-Table HotFixID, Description, InstalledOn -AutoSize }
-                else { Write-Host "  [-] Î´Í¨¹ı Get-HotFix ¼ì²âµ½ÈÈĞŞ¸´²¹¶¡¡£" -ForegroundColor Yellow }
+                else { Write-Host "  [-] æœªé€šè¿‡ Get-HotFix æ£€æµ‹åˆ°çƒ­ä¿®å¤è¡¥ä¸ã€‚" -ForegroundColor Yellow }
 
-                $kb = Read-Host "`n  [?] ÊäÈëÒªĞ¶ÔØµÄ KB ±àºÅ (ÀıÈç: KB5034441£¬»òÁô¿ÕÈ¡Ïû)"
+                $kb = Read-Host "`n  [?] è¾“å…¥è¦å¸è½½çš„ KB ç¼–å· (ä¾‹å¦‚: KB5034441ï¼Œæˆ–ç•™ç©ºå–æ¶ˆ)"
                 if (-not $kb) { return }
                 $kb = $kb -replace '(?i)^KB', ''
 
                 $dismSuccess = $false
-                Write-Host "  [*] ÕıÔÚ³¢ÊÔÍ¨¹ı DISM Ğ¶ÔØ KB$kb..." -ForegroundColor Cyan
+                Write-Host "  [*] æ­£åœ¨å°è¯•é€šè¿‡ DISM å¸è½½ KB$kb..." -ForegroundColor Cyan
                 $packages = & dism /online /get-packages 2>&1 | Select-String "Package_for_KB$kb"
 
                 if ($packages) {
@@ -1559,31 +1559,31 @@ function Manage-WindowsUpdate {
 
                     if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010) {
                         $dismSuccess = $true
-                        Write-Log "Í¨¹ı DISM Ğ¶ÔØ KB$kb¡£" -Type "SUCCESS"
-                        Write-Host "  [+] KB$kb ÒÑ³É¹¦Ğ¶ÔØ¡£(¿ÉÄÜĞèÒªÖØÆô)" -ForegroundColor Green
+                        Write-Log "é€šè¿‡ DISM å¸è½½ KB$kbã€‚" -Type "SUCCESS"
+                        Write-Host "  [+] KB$kb å·²æˆåŠŸå¸è½½ã€‚(å¯èƒ½éœ€è¦é‡å¯)" -ForegroundColor Green
                     } else {
-                        Write-Log "DISM Ğ¶ÔØ KB$kb Ê§°Ü¡£ÍË³ö´úÂë: $($proc.ExitCode)¡£³¢ÊÔ»ØÍËµ½ wusa.exe..." -Type "WARNING"
-                        Write-Host "  [-] DISM Ê§°Ü (ÍË³ö´úÂë $($proc.ExitCode))¡£³¢ÊÔÊ¹ÓÃ wusa.exe ±¸ÓÃ·½°¸..." -ForegroundColor Yellow
+                        Write-Log "DISM å¸è½½ KB$kb å¤±è´¥ã€‚é€€å‡ºä»£ç : $($proc.ExitCode)ã€‚å°è¯•å›é€€åˆ° wusa.exe..." -Type "WARNING"
+                        Write-Host "  [-] DISM å¤±è´¥ (é€€å‡ºä»£ç  $($proc.ExitCode))ã€‚å°è¯•ä½¿ç”¨ wusa.exe å¤‡ç”¨æ–¹æ¡ˆ..." -ForegroundColor Yellow
                     }
                 }
 
                 if (-not $dismSuccess) {
-                    Write-Host "  [!] ½«³öÏÖÒ»¸ö Windows ¶Ô»°¿ò¡£Èç¹û³öÏÖÌáÊ¾£¬ÇëÈ·ÈÏĞ¶ÔØ¡£" -ForegroundColor Cyan
+                    Write-Host "  [!] å°†å‡ºç°ä¸€ä¸ª Windows å¯¹è¯æ¡†ã€‚å¦‚æœå‡ºç°æç¤ºï¼Œè¯·ç¡®è®¤å¸è½½ã€‚" -ForegroundColor Cyan
                     $proc = Start-Process wusa.exe -ArgumentList "/uninstall /kb:$kb /norestart" -Wait -PassThru
 
                     if ($proc.ExitCode -eq 0 -or $proc.ExitCode -eq 3010) {
-                        Write-Log "Í¨¹ı wusa Ğ¶ÔØ KB$kb¡£" -Type "SUCCESS"
-                        Write-Host "  [+] KB$kb ÒÑ³É¹¦Ğ¶ÔØ¡£(¿ÉÄÜĞèÒªÖØÆô)" -ForegroundColor Green
+                        Write-Log "é€šè¿‡ wusa å¸è½½ KB$kbã€‚" -Type "SUCCESS"
+                        Write-Host "  [+] KB$kb å·²æˆåŠŸå¸è½½ã€‚(å¯èƒ½éœ€è¦é‡å¯)" -ForegroundColor Green
                     } else {
-                        Write-Log "Wusa Îª KB$kb Ğ¶ÔØÊ§°Ü/È¡Ïû¡£ÍË³ö´úÂë: $($proc.ExitCode)" -Type "WARNING"
-                        Write-Host "  [-] Ğ¶ÔØÊ§°Ü»òÒÑÈ¡Ïû¡£¸Ã¸üĞÂ¿ÉÄÜÊÇÓÀ¾ÃĞÔµÄ°²È«¸üĞÂ¡£" -ForegroundColor Red
+                        Write-Log "Wusa ä¸º KB$kb å¸è½½å¤±è´¥/å–æ¶ˆã€‚é€€å‡ºä»£ç : $($proc.ExitCode)" -Type "WARNING"
+                        Write-Host "  [-] å¸è½½å¤±è´¥æˆ–å·²å–æ¶ˆã€‚è¯¥æ›´æ–°å¯èƒ½æ˜¯æ°¸ä¹…æ€§çš„å®‰å…¨æ›´æ–°ã€‚" -ForegroundColor Red
                     }
                 }
             }
-            catch { Write-Log "Ğ¶ÔØ KB Ê§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+            catch { Write-Log "å¸è½½ KB å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
         }
         '2' {
-            Write-Log "ÕıÔÚÔİÍ£ Windows ¸üĞÂ 35 Ìì..." -Type "INFO"
+            Write-Log "æ­£åœ¨æš‚åœ Windows æ›´æ–° 35 å¤©..." -Type "INFO"
             try {
                 $wuPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
                 if (-not (Test-Path $wuPath)) { New-Item -Path $wuPath -Force | Out-Null }
@@ -1607,13 +1607,13 @@ function Manage-WindowsUpdate {
                 Set-ItemProperty -Path $uxPath -Name PauseQualityUpdatesEndTime -Value $pauseEnd -Force -ErrorAction Stop
                 Set-ItemProperty -Path $uxPath -Name PauseUpdatesExpiryTime -Value $pauseEnd -Force -ErrorAction Stop
 
-                Write-Host "  [+] Windows ¸üĞÂÒÑÍêÈ«ÔİÍ£ 35 Ìì (ÒÑÓ¦ÓÃ GPO ºÍÉèÖÃ UI ¸²¸Ç)¡£" -ForegroundColor Green
-                Write-Log "Windows ¸üĞÂÒÑÔİÍ£ÖÁ $pauseEnd¡£" -Type "SUCCESS"
+                Write-Host "  [+] Windows æ›´æ–°å·²å®Œå…¨æš‚åœ 35 å¤© (å·²åº”ç”¨ GPO å’Œè®¾ç½® UI è¦†ç›–)ã€‚" -ForegroundColor Green
+                Write-Log "Windows æ›´æ–°å·²æš‚åœè‡³ $pauseEndã€‚" -Type "SUCCESS"
             }
-            catch { Write-Log "ÔİÍ£ Windows ¸üĞÂÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+            catch { Write-Log "æš‚åœ Windows æ›´æ–°å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
         }
         '3' {
-            Write-Log "ÕıÔÚÓÀ¾Ã½ûÓÃ Windows ¸üĞÂ·şÎñ..." -Type "INFO"
+            Write-Log "æ­£åœ¨æ°¸ä¹…ç¦ç”¨ Windows æ›´æ–°æœåŠ¡..." -Type "INFO"
             try {
                 $services = @("wuauserv", "UsoSvc", "bits")
                 foreach ($svc in $services) {
@@ -1630,15 +1630,15 @@ function Manage-WindowsUpdate {
                 if (-not (Test-Path $auPath)) { New-Item -Path $auPath -Force | Out-Null }
                 Set-ItemProperty -Path $auPath -Name NoAutoUpdate -Value 1 -Type DWord -Force -ErrorAction Stop
 
-                Write-Log "Windows ¸üĞÂ·şÎñ±»ÓÀ¾Ã½ûÓÃ (MedicÒÑ×è¶Ï)¡£" -Type "SUCCESS"
-                Write-Host "  [+] ºËĞÄ Windows ¸üĞÂ·şÎñ (wuauserv, UsoSvc, bits, WaaSMedicSvc) ÒÑ½ûÓÃ¡£" -ForegroundColor Green
-                Write-Host "  [+] ×¢²á±í²ßÂÔ NoAutoUpdate ÒÑÇ¿ÖÆÉèÎª 1¡£" -ForegroundColor Green
-                Write-Host "  [!] °²È«ÅäÖÃ½«²»ÔÙ±» Windows ¸üĞÂ»¹Ô­¡£" -ForegroundColor Yellow
+                Write-Log "Windows æ›´æ–°æœåŠ¡è¢«æ°¸ä¹…ç¦ç”¨ (Medicå·²é˜»æ–­)ã€‚" -Type "SUCCESS"
+                Write-Host "  [+] æ ¸å¿ƒ Windows æ›´æ–°æœåŠ¡ (wuauserv, UsoSvc, bits, WaaSMedicSvc) å·²ç¦ç”¨ã€‚" -ForegroundColor Green
+                Write-Host "  [+] æ³¨å†Œè¡¨ç­–ç•¥ NoAutoUpdate å·²å¼ºåˆ¶è®¾ä¸º 1ã€‚" -ForegroundColor Green
+                Write-Host "  [!] å®‰å…¨é…ç½®å°†ä¸å†è¢« Windows æ›´æ–°è¿˜åŸã€‚" -ForegroundColor Yellow
             }
-            catch { Write-Log "½ûÓÃ Windows ¸üĞÂÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+            catch { Write-Log "ç¦ç”¨ Windows æ›´æ–°å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
         }
         '4' {
-            Write-Log "ÕıÔÚÖØĞÂÆôÓÃ Windows ¸üĞÂ·şÎñ..." -Type "INFO"
+            Write-Log "æ­£åœ¨é‡æ–°å¯ç”¨ Windows æ›´æ–°æœåŠ¡..." -Type "INFO"
             try {
                 & sc.exe config wuauserv start= demand > $null 2>&1
                 & sc.exe config UsoSvc start= auto > $null 2>&1
@@ -1671,11 +1671,11 @@ function Manage-WindowsUpdate {
                     }
                 }
 
-                Write-Log "Windows ¸üĞÂ·şÎñÒÑ»Ö¸´ÎªÄ¬ÈÏÆô¶¯ÀàĞÍ¡£" -Type "SUCCESS"
-                Write-Host "  [+] Windows ¸üĞÂ·şÎñÒÑ»Ö¸´µ½Ä¬ÈÏ×´Ì¬¡£" -ForegroundColor Green
-                Write-Host "  [+] ×Ô¶¯¸üĞÂºÍÔİÍ£ÏŞÖÆÒÑ±»ÒÆ³ı¡£" -ForegroundColor Green
+                Write-Log "Windows æ›´æ–°æœåŠ¡å·²æ¢å¤ä¸ºé»˜è®¤å¯åŠ¨ç±»å‹ã€‚" -Type "SUCCESS"
+                Write-Host "  [+] Windows æ›´æ–°æœåŠ¡å·²æ¢å¤åˆ°é»˜è®¤çŠ¶æ€ã€‚" -ForegroundColor Green
+                Write-Host "  [+] è‡ªåŠ¨æ›´æ–°å’Œæš‚åœé™åˆ¶å·²è¢«ç§»é™¤ã€‚" -ForegroundColor Green
             }
-            catch { Write-Log "»Ö¸´ Windows ¸üĞÂÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+            catch { Write-Log "æ¢å¤ Windows æ›´æ–°å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
         }
         default { return }
     }
@@ -1683,9 +1683,9 @@ function Manage-WindowsUpdate {
 
 function Sweep-OrphanedDrivers {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ¹ÂÁ¢Çı¶¯³ÌĞòÇåÀí (pnputil)"
+    Write-Host "               å­¤ç«‹é©±åŠ¨ç¨‹åºæ¸…ç† (pnputil)"
     Write-Host "  ======================================================================"
-    Write-Log "ÕıÔÚÉ¨Ãè¹ÂÁ¢µÄ´òÓ¡»úÇı¶¯³ÌĞò..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰«æå­¤ç«‹çš„æ‰“å°æœºé©±åŠ¨ç¨‹åº..." -Type "INFO"
     try {
         $rawOutput = & pnputil /enum-drivers 2>&1
         $activeDrivers = (Get-PrinterDriver -ErrorAction SilentlyContinue).Name
@@ -1694,48 +1694,48 @@ function Sweep-OrphanedDrivers {
         $currentClass = ""
         $currentProvider = ""
         foreach ($line in $rawOutput) {
-            if ($line -match 'Published Name\s*:\s*(oem\d+\.inf)' -or $line -match '·¢²¼µÄÃû³Æ\s*:\s*(oem\d+\.inf)') { $currentOem = $Matches[1] }
-            if ($line -match 'Class Name\s*:\s*(.+)' -or $line -match 'ÀàÃû\s*:\s*(.+)') { $currentClass = $Matches[1].Trim() }
-            if ($line -match 'Driver Package Provider\s*:\s*(.+)' -or $line -match 'Çı¶¯³ÌĞò°üÌá¹©ÉÌ\s*:\s*(.+)') { $currentProvider = $Matches[1].Trim() }
-            if ($line -match '^\s*$' -and $currentOem -and ($currentClass -match 'Printer' -or $currentClass -match '´òÓ¡»ú')) {
+            if ($line -match 'Published Name\s*:\s*(oem\d+\.inf)' -or $line -match 'å‘å¸ƒçš„åç§°\s*:\s*(oem\d+\.inf)') { $currentOem = $Matches[1] }
+            if ($line -match 'Class Name\s*:\s*(.+)' -or $line -match 'ç±»å\s*:\s*(.+)') { $currentClass = $Matches[1].Trim() }
+            if ($line -match 'Driver Package Provider\s*:\s*(.+)' -or $line -match 'é©±åŠ¨ç¨‹åºåŒ…æä¾›å•†\s*:\s*(.+)') { $currentProvider = $Matches[1].Trim() }
+            if ($line -match '^\s*$' -and $currentOem -and ($currentClass -match 'Printer' -or $currentClass -match 'æ‰“å°æœº')) {
                 $orphans += [PSCustomObject]@{ OemInf = $currentOem; Provider = $currentProvider }
                 $currentOem = ""; $currentClass = ""; $currentProvider = ""
             }
         }
-        if ($currentOem -and ($currentClass -match 'Printer' -or $currentClass -match '´òÓ¡»ú')) {
+        if ($currentOem -and ($currentClass -match 'Printer' -or $currentClass -match 'æ‰“å°æœº')) {
             $orphans += [PSCustomObject]@{ OemInf = $currentOem; Provider = $currentProvider }
         }
         if ($orphans.Count -gt 0) {
-            Write-Host "  [!] ÔÚÇı¶¯³ÌĞò´æ´¢ÖĞÕÒµ½ $($orphans.Count) ¸ö´òÓ¡»úÇı¶¯°ü:" -ForegroundColor Yellow
+            Write-Host "  [!] åœ¨é©±åŠ¨ç¨‹åºå­˜å‚¨ä¸­æ‰¾åˆ° $($orphans.Count) ä¸ªæ‰“å°æœºé©±åŠ¨åŒ…:" -ForegroundColor Yellow
             $orphans | Format-Table OemInf, Provider -AutoSize
-            $confirm = Read-Host "  [?] ÊÇ·ñÇ¿ÖÆÉ¾³ıËùÓĞ¹ÂÁ¢µÄ´òÓ¡»úÇı¶¯³ÌĞò? (Y/N)"
+            $confirm = Read-Host "  [?] æ˜¯å¦å¼ºåˆ¶åˆ é™¤æ‰€æœ‰å­¤ç«‹çš„æ‰“å°æœºé©±åŠ¨ç¨‹åº? (Y/N)"
             if ($confirm -eq 'Y') {
                 foreach ($o in $orphans) {
-                    Write-Host "  [*] ÕıÔÚÒÆ³ı $($o.OemInf)..." -ForegroundColor Cyan
+                    Write-Host "  [*] æ­£åœ¨ç§»é™¤ $($o.OemInf)..." -ForegroundColor Cyan
                     & pnputil /delete-driver $o.OemInf /force 2>&1 | Out-Null
                 }
-                Write-Log "ÒÑÇå³ı¹ÂÁ¢Çı¶¯³ÌĞò: $($orphans.Count) ¸ö°ü¡£" -Type "SUCCESS"
-                Write-Host "  [+] ÇåÀíÍê³É¡£" -ForegroundColor Green
+                Write-Log "å·²æ¸…é™¤å­¤ç«‹é©±åŠ¨ç¨‹åº: $($orphans.Count) ä¸ªåŒ…ã€‚" -Type "SUCCESS"
+                Write-Host "  [+] æ¸…ç†å®Œæˆã€‚" -ForegroundColor Green
             }
         }
         else {
-            Write-Host "  [+] ÔÚÇı¶¯³ÌĞò´æ´¢ÖĞÎ´ÕÒµ½¹ÂÁ¢µÄ´òÓ¡»úÇı¶¯³ÌĞò¡£" -ForegroundColor Green
-            Write-Log "Î´¼ì²âµ½¹ÂÁ¢µÄÇı¶¯³ÌĞò¡£" -Type "SUCCESS"
+            Write-Host "  [+] åœ¨é©±åŠ¨ç¨‹åºå­˜å‚¨ä¸­æœªæ‰¾åˆ°å­¤ç«‹çš„æ‰“å°æœºé©±åŠ¨ç¨‹åºã€‚" -ForegroundColor Green
+            Write-Log "æœªæ£€æµ‹åˆ°å­¤ç«‹çš„é©±åŠ¨ç¨‹åºã€‚" -Type "SUCCESS"
         }
     }
-    catch { Write-Log "Çı¶¯ÇåÀíÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "é©±åŠ¨æ¸…ç†å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Force-KillDriverProcess {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ÈÆ¹ı 'Çı¶¯³ÌĞòµ±Ç°ÕıÔÚÊ¹ÓÃ'"
+    Write-Host "               ç»•è¿‡ 'é©±åŠ¨ç¨‹åºå½“å‰æ­£åœ¨ä½¿ç”¨'"
     Write-Host "  ======================================================================"
-    Write-Log "ÕıÔÚÇ¿ÖÆÖÕÖ¹Çı¶¯³ÌĞò¸ôÀë½ø³Ì..." -Type "INFO"
-    Write-Host "  [!] ¾¯¸æ: Õâ½«ÖÕÖ¹ËùÓĞÕıÔÚ´¦ÀíµÄ´òÓ¡ÈÎÎñ¡£" -ForegroundColor Red
-    $confirm = Read-Host "  [?] ÊÇ·ñ¼ÌĞø? (Y/N)"
+    Write-Log "æ­£åœ¨å¼ºåˆ¶ç»ˆæ­¢é©±åŠ¨ç¨‹åºéš”ç¦»è¿›ç¨‹..." -Type "INFO"
+    Write-Host "  [!] è­¦å‘Š: è¿™å°†ç»ˆæ­¢æ‰€æœ‰æ­£åœ¨å¤„ç†çš„æ‰“å°ä»»åŠ¡ã€‚" -ForegroundColor Red
+    $confirm = Read-Host "  [?] æ˜¯å¦ç»§ç»­? (Y/N)"
     if ($confirm -ne 'Y') { return }
     try {
-        Write-Host "  [*] ÕıÔÚÍ£Ö¹ Print Spooler..." -ForegroundColor Cyan
+        Write-Host "  [*] æ­£åœ¨åœæ­¢ Print Spooler..." -ForegroundColor Cyan
         Stop-Service spooler -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 1
         $targets = @("PrintIsolationHost", "printfilterpipelinesvc", "splwow64")
@@ -1743,161 +1743,161 @@ function Force-KillDriverProcess {
             $running = Get-Process -Name $proc -ErrorAction SilentlyContinue
             if ($running) {
                 $running | Stop-Process -Force -ErrorAction SilentlyContinue
-                Write-Host "  [+] ÒÑÖÕÖ¹: $proc (PID: $($running.Id -join ', '))" -ForegroundColor Green
+                Write-Host "  [+] å·²ç»ˆæ­¢: $proc (PID: $($running.Id -join ', '))" -ForegroundColor Green
             }
             else {
-                Write-Host "  [*] $proc Î´ÔÚÔËĞĞ¡£" -ForegroundColor Cyan
+                Write-Host "  [*] $proc æœªåœ¨è¿è¡Œã€‚" -ForegroundColor Cyan
             }
         }
         Start-Sleep -Seconds 2
         Start-Service spooler -ErrorAction SilentlyContinue
-        Write-Log "Çı¶¯³ÌĞò¾ä±úÒÑÊÍ·Å¡£Spooler ÒÑÖØÆô¡£" -Type "SUCCESS"
-        Write-Host "  [+] ËùÓĞÇı¶¯¾ä±úÒÑÊÍ·Å¡£ÏÖÔÚÄã¿ÉÒÔĞ¶ÔØÇı¶¯³ÌĞòÁË¡£" -ForegroundColor Green
+        Write-Log "é©±åŠ¨ç¨‹åºå¥æŸ„å·²é‡Šæ”¾ã€‚Spooler å·²é‡å¯ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] æ‰€æœ‰é©±åŠ¨å¥æŸ„å·²é‡Šæ”¾ã€‚ç°åœ¨ä½ å¯ä»¥å¸è½½é©±åŠ¨ç¨‹åºäº†ã€‚" -ForegroundColor Green
     }
-    catch { Write-Log "Ç¿ÖÆÖÕÖ¹Ê§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "å¼ºåˆ¶ç»ˆæ­¢å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Convert-WSDtoTCPIP {
     Write-Host "`n  ======================================================================"
-    Write-Host "               WSD µ½ ±ê×¼ TCP/IP ¶Ë¿Ú×ª»»Æ÷"
+    Write-Host "               WSD åˆ° æ ‡å‡† TCP/IP ç«¯å£è½¬æ¢å™¨"
     Write-Host "  ======================================================================"
-    Write-Log "ÕıÔÚÉ¨Ãè WSD ¶Ë¿Ú..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰«æ WSD ç«¯å£..." -Type "INFO"
     try {
         $wsdPorts = Get-PrinterPort -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "WSD-*" }
         if (-not $wsdPorts) {
-            Write-Host "  [+] Î´¼ì²âµ½ WSD ¶Ë¿Ú¡£ËùÓĞ¶Ë¿Ú×´¿öÎÈ¶¨¡£" -ForegroundColor Green
-            Write-Log "Î´ÕÒµ½ WSD ¶Ë¿Ú¡£" -Type "SUCCESS"
+            Write-Host "  [+] æœªæ£€æµ‹åˆ° WSD ç«¯å£ã€‚æ‰€æœ‰ç«¯å£çŠ¶å†µç¨³å®šã€‚" -ForegroundColor Green
+            Write-Log "æœªæ‰¾åˆ° WSD ç«¯å£ã€‚" -Type "SUCCESS"
             return
         }
-        Write-Host "  [!] ÕÒµ½ $($wsdPorts.Count) ¸ö WSD ¶Ë¿Ú:" -ForegroundColor Yellow
+        Write-Host "  [!] æ‰¾åˆ° $($wsdPorts.Count) ä¸ª WSD ç«¯å£:" -ForegroundColor Yellow
         foreach ($wp in $wsdPorts) {
             $printerOnPort = Get-Printer -ErrorAction SilentlyContinue | Where-Object { $_.PortName -eq $wp.Name }
-            $printerName = if ($printerOnPort) { $printerOnPort.Name } else { "(Î´·ÖÅä)" }
-            Write-Host "      ¶Ë¿Ú: $($wp.Name) | ´òÓ¡»ú: $printerName" -ForegroundColor Cyan
+            $printerName = if ($printerOnPort) { $printerOnPort.Name } else { "(æœªåˆ†é…)" }
+            Write-Host "      ç«¯å£: $($wp.Name) | æ‰“å°æœº: $printerName" -ForegroundColor Cyan
         }
-        $ip = Read-Host "`n  [?] ÊäÈë WSD ´òÓ¡»úµÄÊµ¼Ê IP µØÖ· (ÀıÈç: 192.168.1.100)"
+        $ip = Read-Host "`n  [?] è¾“å…¥ WSD æ‰“å°æœºçš„å®é™… IP åœ°å€ (ä¾‹å¦‚: 192.168.1.100)"
         if (-not $ip) { return }
         $newPortName = "IP_$ip"
         if (-not (Get-PrinterPort -Name $newPortName -ErrorAction SilentlyContinue)) {
             Add-PrinterPort -Name $newPortName -PrinterHostAddress $ip -ErrorAction Stop
-            Write-Host "  [+] TCP/IP ¶Ë¿Ú $newPortName ÒÑ´´½¨¡£" -ForegroundColor Green
+            Write-Host "  [+] TCP/IP ç«¯å£ $newPortName å·²åˆ›å»ºã€‚" -ForegroundColor Green
         }
         $printerToMove = Get-Printer -ErrorAction SilentlyContinue | Where-Object { $_.PortName -like "WSD-*" } | Select-Object -First 1
         if ($printerToMove) {
             Set-Printer -Name $printerToMove.Name -PortName $newPortName -ErrorAction Stop
-            Write-Log "´òÓ¡»ú $($printerToMove.Name) ´Ó WSD Ç¨ÒÆµ½ÁË TCP/IP ($ip)¡£" -Type "SUCCESS"
-            Write-Host "  [+] $($printerToMove.Name) ÒÑÇ¨ÒÆµ½ $newPortName¡£" -ForegroundColor Green
+            Write-Log "æ‰“å°æœº $($printerToMove.Name) ä» WSD è¿ç§»åˆ°äº† TCP/IP ($ip)ã€‚" -Type "SUCCESS"
+            Write-Host "  [+] $($printerToMove.Name) å·²è¿ç§»åˆ° $newPortNameã€‚" -ForegroundColor Green
         }
     }
-    catch { Write-Log "WSD ×ª»»Ê§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "WSD è½¬æ¢å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Reset-NetworkSockets {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ÍøÂçÌ×½Ó×ÖÖØĞÂ³õÊ¼»¯ (Ñ¡ÔñĞÔÇåÀí)"
+    Write-Host "               ç½‘ç»œå¥—æ¥å­—é‡æ–°åˆå§‹åŒ– (é€‰æ‹©æ€§æ¸…ç†)"
     Write-Host "  ======================================================================"
-    Write-Log "ÕıÔÚÖ´ĞĞÑ¡ÔñĞÔÍøÂçÌ×½Ó×ÖÇåÀí..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰§è¡Œé€‰æ‹©æ€§ç½‘ç»œå¥—æ¥å­—æ¸…ç†..." -Type "INFO"
     try {
-        Write-Host "  [*] ÕıÔÚÉ¨Ãè¿¨×¡µÄ SMB/RPC Á¬½Ó..." -ForegroundColor Cyan
+        Write-Host "  [*] æ­£åœ¨æ‰«æå¡ä½çš„ SMB/RPC è¿æ¥..." -ForegroundColor Cyan
         $stuck445 = & netstat -ano 2>&1 | Select-String ":445\s.*(ESTABLISHED|TIME_WAIT|CLOSE_WAIT)"
         $stuck135 = & netstat -ano 2>&1 | Select-String ":135\s.*(ESTABLISHED|TIME_WAIT|CLOSE_WAIT)"
         $totalStuck = 0
-        if ($stuck445) { $totalStuck += $stuck445.Count; Write-Host "  [!] ¶Ë¿Ú 445 (SMB): $($stuck445.Count) ¸ö¿¨×¡µÄÁ¬½Ó" -ForegroundColor Yellow }
-        if ($stuck135) { $totalStuck += $stuck135.Count; Write-Host "  [!] ¶Ë¿Ú 135 (RPC): $($stuck135.Count) ¸ö¿¨×¡µÄÁ¬½Ó" -ForegroundColor Yellow }
-        if ($totalStuck -eq 0) { Write-Host "  [+] Î´¼ì²âµ½¿¨×¡µÄÁ¬½Ó¡£" -ForegroundColor Green }
-        Write-Host "  [*] ÕıÔÚ½öÖØÆô SMB ¿Í»§¶ËºÍ·şÎñÆ÷·şÎñ..." -ForegroundColor Cyan
+        if ($stuck445) { $totalStuck += $stuck445.Count; Write-Host "  [!] ç«¯å£ 445 (SMB): $($stuck445.Count) ä¸ªå¡ä½çš„è¿æ¥" -ForegroundColor Yellow }
+        if ($stuck135) { $totalStuck += $stuck135.Count; Write-Host "  [!] ç«¯å£ 135 (RPC): $($stuck135.Count) ä¸ªå¡ä½çš„è¿æ¥" -ForegroundColor Yellow }
+        if ($totalStuck -eq 0) { Write-Host "  [+] æœªæ£€æµ‹åˆ°å¡ä½çš„è¿æ¥ã€‚" -ForegroundColor Green }
+        Write-Host "  [*] æ­£åœ¨ä»…é‡å¯ SMB å®¢æˆ·ç«¯å’ŒæœåŠ¡å™¨æœåŠ¡..." -ForegroundColor Cyan
         Restart-Service LanmanWorkstation -Force -ErrorAction SilentlyContinue
         Restart-Service LanmanServer -Force -ErrorAction SilentlyContinue
         $LASTEXITCODE = 0; ipconfig /registerdns > $null 2>&1
-        Write-Log "Ñ¡ÔñĞÔÇå³ıÁËÍøÂçÌ×½Ó×Ö¡£ÒÑÇå³ı $totalStuck ¸öÁ¬½Ó¡£" -Type "SUCCESS"
-        Write-Host "  [+] Ì×½Ó×ÖÇåÀíÍê³É¡£Çå³ıÁË $totalStuck ¸öÊ§Ğ§Á¬½Ó¡£" -ForegroundColor Green
+        Write-Log "é€‰æ‹©æ€§æ¸…é™¤äº†ç½‘ç»œå¥—æ¥å­—ã€‚å·²æ¸…é™¤ $totalStuck ä¸ªè¿æ¥ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] å¥—æ¥å­—æ¸…ç†å®Œæˆã€‚æ¸…é™¤äº† $totalStuck ä¸ªå¤±æ•ˆè¿æ¥ã€‚" -ForegroundColor Green
     }
-    catch { Write-Log "Ì×½Ó×ÖÖØ³õÊ¼»¯Ê§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "å¥—æ¥å­—é‡åˆå§‹åŒ–å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Rescue-NetworkProfile {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ¾ÈÔ®ÍøÂçÅäÖÃ (×Ô¶¯¼ì²â & ¿´ÃÅ¹·)"
+    Write-Host "               æ•‘æ´ç½‘ç»œé…ç½® (è‡ªåŠ¨æ£€æµ‹ & çœ‹é—¨ç‹—)"
     Write-Host "  ======================================================================"
-    Write-Log "ÕıÔÚ¾ÈÔ®ÍøÂçÅäÖÃ..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ•‘æ´ç½‘ç»œé…ç½®..." -Type "INFO"
     try {
         $profiles = Get-NetConnectionProfile -ErrorAction SilentlyContinue
         $publicFound = $false
         foreach ($p in $profiles) {
             if ($p.NetworkCategory -eq 'Public') {
                 $publicFound = $true
-                Write-Host "  [!] ¼ì²âµ½¹«ÓÃÅäÖÃ: $($p.InterfaceAlias)" -ForegroundColor Red
+                Write-Host "  [!] æ£€æµ‹åˆ°å…¬ç”¨é…ç½®: $($p.InterfaceAlias)" -ForegroundColor Red
                 Set-NetConnectionProfile -InterfaceAlias $p.InterfaceAlias -NetworkCategory Private -ErrorAction SilentlyContinue
-                Write-Host "  [+] Ç¿ÖÆÉèÎª×¨ÓÃ: $($p.InterfaceAlias)" -ForegroundColor Green
+                Write-Host "  [+] å¼ºåˆ¶è®¾ä¸ºä¸“ç”¨: $($p.InterfaceAlias)" -ForegroundColor Green
             }
         }
-        if (-not $publicFound) { Write-Host "  [+] ËùÓĞÍøÂçÅäÖÃÎÄ¼ş¶¼ÒÑ¾­ÊÇ ×¨ÓÃ/Óò Ä£Ê½¡£ÎŞĞè²Ù×÷¡£" -ForegroundColor Green }
-        $deployWatchdog = Read-Host "`n  [?] ÊÇ·ñ²¿ÊğÍøÂçÅäÖÃ¿´ÃÅ¹· (Ã¿ 10 ·ÖÖÓ¼ì²éÒ»´Î)? (Y/N)"
+        if (-not $publicFound) { Write-Host "  [+] æ‰€æœ‰ç½‘ç»œé…ç½®æ–‡ä»¶éƒ½å·²ç»æ˜¯ ä¸“ç”¨/åŸŸ æ¨¡å¼ã€‚æ— éœ€æ“ä½œã€‚" -ForegroundColor Green }
+        $deployWatchdog = Read-Host "`n  [?] æ˜¯å¦éƒ¨ç½²ç½‘ç»œé…ç½®çœ‹é—¨ç‹— (æ¯ 10 åˆ†é’Ÿæ£€æŸ¥ä¸€æ¬¡)? (Y/N)"
         if ($deployWatchdog -eq 'Y') {
             $cmd = "powershell.exe -WindowStyle Hidden -Command \`"Get-NetConnectionProfile | Where-Object { `$_.NetworkCategory -eq 'Public' } | Set-NetConnectionProfile -NetworkCategory Private\`""
             & schtasks.exe /create /tn "NetworkProfileWatchdog" /tr $cmd /sc minute /mo 10 /ru "SYSTEM" /rl HIGHEST /f > $null 2>&1
             if ($LASTEXITCODE -eq 0) {
-                # ÅäÖÃÈÎÎñÔÚµç³Ø¹©µçÊ±ÔËĞĞ (±ÜÃâ±Ê¼Ç±¾ÉÏµÄ 0x800710E0 ´íÎó)
+                # é…ç½®ä»»åŠ¡åœ¨ç”µæ± ä¾›ç”µæ—¶è¿è¡Œ (é¿å…ç¬”è®°æœ¬ä¸Šçš„ 0x800710E0 é”™è¯¯)
                 try {
                     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
                     Set-ScheduledTask -TaskName "NetworkProfileWatchdog" -Settings $settings -ErrorAction SilentlyContinue | Out-Null
                 } catch {}
-                Write-Log "ÒÑ²¿ÊğÍøÂçÅäÖÃ¿´ÃÅ¹· (ÎŞÏŞÖØ¸´)¡£" -Type "SUCCESS"
-                Write-Host "  [+] ¿´ÃÅ¹·ÒÑ²¿Êğ¡£½«Ã¿ 10 ·ÖÖÓÇ¿ÖÆ¼ì²é²¢ÉèÎª×¨ÓÃÍøÂç¡£" -ForegroundColor Green
+                Write-Log "å·²éƒ¨ç½²ç½‘ç»œé…ç½®çœ‹é—¨ç‹— (æ— é™é‡å¤)ã€‚" -Type "SUCCESS"
+                Write-Host "  [+] çœ‹é—¨ç‹—å·²éƒ¨ç½²ã€‚å°†æ¯ 10 åˆ†é’Ÿå¼ºåˆ¶æ£€æŸ¥å¹¶è®¾ä¸ºä¸“ç”¨ç½‘ç»œã€‚" -ForegroundColor Green
             } else {
-                Write-Log "²¿ÊğÍøÂçÅäÖÃ¿´ÃÅ¹·Ê§°Ü¡£schtasks ·µ»ØÍË³ö´úÂë $LASTEXITCODE" -Type "ERROR"
+                Write-Log "éƒ¨ç½²ç½‘ç»œé…ç½®çœ‹é—¨ç‹—å¤±è´¥ã€‚schtasks è¿”å›é€€å‡ºä»£ç  $LASTEXITCODE" -Type "ERROR"
             }
         }
     }
-    catch { Write-Log "ÍøÂç¾ÈÔ®Ê§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "ç½‘ç»œæ•‘æ´å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Remove-GhostUSBPrinters {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ÓÄÁé USB ¶Ë¿Ú & ¸±±¾Çå³ıÆ÷"
+    Write-Host "               å¹½çµ USB ç«¯å£ & å‰¯æœ¬æ¸…é™¤å™¨"
     Write-Host "  ======================================================================"
-    Write-Log "ÕıÔÚÉ¨ÃèÓÄÁé USB ´òÓ¡»úºÍ¸±±¾..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰«æå¹½çµ USB æ‰“å°æœºå’Œå‰¯æœ¬..." -Type "INFO"
     try {
         $allPrinters = Get-Printer -ErrorAction SilentlyContinue
-        $ghosts = $allPrinters | Where-Object { $_.Name -match '\(Copy \d+\)' -or $_.Name -match ' - Copy' -or $_.Name -match 'Copy \d+$' -or $_.Name -match '\(¸±±¾ \d+\)' }
-        $activePorts = ($allPrinters | Where-Object { $_.Name -notmatch 'Copy' -and $_.Name -notmatch '¸±±¾' }).PortName
+        $ghosts = $allPrinters | Where-Object { $_.Name -match '\(Copy \d+\)' -or $_.Name -match ' - Copy' -or $_.Name -match 'Copy \d+$' -or $_.Name -match '\(å‰¯æœ¬ \d+\)' }
+        $activePorts = ($allPrinters | Where-Object { $_.Name -notmatch 'Copy' -and $_.Name -notmatch 'å‰¯æœ¬' }).PortName
         $deadUSB = Get-PrinterPort -ErrorAction SilentlyContinue | Where-Object { $_.Name -like "USB*" -and $_.Name -notin $activePorts }
         if ($ghosts.Count -eq 0 -and $deadUSB.Count -eq 0) {
-            Write-Host "  [+] Î´¼ì²âµ½ÓÄÁé´òÓ¡»ú»òËÀ USB ¶Ë¿Ú¡£" -ForegroundColor Green
-            Write-Log "Î´ÕÒµ½ÓÄÁéÉè±¸¡£" -Type "SUCCESS"
+            Write-Host "  [+] æœªæ£€æµ‹åˆ°å¹½çµæ‰“å°æœºæˆ–æ­» USB ç«¯å£ã€‚" -ForegroundColor Green
+            Write-Log "æœªæ‰¾åˆ°å¹½çµè®¾å¤‡ã€‚" -Type "SUCCESS"
             return
         }
         if ($ghosts.Count -gt 0) {
-            Write-Host "  [!] ÕÒµ½ÖØ¸´/ÓÄÁé´òÓ¡»ú:" -ForegroundColor Yellow
-            foreach ($g in $ghosts) { Write-Host "      - $($g.Name) [¶Ë¿Ú: $($g.PortName)]" -ForegroundColor Red }
+            Write-Host "  [!] æ‰¾åˆ°é‡å¤/å¹½çµæ‰“å°æœº:" -ForegroundColor Yellow
+            foreach ($g in $ghosts) { Write-Host "      - $($g.Name) [ç«¯å£: $($g.PortName)]" -ForegroundColor Red }
         }
         if ($deadUSB.Count -gt 0) {
-            Write-Host "  [!] ÕÒµ½ËÀ USB ¶Ë¿Ú:" -ForegroundColor Yellow
+            Write-Host "  [!] æ‰¾åˆ°æ­» USB ç«¯å£:" -ForegroundColor Yellow
             foreach ($u in $deadUSB) { Write-Host "      - $($u.Name)" -ForegroundColor Red }
         }
-        $confirm = Read-Host "`n  [?] ÊÇ·ñÒÆ³ıËùÓĞÓÄÁé´òÓ¡»úºÍËÀ USB ¶Ë¿Ú? (Y/N)"
+        $confirm = Read-Host "`n  [?] æ˜¯å¦ç§»é™¤æ‰€æœ‰å¹½çµæ‰“å°æœºå’Œæ­» USB ç«¯å£? (Y/N)"
         if ($confirm -eq 'Y') {
             foreach ($g in $ghosts) {
                 Remove-Printer -Name $g.Name -ErrorAction SilentlyContinue
-                Write-Host "  [+] ÒÑÒÆ³ı´òÓ¡»ú: $($g.Name)" -ForegroundColor Green
+                Write-Host "  [+] å·²ç§»é™¤æ‰“å°æœº: $($g.Name)" -ForegroundColor Green
             }
             foreach ($u in $deadUSB) {
                 Remove-PrinterPort -Name $u.Name -ErrorAction SilentlyContinue
-                Write-Host "  [+] ÒÑÒÆ³ı¶Ë¿Ú: $($u.Name)" -ForegroundColor Green
+                Write-Host "  [+] å·²ç§»é™¤ç«¯å£: $($u.Name)" -ForegroundColor Green
             }
-            Write-Log "ÇåÀíÓÄÁéÉè±¸:ÒÆ³ıÁË $($ghosts.Count) Ì¨´òÓ¡»ú, $($deadUSB.Count) ¸ö¶Ë¿Ú¡£" -Type "SUCCESS"
+            Write-Log "æ¸…ç†å¹½çµè®¾å¤‡:ç§»é™¤äº† $($ghosts.Count) å°æ‰“å°æœº, $($deadUSB.Count) ä¸ªç«¯å£ã€‚" -Type "SUCCESS"
         }
     }
-    catch { Write-Log "ÓÄÁé USB ÇåÀíÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "å¹½çµ USB æ¸…ç†å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Nuke-PrintQueue {
-    Write-Log "ÕıÔÚÇ¿ÖÆÇå³ı´òÓ¡¶ÓÁĞ..." -Type "INFO"
+    Write-Log "æ­£åœ¨å¼ºåˆ¶æ¸…é™¤æ‰“å°é˜Ÿåˆ—..." -Type "INFO"
     Write-Host "`n  ======================================================================"
-    Write-Host "                Ç¿ÖÆÇå³ı´òÓ¡¶ÓÁĞ"
+    Write-Host "                å¼ºåˆ¶æ¸…é™¤æ‰“å°é˜Ÿåˆ—"
     Write-Host "  ======================================================================"
     try {
-        Write-Host "  [*] ÕıÔÚÖÕÖ¹ Print Spooler ¼°ËùÓĞ×Ó½ø³Ì..." -ForegroundColor Cyan
+        Write-Host "  [*] æ­£åœ¨ç»ˆæ­¢ Print Spooler åŠæ‰€æœ‰å­è¿›ç¨‹..." -ForegroundColor Cyan
         Stop-Service spooler -Force -ErrorAction SilentlyContinue
         Start-Sleep -Milliseconds 500
         Get-Process -Name "PrintIsolationHost", "printfilterpipelinesvc", "splwow64" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -1911,39 +1911,39 @@ function Nuke-PrintQueue {
         Remove-Item "$spoolDir\*" -Force -Recurse -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 1
         Start-Service spooler -ErrorAction Stop
-        Write-Log "Ç¿ÖÆÇå³ıÍê³É¡£Çå³ıÁË $totalFiles ¸öËğ»µµÄÎÄ¼ş¡£" -Type "SUCCESS"
-        Write-Host "  [+] ´òÓ¡¶ÓÁĞÒÑÇå¿Õ¡£ÇåÀíÁË $totalFiles ¸öÎÄ¼ş¡£Spooler ÒÑÖØÆô¡£" -ForegroundColor Green
+        Write-Log "å¼ºåˆ¶æ¸…é™¤å®Œæˆã€‚æ¸…é™¤äº† $totalFiles ä¸ªæŸåçš„æ–‡ä»¶ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] æ‰“å°é˜Ÿåˆ—å·²æ¸…ç©ºã€‚æ¸…ç†äº† $totalFiles ä¸ªæ–‡ä»¶ã€‚Spooler å·²é‡å¯ã€‚" -ForegroundColor Green
     }
-    catch { Write-Log "Ç¿ÖÆÇå³ıÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "å¼ºåˆ¶æ¸…é™¤å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Reset-SpoolerDependencyRegistry {
-    Write-Log "ÕıÔÚÍ¨¹ıÖ±½ÓĞŞ¸Ä×¢²á±íÖØÖÃ Spooler ÒÀÀµ·şÎñ..." -Type "INFO"
+    Write-Log "æ­£åœ¨é€šè¿‡ç›´æ¥ä¿®æ”¹æ³¨å†Œè¡¨é‡ç½® Spooler ä¾èµ–æœåŠ¡..." -Type "INFO"
     try {
         $regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\Spooler"
         $current = (Get-ItemProperty $regPath -ErrorAction SilentlyContinue).DependOnService
         if ($current) {
-            Write-Host "  [*] µ±Ç°ÒÀÀµÏî: $($current -join ', ')" -ForegroundColor Yellow
+            Write-Host "  [*] å½“å‰ä¾èµ–é¡¹: $($current -join ', ')" -ForegroundColor Yellow
         }
         Set-ItemProperty -Path $regPath -Name DependOnService -Value @("RPCSS","http") -Type MultiString -Force -ErrorAction Stop
-        Write-Log "Spooler DependOnService ÒÑÖØÖÃÎª³ö³§Ä¬ÈÏ (RPCSS, http)¡£" -Type "SUCCESS"
-        Write-Host "  [+] Spooler ÒÀÀµÏîÒÑÖØÖÃÎª: RPCSS, http" -ForegroundColor Green
-        Write-Host "  [*] ÕıÔÚÖØÆô Spooler ÒÔÓ¦ÓÃÉèÖÃ..." -ForegroundColor Cyan
+        Write-Log "Spooler DependOnService å·²é‡ç½®ä¸ºå‡ºå‚é»˜è®¤ (RPCSS, http)ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] Spooler ä¾èµ–é¡¹å·²é‡ç½®ä¸º: RPCSS, http" -ForegroundColor Green
+        Write-Host "  [*] æ­£åœ¨é‡å¯ Spooler ä»¥åº”ç”¨è®¾ç½®..." -ForegroundColor Cyan
         Restart-Service spooler -Force -ErrorAction SilentlyContinue
     }
-    catch { Write-Log "ÖØÖÃÒÀÀµ×¢²á±íÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "é‡ç½®ä¾èµ–æ³¨å†Œè¡¨å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Inject-CrossUserCredentials {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ¿çÓÃ»§Æ¾¾İÓ³Éä"
+    Write-Host "               è·¨ç”¨æˆ·å‡­æ®æ˜ å°„"
     Write-Host "  ======================================================================"
-    Write-Host "  [!] ¾¯¸æ: Õâ½«Ïò´ËµçÄÔÉÏµÄ[ËùÓĞÓÃ»§ÅäÖÃÎÄ¼ş]ÖĞ×¢ÈëÆ¾¾İ¡£" -ForegroundColor Red
-    Write-Log "¿ªÊ¼¿çÓÃ»§Æ¾¾İÓ³Éä..." -Type "INFO"
-    $ip = Read-Host "  [?] Ä¿±ê IP/Ö÷»úÃû (ÀıÈç: 192.168.1.10)"
-    $usr = Read-Host "  [?] Ä¿±êÖ÷»úÉÏµÄÓÃ»§Ãû"
-    $pass = Read-Host "  [?] Ä¿±êÖ÷»úÉÏµÄÃÜÂë (Ã÷ÎÄÏÔÊ¾)"
-    if (-not $ip -or -not $usr) { Write-Host "  [-] ÒÑÈ¡Ïû¡£" -ForegroundColor Red; return }
+    Write-Host "  [!] è­¦å‘Š: è¿™å°†å‘æ­¤ç”µè„‘ä¸Šçš„[æ‰€æœ‰ç”¨æˆ·é…ç½®æ–‡ä»¶]ä¸­æ³¨å…¥å‡­æ®ã€‚" -ForegroundColor Red
+    Write-Log "å¼€å§‹è·¨ç”¨æˆ·å‡­æ®æ˜ å°„..." -Type "INFO"
+    $ip = Read-Host "  [?] ç›®æ ‡ IP/ä¸»æœºå (ä¾‹å¦‚: 192.168.1.10)"
+    $usr = Read-Host "  [?] ç›®æ ‡ä¸»æœºä¸Šçš„ç”¨æˆ·å"
+    $pass = Read-Host "  [?] ç›®æ ‡ä¸»æœºä¸Šçš„å¯†ç  (æ˜æ–‡æ˜¾ç¤º)"
+    if (-not $ip -or -not $usr) { Write-Host "  [-] å·²å–æ¶ˆã€‚" -ForegroundColor Red; return }
     try {
         $profiles = Get-ChildItem "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList" -ErrorAction SilentlyContinue | Where-Object { $_.PSChildName -match '^S-1-5-21-' }
         $injected = 0
@@ -1951,7 +1951,7 @@ function Inject-CrossUserCredentials {
             $sid = $profile.PSChildName
             $profilePath = (Get-ItemProperty $profile.PSPath -ErrorAction SilentlyContinue).ProfileImagePath
             $userName = Split-Path $profilePath -Leaf
-            Write-Host "  [*] ÕıÔÚÎªÓÃ»§ $userName ($sid) ×¢ÈëÆ¾¾İ..." -ForegroundColor Cyan
+            Write-Host "  [*] æ­£åœ¨ä¸ºç”¨æˆ· $userName ($sid) æ³¨å…¥å‡­æ®..." -ForegroundColor Cyan
             $ntuser = Join-Path $profilePath "NTUSER.DAT"
             if (Test-Path $ntuser) {
                 $LASTEXITCODE = 0; & reg load "HKU\$sid" $ntuser > $null 2>&1
@@ -1965,9 +1965,9 @@ function Inject-CrossUserCredentials {
                         # Inject RunOnce to execute the script (script self-deletes after running)
                         $runOncePath = "Registry::HKEY_USERS\$sid\Software\Microsoft\Windows\CurrentVersion\RunOnce"
                         Set-ItemProperty -Path $runOncePath -Name "PrinterCredFix" -Value "`"$credScript`"" -Force -ErrorAction Stop
-                        Write-Log "ÒÑÎª $userName ×¢Èë RunOnce Æ¾¾İÃüÁî¡£" -Type "SUCCESS"
+                        Write-Log "å·²ä¸º $userName æ³¨å…¥ RunOnce å‡­æ®å‘½ä»¤ã€‚" -Type "SUCCESS"
                     } catch {
-                        Write-Log "Ğ´Èë RunOnce ×¢²á±íÊ§°Ü (${userName}): $($_.Exception.Message)" -Type "ERROR"
+                        Write-Log "å†™å…¥ RunOnce æ³¨å†Œè¡¨å¤±è´¥ (${userName}): $($_.Exception.Message)" -Type "ERROR"
                     }
                     
                     # Retry loop to unload registry safely
@@ -1982,56 +1982,56 @@ function Inject-CrossUserCredentials {
                         Start-Sleep -Milliseconds 200
                     }
                     if (-not $unloaded) {
-                        Write-Log "ÔÚ³¢ÊÔ5´Îºó£¬Ğ¶ÔØ $userName ($sid) µÄ×¢²á±íÅäÖÃµ¥ÔªÊ§°Ü¡£" -Type "WARNING"
+                        Write-Log "åœ¨å°è¯•5æ¬¡åï¼Œå¸è½½ $userName ($sid) çš„æ³¨å†Œè¡¨é…ç½®å•å…ƒå¤±è´¥ã€‚" -Type "WARNING"
                     }
                     $injected++
                 } else {
-                    Write-Log "¼ÓÔØ $userName ($sid) µÄ×¢²á±íÅäÖÃµ¥ÔªÊ§°Ü¡£" -Type "ERROR"
+                    Write-Log "åŠ è½½ $userName ($sid) çš„æ³¨å†Œè¡¨é…ç½®å•å…ƒå¤±è´¥ã€‚" -Type "ERROR"
                 }
             }
         }
-        Write-Log "ÒÑÎª $injected ¸öÓÃ»§ÅäÖÃÎÄ¼ş×¢ÈëÆ¾¾İ¡£" -Type "SUCCESS"
-        Write-Host "  [+] Æ¾¾İÒÑ×¢Èë $injected ¸öÓÃ»§ÅäÖÃÎÄ¼şÖĞ¡£" -ForegroundColor Green
+        Write-Log "å·²ä¸º $injected ä¸ªç”¨æˆ·é…ç½®æ–‡ä»¶æ³¨å…¥å‡­æ®ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] å‡­æ®å·²æ³¨å…¥ $injected ä¸ªç”¨æˆ·é…ç½®æ–‡ä»¶ä¸­ã€‚" -ForegroundColor Green
         $pass = ""
     }
-    catch { Write-Log "¿çÓÃ»§Æ¾¾İ×¢ÈëÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "è·¨ç”¨æˆ·å‡­æ®æ³¨å…¥å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Force-DefaultPrinterRegistry {
     Write-Host "`n  ======================================================================"
-    Write-Host "               Ç¿ÖÆÉèÖÃÄ¬ÈÏ´òÓ¡»ú (×¢²á±íÈÆ¹ı 0x00000709)"
+    Write-Host "               å¼ºåˆ¶è®¾ç½®é»˜è®¤æ‰“å°æœº (æ³¨å†Œè¡¨ç»•è¿‡ 0x00000709)"
     Write-Host "  ======================================================================"
-    Write-Log "Í¨¹ı×¢Èë×¢²á±íÇ¿ÖÆÉèÖÃÄ¬ÈÏ´òÓ¡»ú..." -Type "INFO"
+    Write-Log "é€šè¿‡æ³¨å…¥æ³¨å†Œè¡¨å¼ºåˆ¶è®¾ç½®é»˜è®¤æ‰“å°æœº..." -Type "INFO"
     try {
         Set-ItemProperty "HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows" -Name LegacyDefaultPrinterMode -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
         $printers = Get-Printer -ErrorAction Stop
-        if (-not $printers) { Write-Host "  [-] Î´ÕÒµ½´òÓ¡»ú¡£" -ForegroundColor Red; return }
+        if (-not $printers) { Write-Host "  [-] æœªæ‰¾åˆ°æ‰“å°æœºã€‚" -ForegroundColor Red; return }
         $idx = 1
         foreach ($p in $printers) {
-            Write-Host "  [$idx] $($p.Name) | ¶Ë¿Ú: $($p.PortName)" -ForegroundColor Cyan
+            Write-Host "  [$idx] $($p.Name) | ç«¯å£: $($p.PortName)" -ForegroundColor Cyan
             $idx++
         }
-        $sel = Read-Host "`n  [?] ÇëÑ¡ÔñÒªÇ¿ÖÆÉèÎªÄ¬ÈÏµÄ´òÓ¡»ú±àºÅ"
+        $sel = Read-Host "`n  [?] è¯·é€‰æ‹©è¦å¼ºåˆ¶è®¾ä¸ºé»˜è®¤çš„æ‰“å°æœºç¼–å·"
         $selIdx = -1
-        try { $selIdx = [int]$sel - 1 } catch { Write-Host "  [-] ÊäÈëÎŞĞ§¡£" -ForegroundColor Red; return }
-        if ($selIdx -lt 0 -or $selIdx -ge $printers.Count) { Write-Host "  [-] Ñ¡ÔñÎŞĞ§¡£" -ForegroundColor Red; return }
+        try { $selIdx = [int]$sel - 1 } catch { Write-Host "  [-] è¾“å…¥æ— æ•ˆã€‚" -ForegroundColor Red; return }
+        if ($selIdx -lt 0 -or $selIdx -ge $printers.Count) { Write-Host "  [-] é€‰æ‹©æ— æ•ˆã€‚" -ForegroundColor Red; return }
         $target = $printers[$selIdx]
         $deviceStr = "$($target.Name),winspool,$($target.PortName):"
         Set-ItemProperty "HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows" -Name Device -Value $deviceStr -Type String -Force -ErrorAction Stop
-        Write-Log "Í¨¹ı×¢²á±íÇ¿ÖÆÉèÖÃÁËÄ¬ÈÏ´òÓ¡»ú: $($target.Name)" -Type "SUCCESS"
-        Write-Host "  [+] Ä¬ÈÏ´òÓ¡»úÒÑÉèÖÃÎª: $($target.Name) (ÒÑÓ¦ÓÃ×¢²á±íÈÆ¹ı)¡£" -ForegroundColor Green
+        Write-Log "é€šè¿‡æ³¨å†Œè¡¨å¼ºåˆ¶è®¾ç½®äº†é»˜è®¤æ‰“å°æœº: $($target.Name)" -Type "SUCCESS"
+        Write-Host "  [+] é»˜è®¤æ‰“å°æœºå·²è®¾ç½®ä¸º: $($target.Name) (å·²åº”ç”¨æ³¨å†Œè¡¨ç»•è¿‡)ã€‚" -ForegroundColor Green
     }
-    catch { Write-Log "×¢²á±íÄ¬ÈÏ´òÓ¡»úÉèÖÃÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "æ³¨å†Œè¡¨é»˜è®¤æ‰“å°æœºè®¾ç½®å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Sanitize-PrinterShareName {
-    Write-Log "ÕıÔÚÉ¨Ãè²»ºÏ¹æµÄ´òÓ¡»ú¹²ÏíÃû³Æ..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰«æä¸åˆè§„çš„æ‰“å°æœºå…±äº«åç§°..." -Type "INFO"
     Write-Host "`n  ======================================================================"
-    Write-Host "               ×Ô¶¯ÇåÀí´òÓ¡»ú¹²ÏíÃû³Æ"
+    Write-Host "               è‡ªåŠ¨æ¸…ç†æ‰“å°æœºå…±äº«åç§°"
     Write-Host "  ======================================================================"
     try {
         $shared = Get-Printer -ErrorAction SilentlyContinue | Where-Object { $_.Shared -eq $true }
-        if (-not $shared) { Write-Host "  [+] Î´ÕÒµ½¹²Ïí´òÓ¡»ú¡£" -ForegroundColor Yellow; return }
+        if (-not $shared) { Write-Host "  [+] æœªæ‰¾åˆ°å…±äº«æ‰“å°æœºã€‚" -ForegroundColor Yellow; return }
         $fixed = 0
         foreach ($p in $shared) {
             $original = $p.ShareName
@@ -2042,28 +2042,28 @@ function Sanitize-PrinterShareName {
                 $fixed++
             }
             else {
-                Write-Host "  [+] $original (ºÏ¹æ)" -ForegroundColor Green
+                Write-Host "  [+] $original (åˆè§„)" -ForegroundColor Green
             }
         }
         if ($fixed -gt 0) {
-            Write-Log "ÇåÀíÁË $fixed ¸ö´òÓ¡»ú¹²ÏíÃû³Æ¡£" -Type "SUCCESS"
-            Write-Host "`n  [+] $fixed ¸ö¹²ÏíÃû³ÆÒÑ±»ÇåÀí¡£" -ForegroundColor Green
+            Write-Log "æ¸…ç†äº† $fixed ä¸ªæ‰“å°æœºå…±äº«åç§°ã€‚" -Type "SUCCESS"
+            Write-Host "`n  [+] $fixed ä¸ªå…±äº«åç§°å·²è¢«æ¸…ç†ã€‚" -ForegroundColor Green
         }
         else {
-            Write-Host "`n  [+] ËùÓĞ¹²ÏíÃû³ÆÒÑ¾­ºÏ¹æ¡£" -ForegroundColor Green
-            Write-Log "ËùÓĞ¹²ÏíÃû³ÆºÏ¹æ¡£" -Type "SUCCESS"
+            Write-Host "`n  [+] æ‰€æœ‰å…±äº«åç§°å·²ç»åˆè§„ã€‚" -ForegroundColor Green
+            Write-Log "æ‰€æœ‰å…±äº«åç§°åˆè§„ã€‚" -Type "SUCCESS"
         }
     }
-    catch { Write-Log "ÇåÀí¹²ÏíÃû³ÆÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "æ¸…ç†å…±äº«åç§°å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Fix-BrowserPrintSandbox {
-    Write-Log "ÕıÔÚÖØÖÃä¯ÀÀÆ÷´òÓ¡É³ºĞ (Chromium)..." -Type "INFO"
+    Write-Log "æ­£åœ¨é‡ç½®æµè§ˆå™¨æ‰“å°æ²™ç›’ (Chromium)..." -Type "INFO"
     Write-Host "`n  ======================================================================"
-    Write-Host "               ä¯ÀÀÆ÷´òÓ¡É³ºĞĞŞ¸´ (CHROMIUM)"
+    Write-Host "               æµè§ˆå™¨æ‰“å°æ²™ç›’ä¿®å¤ (CHROMIUM)"
     Write-Host "  ======================================================================"
     try {
-        Write-Host "  [*] ÕıÔÚÖÕÖ¹ä¯ÀÀÆ÷½ø³Ì..." -ForegroundColor Cyan
+        Write-Host "  [*] æ­£åœ¨ç»ˆæ­¢æµè§ˆå™¨è¿›ç¨‹..." -ForegroundColor Cyan
         Get-Process -Name "chrome", "msedge" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 2
         $cleared = 0
@@ -2071,25 +2071,25 @@ function Fix-BrowserPrintSandbox {
         $edgePrintDir = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Cache"
         if (Test-Path $chromePrintDir) {
             Remove-Item "$chromePrintDir\*" -Force -Recurse -ErrorAction SilentlyContinue
-            $cleared++; Write-Host "  [+] Chrome »º´æÒÑÇå³ı¡£" -ForegroundColor Green
+            $cleared++; Write-Host "  [+] Chrome ç¼“å­˜å·²æ¸…é™¤ã€‚" -ForegroundColor Green
         }
         if (Test-Path $edgePrintDir) {
             Remove-Item "$edgePrintDir\*" -Force -Recurse -ErrorAction SilentlyContinue
-            $cleared++; Write-Host "  [+] Edge »º´æÒÑÇå³ı¡£" -ForegroundColor Green
+            $cleared++; Write-Host "  [+] Edge ç¼“å­˜å·²æ¸…é™¤ã€‚" -ForegroundColor Green
         }
         & CheckNetIsolation.exe LoopbackExempt -a -n="microsoft.windows.printdialog_cw5n1h2txyewy" 2>&1 | Out-Null
         & CheckNetIsolation.exe LoopbackExempt -a -n="microsoft.microsoftedge_8wekyb3d8bbwe" 2>&1 | Out-Null
         Restart-Service spooler -Force -ErrorAction SilentlyContinue
-        Write-Log "ä¯ÀÀÆ÷´òÓ¡É³ºĞÒÑÖØÖÃ¡£Çå³ıÁË $cleared ¸öä¯ÀÀÆ÷»º´æ¡£" -Type "SUCCESS"
-        Write-Host "  [+] ä¯ÀÀÆ÷´òÓ¡É³ºĞĞŞ¸´Íê³É¡£ÇëÖØĞÂ´ò¿ªä¯ÀÀÆ÷¡£" -ForegroundColor Green
+        Write-Log "æµè§ˆå™¨æ‰“å°æ²™ç›’å·²é‡ç½®ã€‚æ¸…é™¤äº† $cleared ä¸ªæµè§ˆå™¨ç¼“å­˜ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] æµè§ˆå™¨æ‰“å°æ²™ç›’ä¿®å¤å®Œæˆã€‚è¯·é‡æ–°æ‰“å¼€æµè§ˆå™¨ã€‚" -ForegroundColor Green
     }
-    catch { Write-Log "ä¯ÀÀÆ÷É³ºĞĞŞ¸´Ê§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "æµè§ˆå™¨æ²™ç›’ä¿®å¤å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Detect-GPOIntervention {
-    Write-Log "ÕıÔÚÉ¨ÃèÓ°Ïì´òÓ¡»ú×¢²á±íµÄ×é²ßÂÔ (GPO) ¸ÉÔ¤..." -Type "INFO"
+    Write-Log "æ­£åœ¨æ‰«æå½±å“æ‰“å°æœºæ³¨å†Œè¡¨çš„ç»„ç­–ç•¥ (GPO) å¹²é¢„..." -Type "INFO"
     Write-Host "`n  ======================================================================"
-    Write-Host "               ×é²ßÂÔ (GPO) ¸ÉÔ¤¼ì²â"
+    Write-Host "               ç»„ç­–ç•¥ (GPO) å¹²é¢„æ£€æµ‹"
     Write-Host "  ======================================================================"
     try {
         $isPartOfDomain = $false
@@ -2104,19 +2104,19 @@ function Detect-GPOIntervention {
         }
 
         if ($isPartOfDomain) {
-            Write-Host "  [+] Óò×´Ì¬: ÒÑ¼ÓÈëÓò (DOMAIN JOINED)" -ForegroundColor Green
+            Write-Host "  [+] åŸŸçŠ¶æ€: å·²åŠ å…¥åŸŸ (DOMAIN JOINED)" -ForegroundColor Green
         } else {
-            Write-Host "  [+] Óò×´Ì¬: ¹¤×÷×é (WORKGROUP - Î´¼ÓÈëÓò)" -ForegroundColor Green
+            Write-Host "  [+] åŸŸçŠ¶æ€: å·¥ä½œç»„ (WORKGROUP - æœªåŠ å…¥åŸŸ)" -ForegroundColor Green
         }
 
         $policyPaths = @(
-            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"; Label = "´òÓ¡»ú²ßÂÔ (Printer Policies)" },
-            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint"; Label = "µãºÍ´òÓ¡ (Point and Print)" },
-            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC"; Label = "RPC ²ßÂÔ" },
-            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP"; Label = "Windows ÊÜ±£»¤µÄ´òÓ¡ (WPP)" },
-            @{ Path = "HKCU:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"; Label = "ÓÃ»§´òÓ¡»ú²ßÂÔ" },
-            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation"; Label = "Lanman Workstation ²ßÂÔ" },
-            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanServer"; Label = "Lanman Server ²ßÂÔ" }
+            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"; Label = "æ‰“å°æœºç­–ç•¥ (Printer Policies)" },
+            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint"; Label = "ç‚¹å’Œæ‰“å° (Point and Print)" },
+            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC"; Label = "RPC ç­–ç•¥" },
+            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP"; Label = "Windows å—ä¿æŠ¤çš„æ‰“å° (WPP)" },
+            @{ Path = "HKCU:\SOFTWARE\Policies\Microsoft\Windows NT\Printers"; Label = "ç”¨æˆ·æ‰“å°æœºç­–ç•¥" },
+            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation"; Label = "Lanman Workstation ç­–ç•¥" },
+            @{ Path = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\LanmanServer"; Label = "Lanman Server ç­–ç•¥" }
         )
 
         $recommendations = @{
@@ -2150,20 +2150,20 @@ function Detect-GPOIntervention {
                 $propNames = $props.PSObject.Properties | Where-Object { $_.Name -notmatch '^PS' }
                 if ($propNames.Count -gt 0) {
                     $gpoDetected = $true
-                    Write-Host "`n  [*] Â·¾¶: $($entry.Label)" -ForegroundColor Cyan
+                    Write-Host "`n  [*] è·¯å¾„: $($entry.Label)" -ForegroundColor Cyan
                     foreach ($prop in $propNames) {
                         $pName = $prop.Name
                         $pValue = $prop.Value
                         if ($recommendations.ContainsKey($pName)) {
                             $recVal = $recommendations[$pName]
                             if ($pValue.ToString() -eq $recVal.ToString()) {
-                                Write-Host "      [ÒÑ¼¤»îĞŞ¸´] $pName = $pValue" -ForegroundColor Green
+                                Write-Host "      [å·²æ¿€æ´»ä¿®å¤] $pName = $pValue" -ForegroundColor Green
                             } else {
                                 $restrictionDetected = $true
-                                Write-Host "      [!] ²ßÂÔ¸²¸Ç (ÊÜÏŞ): $pName = $pValue (Ó¦Îª: $recVal)" -ForegroundColor Red
+                                Write-Host "      [!] ç­–ç•¥è¦†ç›– (å—é™): $pName = $pValue (åº”ä¸º: $recVal)" -ForegroundColor Red
                             }
                         } else {
-                            Write-Host "      [*] ÓÃ»§¸²¸Ç: $pName = $pValue" -ForegroundColor Yellow
+                            Write-Host "      [*] ç”¨æˆ·è¦†ç›–: $pName = $pValue" -ForegroundColor Yellow
                         }
                     }
                 }
@@ -2171,41 +2171,41 @@ function Detect-GPOIntervention {
         }
 
         if ($isPartOfDomain) {
-            Write-Host "`n  [*] ÕıÔÚÔËĞĞ gpresult ²éÕÒÓë´òÓ¡»úÏà¹ØµÄ GPO..." -ForegroundColor Cyan
-            $gpresult = & gpresult /R /Scope Computer 2>&1 | Select-String -Pattern "Printer|Print|Point|´òÓ¡"
+            Write-Host "`n  [*] æ­£åœ¨è¿è¡Œ gpresult æŸ¥æ‰¾ä¸æ‰“å°æœºç›¸å…³çš„ GPO..." -ForegroundColor Cyan
+            $gpresult = & gpresult /R /Scope Computer 2>&1 | Select-String -Pattern "Printer|Print|Point|æ‰“å°"
             if ($gpresult) {
-                Write-Host "  [!] ÔÚ¼ÆËã»ú²ßÂÔÖĞÕÒµ½ GPO ÒıÓÃ:" -ForegroundColor Yellow
+                Write-Host "  [!] åœ¨è®¡ç®—æœºç­–ç•¥ä¸­æ‰¾åˆ° GPO å¼•ç”¨:" -ForegroundColor Yellow
                 $gpresult | ForEach-Object { Write-Host "      $_" -ForegroundColor Cyan }
             } else {
-                Write-Host "  [+] Î´Í¨¹ı gpresult ¼ì²âµ½»î¶¯µÄ´òÓ¡»úÏà¹Ø GPO¡£" -ForegroundColor Green
+                Write-Host "  [+] æœªé€šè¿‡ gpresult æ£€æµ‹åˆ°æ´»åŠ¨çš„æ‰“å°æœºç›¸å…³ GPOã€‚" -ForegroundColor Green
             }
 
             if ($restrictionDetected) {
-                Write-Host "`n  [!] ¾¯¸æ: ±» GPO ¹ÜÀíµÄ¼üÖµ½«±»Óò¿ØÖÆÆ÷[¸²¸Ç]¡£" -ForegroundColor Red
-                Write-Host "  [!] ¶ÔÕâĞ©¼üµÄ±¾µØ¸ü¸Ä½«ÔÚ gpupdate ºó»¹Ô­¡£" -ForegroundColor Red
-                Write-Log "¼ì²âµ½Õë¶Ô´òÓ¡»ú×¢²á±íµÄ GPO ¸ÉÔ¤¡£" -Type "WARNING"
+                Write-Host "`n  [!] è­¦å‘Š: è¢« GPO ç®¡ç†çš„é”®å€¼å°†è¢«åŸŸæ§åˆ¶å™¨[è¦†ç›–]ã€‚" -ForegroundColor Red
+                Write-Host "  [!] å¯¹è¿™äº›é”®çš„æœ¬åœ°æ›´æ”¹å°†åœ¨ gpupdate åè¿˜åŸã€‚" -ForegroundColor Red
+                Write-Log "æ£€æµ‹åˆ°é’ˆå¯¹æ‰“å°æœºæ³¨å†Œè¡¨çš„ GPO å¹²é¢„ã€‚" -Type "WARNING"
             } else {
-                Write-Host "`n  [+] GPO ²ßÂÔÓë´òÓ¡»ú¹²ÏíĞŞ¸´¹¤¾ßÒ»ÖÂ»òÎ´¼¤»î¡£" -ForegroundColor Green
-                Write-Log "GPO ¼ì²éÍê±Ï£»²ßÂÔÒÑ¶ÔÆë¡£" -Type "SUCCESS"
+                Write-Host "`n  [+] GPO ç­–ç•¥ä¸æ‰“å°æœºå…±äº«ä¿®å¤å·¥å…·ä¸€è‡´æˆ–æœªæ¿€æ´»ã€‚" -ForegroundColor Green
+                Write-Log "GPO æ£€æŸ¥å®Œæ¯•ï¼›ç­–ç•¥å·²å¯¹é½ã€‚" -Type "SUCCESS"
             }
         } else {
-            Write-Host "`n  [+] ±¾µØ¹¤×÷×é»·¾³ (Î´¼ì²âµ½»î¶¯µÄÓò¿ØÖÆÆ÷)¡£" -ForegroundColor Green
+            Write-Host "`n  [+] æœ¬åœ°å·¥ä½œç»„ç¯å¢ƒ (æœªæ£€æµ‹åˆ°æ´»åŠ¨çš„åŸŸæ§åˆ¶å™¨)ã€‚" -ForegroundColor Green
             if ($restrictionDetected) {
-                Write-Host "  [!] Ä³Ğ©±¾µØ²ßÂÔ¸²¸ÇÁËÅäÖÃ²¢ÏŞÖÆÁË¹²Ïí¡£¿ÉÒÔÔÚ±¾µØµ÷ÕûËüÃÇ¡£" -ForegroundColor Yellow
-                Write-Log "¼ì²âµ½±¾µØ²ßÂÔÏŞÖÆ¡£" -Type "WARNING"
+                Write-Host "  [!] æŸäº›æœ¬åœ°ç­–ç•¥è¦†ç›–äº†é…ç½®å¹¶é™åˆ¶äº†å…±äº«ã€‚å¯ä»¥åœ¨æœ¬åœ°è°ƒæ•´å®ƒä»¬ã€‚" -ForegroundColor Yellow
+                Write-Log "æ£€æµ‹åˆ°æœ¬åœ°ç­–ç•¥é™åˆ¶ã€‚" -Type "WARNING"
             } else {
-                Write-Host "  [+] Î´¼ì²âµ½±¾µØ²ßÂÔ³åÍ»¡£" -ForegroundColor Green
-                Write-Log "Î´¼ì²âµ½²ßÂÔ³åÍ»¡£" -Type "SUCCESS"
+                Write-Host "  [+] æœªæ£€æµ‹åˆ°æœ¬åœ°ç­–ç•¥å†²çªã€‚" -ForegroundColor Green
+                Write-Log "æœªæ£€æµ‹åˆ°ç­–ç•¥å†²çªã€‚" -Type "SUCCESS"
             }
         }
     }
-    catch { Write-Log "GPO ¼ì²âÊ§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "GPO æ£€æµ‹å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Parse-PrintEventLog {
-    Write-Log "ÕıÔÚ½âÎö×î½ü 5 ¸ö PrintService ´íÎó/¾¯¸æÊÂ¼ş..." -Type "INFO"
+    Write-Log "æ­£åœ¨è§£ææœ€è¿‘ 5 ä¸ª PrintService é”™è¯¯/è­¦å‘Šäº‹ä»¶..." -Type "INFO"
     Write-Host "`n  ======================================================================"
-    Write-Host "                 ´òÓ¡·şÎñÊÂ¼şÈÕÖ¾½âÎöÆ÷ (Ç° 5 Ãû)"
+    Write-Host "                 æ‰“å°æœåŠ¡äº‹ä»¶æ—¥å¿—è§£æå™¨ (å‰ 5 å)"
     Write-Host "  ======================================================================"
     try {
         $events = Get-WinEvent -FilterHashtable @{
@@ -2214,27 +2214,27 @@ function Parse-PrintEventLog {
         } -MaxEvents 5 -ErrorAction SilentlyContinue
         if ($events) {
             $resolutionMap = @{
-                '808' = "Çı¶¯³ÌĞò°²×°Ê§°Ü¡£ÇëÖ´ĞĞ [43] ¹ÂÁ¢Çı¶¯³ÌĞòÇåÀí¡£"
-                '842' = "¶ÓÁĞËğ»µ¡£ÇëÖ´ĞĞ [37] Ç¿ÖÆÇå³ı´òÓ¡¶ÓÁĞ¡£"
-                '354' = "ºóÌ¨´òÓ¡³ÌĞòÎŞ·¨Æô¶¯¡£ÇëÖ´ĞĞ [38] ÖØÖÃ Spooler ÒÀÀµÏî¡£"
-                '824' = "´òÓ¡»úÍÑ»ú¡£ÇëÖ´ĞĞ [26] WSD µ½ TCP/IP ¶Ë¿Ú×ª»»Æ÷¡£"
+                '808' = "é©±åŠ¨ç¨‹åºå®‰è£…å¤±è´¥ã€‚è¯·æ‰§è¡Œ [43] å­¤ç«‹é©±åŠ¨ç¨‹åºæ¸…ç†ã€‚"
+                '842' = "é˜Ÿåˆ—æŸåã€‚è¯·æ‰§è¡Œ [37] å¼ºåˆ¶æ¸…é™¤æ‰“å°é˜Ÿåˆ—ã€‚"
+                '354' = "åå°æ‰“å°ç¨‹åºæ— æ³•å¯åŠ¨ã€‚è¯·æ‰§è¡Œ [38] é‡ç½® Spooler ä¾èµ–é¡¹ã€‚"
+                '824' = "æ‰“å°æœºè„±æœºã€‚è¯·æ‰§è¡Œ [26] WSD åˆ° TCP/IP ç«¯å£è½¬æ¢å™¨ã€‚"
             }
             foreach ($evt in $events) {
-                $levelStr = if ($evt.Level -eq 2) { "´íÎó" } else { "¾¯¸æ" }
+                $levelStr = if ($evt.Level -eq 2) { "é”™è¯¯" } else { "è­¦å‘Š" }
                 $color = if ($evt.Level -eq 2) { "Red" } else { "Yellow" }
-                Write-Host "`n  [$levelStr] ÊÂ¼ş $($evt.Id) - $($evt.TimeCreated)" -ForegroundColor $color
-                Write-Host "  ÏûÏ¢: $($evt.Message)" -ForegroundColor White
+                Write-Host "`n  [$levelStr] äº‹ä»¶ $($evt.Id) - $($evt.TimeCreated)" -ForegroundColor $color
+                Write-Host "  æ¶ˆæ¯: $($evt.Message)" -ForegroundColor White
 
                 $suggestion = ""
                 if ($evt.Id -eq 372) {
-                    if ($evt.Message -match "Access is denied" -or $evt.Message -match "¾Ü¾ø·ÃÎÊ" -or $evt.Message -match "error code.*: 5\b") {
-                        $suggestion = "È¨ÏŞ±»×èÖ¹¡£ÇëÖ´ĞĞ [12] ½ûÓÃÃÜÂë¹²Ïí »ò [60] ×¢ÈëÆ¾¾İ¡£"
+                    if ($evt.Message -match "Access is denied" -or $evt.Message -match "æ‹’ç»è®¿é—®" -or $evt.Message -match "error code.*: 5\b") {
+                        $suggestion = "æƒé™è¢«é˜»æ­¢ã€‚è¯·æ‰§è¡Œ [12] ç¦ç”¨å¯†ç å…±äº« æˆ– [60] æ³¨å…¥å‡­æ®ã€‚"
                     }
-                    elseif ($evt.Message -match "The network path was not found" -or $evt.Message -match "ÕÒ²»µ½ÍøÂçÂ·¾¶" -or $evt.Message -match "error code.*: 53\b") {
-                        $suggestion = "Ö÷»úÎŞ·¨·ÃÎÊ¡£ÑéÖ¤Ö÷»ú IP/µçÔ´×´Ì¬£¬È»ºóÖ´ĞĞ [14] ÅäÖÃ·À»ğÇ½¡£"
+                    elseif ($evt.Message -match "The network path was not found" -or $evt.Message -match "æ‰¾ä¸åˆ°ç½‘ç»œè·¯å¾„" -or $evt.Message -match "error code.*: 53\b") {
+                        $suggestion = "ä¸»æœºæ— æ³•è®¿é—®ã€‚éªŒè¯ä¸»æœº IP/ç”µæºçŠ¶æ€ï¼Œç„¶åæ‰§è¡Œ [14] é…ç½®é˜²ç«å¢™ã€‚"
                     }
                     else {
-                        $suggestion = "Spooler/Çı¶¯³ÌĞò±ÀÀ£¡£ÇëÖ´ĞĞ [06] »ò [37] Ç¿ÖÆÇå³ı´òÓ¡¶ÓÁĞ¡£"
+                        $suggestion = "Spooler/é©±åŠ¨ç¨‹åºå´©æºƒã€‚è¯·æ‰§è¡Œ [06] æˆ– [37] å¼ºåˆ¶æ¸…é™¤æ‰“å°é˜Ÿåˆ—ã€‚"
                     }
                 }
                 elseif ($resolutionMap.ContainsKey($evt.Id.ToString())) {
@@ -2242,51 +2242,51 @@ function Parse-PrintEventLog {
                 }
 
                 if ($suggestion) {
-                    Write-Host "  ½¨Òé²Ù×÷: $suggestion" -ForegroundColor Green
+                    Write-Host "  å»ºè®®æ“ä½œ: $suggestion" -ForegroundColor Green
                 }
             }
         }
         else {
-            Write-Host "  [+] Î´ÕÒµ½´íÎó/¾¯¸æÊÂ¼ş¡£´òÓ¡·şÎñ×´Ì¬½¡¿µ¡£" -ForegroundColor Green
+            Write-Host "  [+] æœªæ‰¾åˆ°é”™è¯¯/è­¦å‘Šäº‹ä»¶ã€‚æ‰“å°æœåŠ¡çŠ¶æ€å¥åº·ã€‚" -ForegroundColor Green
         }
-        Write-Log "ÒÑ½âÎö PrintService ÊÂ¼şÈÕÖ¾¡£" -Type "SUCCESS"
+        Write-Log "å·²è§£æ PrintService äº‹ä»¶æ—¥å¿—ã€‚" -Type "SUCCESS"
     }
-    catch { Write-Log "½âÎöÊÂ¼şÈÕÖ¾Ê§°Ü: $($_.Exception.Message)" -Type "ERROR" }
+    catch { Write-Log "è§£æäº‹ä»¶æ—¥å¿—å¤±è´¥: $($_.Exception.Message)" -Type "ERROR" }
 }
 
 function Map-LocalPortUNC {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ½«±¾µØ¶Ë¿ÚÓ³Éäµ½ UNC Â·¾¶ (ÈÆ¹ı)"
+    Write-Host "               å°†æœ¬åœ°ç«¯å£æ˜ å°„åˆ° UNC è·¯å¾„ (ç»•è¿‡)"
     Write-Host "  ======================================================================"
-    Write-Host "  [!] Èç¹û±ê×¼¹²Ïí[ÈÔÈ»]ÌáÊ¾'¼ì²é´òÓ¡»úÃû³Æ'´íÎó£¬ÇëÊ¹ÓÃ´Ë·½·¨¡£"
-    $ip = Read-Host "  [?] Ä¿±êÖ÷»ú IP/Ö÷»úÃû (ÀıÈç: 192.168.1.10)"
-    $share = Read-Host "  [?] ÍêÈ«Ò»ÖÂµÄ´òÓ¡»ú¹²ÏíÃû³Æ (ÀıÈç: EPSON_L120)"
+    Write-Host "  [!] å¦‚æœæ ‡å‡†å…±äº«[ä»ç„¶]æç¤º'æ£€æŸ¥æ‰“å°æœºåç§°'é”™è¯¯ï¼Œè¯·ä½¿ç”¨æ­¤æ–¹æ³•ã€‚"
+    $ip = Read-Host "  [?] ç›®æ ‡ä¸»æœº IP/ä¸»æœºå (ä¾‹å¦‚: 192.168.1.10)"
+    $share = Read-Host "  [?] å®Œå…¨ä¸€è‡´çš„æ‰“å°æœºå…±äº«åç§° (ä¾‹å¦‚: EPSON_L120)"
     if ($ip -and $share) {
         $uncPath = "\\$ip\$share"
         try {
-            Write-Host "  [*] ÕıÔÚ³¢ÊÔ±ê×¼µÄ±¾µØ¶Ë¿Ú´´½¨: $uncPath" -ForegroundColor Cyan
+            Write-Host "  [*] æ­£åœ¨å°è¯•æ ‡å‡†çš„æœ¬åœ°ç«¯å£åˆ›å»º: $uncPath" -ForegroundColor Cyan
             Add-PrinterPort -Name $uncPath -ErrorAction Stop
-            Write-Log "Í¨¹ı API ´´½¨ÁË UNC ±¾µØ¶Ë¿Ú: $uncPath" -Type "SUCCESS"
-            Write-Host "  [+] ±¾µØ¶Ë¿Ú×¢Èë³É¹¦£¡ÏÖÔÚÄú¿ÉÒÔ'Ìí¼Ó±¾µØ´òÓ¡»ú'²¢Ñ¡Ôñ¸Ã¶Ë¿Ú¡£" -ForegroundColor Green
+            Write-Log "é€šè¿‡ API åˆ›å»ºäº† UNC æœ¬åœ°ç«¯å£: $uncPath" -Type "SUCCESS"
+            Write-Host "  [+] æœ¬åœ°ç«¯å£æ³¨å…¥æˆåŠŸï¼ç°åœ¨æ‚¨å¯ä»¥'æ·»åŠ æœ¬åœ°æ‰“å°æœº'å¹¶é€‰æ‹©è¯¥ç«¯å£ã€‚" -ForegroundColor Green
         }
         catch {
-            Write-Host "  [*] ±ê×¼·½·¨±» Windows ×èÖ¹¡£ÕıÔÚ²¿Êğ×¢²á±íÈÆ¹ı..." -ForegroundColor Yellow
+            Write-Host "  [*] æ ‡å‡†æ–¹æ³•è¢« Windows é˜»æ­¢ã€‚æ­£åœ¨éƒ¨ç½²æ³¨å†Œè¡¨ç»•è¿‡..." -ForegroundColor Yellow
             try {
                 $portRegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports"
 
                 Set-ItemProperty -Path $portRegPath -Name $uncPath -Value "" -Type String -Force -ErrorAction Stop
 
-                Write-Host "  [*] ¶Ë¿ÚÒÑ×¢Èë¡£ÕıÔÚÖØÆô Print Spooler ÒÔÍê³ÉÅäÖÃ..." -ForegroundColor Cyan
+                Write-Host "  [*] ç«¯å£å·²æ³¨å…¥ã€‚æ­£åœ¨é‡å¯ Print Spooler ä»¥å®Œæˆé…ç½®..." -ForegroundColor Cyan
                 Restart-Service spooler -Force -ErrorAction SilentlyContinue
 
-                Write-Log "Í¨¹ı×¢²á±íÈÆ¹ı×¢ÈëÁË UNC ±¾µØ¶Ë¿Ú: $uncPath" -Type "SUCCESS"
-                Write-Host "  [+] ÈÆ¹ı³É¹¦£¡¶Ë¿Ú $uncPath ÏÖÔÚÒÑ´æÔÚÓÚÄãµÄ¶Ë¿ÚÁĞ±íÖĞ¡£" -ForegroundColor Green
-                Write-Host "  [!] ÏÂÒ»²½: ½øÈë 'Ìí¼Ó´òÓ¡»ú' -> 'Ìí¼Ó±¾µØ´òÓ¡»ú' -> 'Ê¹ÓÃÏÖÓĞµÄ¶Ë¿Ú'¡£" -ForegroundColor Green
-                Write-Host "  [!] ´ÓÏÂÀ­²Ëµ¥ÖĞÑ¡Ôñ $uncPath£¬È»ºóÑ¡ÔñÄãµÄ´òÓ¡»úÇı¶¯¡£" -ForegroundColor Green
+                Write-Log "é€šè¿‡æ³¨å†Œè¡¨ç»•è¿‡æ³¨å…¥äº† UNC æœ¬åœ°ç«¯å£: $uncPath" -Type "SUCCESS"
+                Write-Host "  [+] ç»•è¿‡æˆåŠŸï¼ç«¯å£ $uncPath ç°åœ¨å·²å­˜åœ¨äºä½ çš„ç«¯å£åˆ—è¡¨ä¸­ã€‚" -ForegroundColor Green
+                Write-Host "  [!] ä¸‹ä¸€æ­¥: è¿›å…¥ 'æ·»åŠ æ‰“å°æœº' -> 'æ·»åŠ æœ¬åœ°æ‰“å°æœº' -> 'ä½¿ç”¨ç°æœ‰çš„ç«¯å£'ã€‚" -ForegroundColor Green
+                Write-Host "  [!] ä»ä¸‹æ‹‰èœå•ä¸­é€‰æ‹© $uncPathï¼Œç„¶åé€‰æ‹©ä½ çš„æ‰“å°æœºé©±åŠ¨ã€‚" -ForegroundColor Green
             }
             catch {
-                Write-Log " ÈÆ¹ıÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
-                Write-Host "  [-] ÈÆ¹ıÊ§°Ü¡£×¢²á±í·ÃÎÊ±»¹ÜÀíÔ±/GPOÍêÈ«Ëø¶¨¡£" -ForegroundColor Red
+                Write-Log " ç»•è¿‡å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
+                Write-Host "  [-] ç»•è¿‡å¤±è´¥ã€‚æ³¨å†Œè¡¨è®¿é—®è¢«ç®¡ç†å‘˜/GPOå®Œå…¨é”å®šã€‚" -ForegroundColor Red
             }
         }
     }
@@ -2294,49 +2294,49 @@ function Map-LocalPortUNC {
 
 function Remove-LocalPortUNC {
     Write-Host "`n  ======================================================================"
-    Write-Host "               ÒÆ³ıÒÑ×¢ÈëµÄ±¾µØ¶Ë¿Ú (UNC)"
+    Write-Host "               ç§»é™¤å·²æ³¨å…¥çš„æœ¬åœ°ç«¯å£ (UNC)"
     Write-Host "  ======================================================================"
 
-    Write-Host "  [*] ÕıÔÚÊ¶±ğ»î¶¯µÄ´òÓ¡»ú¶Ë¿Ú..." -ForegroundColor Cyan
+    Write-Host "  [*] æ­£åœ¨è¯†åˆ«æ´»åŠ¨çš„æ‰“å°æœºç«¯å£..." -ForegroundColor Cyan
     try {
         $ports = Get-PrinterPort | Select-Object -ExpandProperty Name | Sort-Object
         if ($ports) {
-            Write-Host "  [>] ¼ì²âµ½µÄ¶Ë¿Ú:" -ForegroundColor Yellow
+            Write-Host "  [>] æ£€æµ‹åˆ°çš„ç«¯å£:" -ForegroundColor Yellow
             foreach ($p in $ports) {
                 if ($p -like "\\*") {
-                    Write-Host "      -> $p (UNC Ó³Éä)" -ForegroundColor Green
+                    Write-Host "      -> $p (UNC æ˜ å°„)" -ForegroundColor Green
                 } else {
                     Write-Host "      -> $p" -ForegroundColor Gray
                 }
             }
         }
-    } catch { Write-Host "  [!] ÎŞ·¨Í¨¹ı API »ñÈ¡¶Ë¿ÚÁĞ±í¡£" -ForegroundColor Yellow }
+    } catch { Write-Host "  [!] æ— æ³•é€šè¿‡ API è·å–ç«¯å£åˆ—è¡¨ã€‚" -ForegroundColor Yellow }
 
-    Write-Host "`n  [!] Ê¹ÓÃ´Ë¹¦ÄÜÉ¾³ıÖ®Ç°ÓÉÑ¡Ïî [86] ´´½¨µÄ¶Ë¿Ú¡£"
-    $portName = Read-Host "  [?] ÊäÈëÒªÒÆ³ıµÄ[È·ÇĞ]¶Ë¿ÚÃû³Æ (ÀıÈç: \\192.168.1.10\Printer)"
+    Write-Host "`n  [!] ä½¿ç”¨æ­¤åŠŸèƒ½åˆ é™¤ä¹‹å‰ç”±é€‰é¡¹ [86] åˆ›å»ºçš„ç«¯å£ã€‚"
+    $portName = Read-Host "  [?] è¾“å…¥è¦ç§»é™¤çš„[ç¡®åˆ‡]ç«¯å£åç§° (ä¾‹å¦‚: \\192.168.1.10\Printer)"
     if (-not $portName) { return }
 
     try {
-        Write-Host "  [*] ÕıÔÚ³¢ÊÔ±ê×¼µÄ¶Ë¿ÚÒÆ³ı..." -ForegroundColor Cyan
+        Write-Host "  [*] æ­£åœ¨å°è¯•æ ‡å‡†çš„ç«¯å£ç§»é™¤..." -ForegroundColor Cyan
         Remove-PrinterPort -Name $portName -ErrorAction Stop
-        Write-Log "¶Ë¿Ú $portName ÒÑÍ¨¹ı API ÒÆ³ı¡£" -Type "SUCCESS"
-        Write-Host "  [+] ¶Ë¿Ú $portName ÒÑ³É¹¦ÒÆ³ı¡£" -ForegroundColor Green
+        Write-Log "ç«¯å£ $portName å·²é€šè¿‡ API ç§»é™¤ã€‚" -Type "SUCCESS"
+        Write-Host "  [+] ç«¯å£ $portName å·²æˆåŠŸç§»é™¤ã€‚" -ForegroundColor Green
     }
     catch {
-        Write-Host "  [*] ±ê×¼·½·¨Ê§°Ü¡£ÕıÔÚ²¿Êğ×¢²á±íÇå³ı..." -ForegroundColor Yellow
+        Write-Host "  [*] æ ‡å‡†æ–¹æ³•å¤±è´¥ã€‚æ­£åœ¨éƒ¨ç½²æ³¨å†Œè¡¨æ¸…é™¤..." -ForegroundColor Yellow
         try {
             $portRegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Ports"
             Remove-ItemProperty -Path $portRegPath -Name $portName -ErrorAction Stop
 
-            Write-Host "  [*] ÒÑ´Ó×¢²á±íÖĞÉ¾³ı¶Ë¿Ú¡£ÕıÔÚÖØÆô Print Spooler..." -ForegroundColor Cyan
+            Write-Host "  [*] å·²ä»æ³¨å†Œè¡¨ä¸­åˆ é™¤ç«¯å£ã€‚æ­£åœ¨é‡å¯ Print Spooler..." -ForegroundColor Cyan
             Restart-Service spooler -Force -ErrorAction SilentlyContinue
 
-            Write-Log "¶Ë¿Ú $portName ÒÑÍ¨¹ı×¢²á±íÈÆ¹ı±»ÒÆ³ı¡£" -Type "SUCCESS"
-            Write-Host "  [+] ÈÆ¹ı³É¹¦£¡¶Ë¿Ú $portName ÒÑ±»ÓÀ¾ÃÉ¾³ı¡£" -ForegroundColor Green
+            Write-Log "ç«¯å£ $portName å·²é€šè¿‡æ³¨å†Œè¡¨ç»•è¿‡è¢«ç§»é™¤ã€‚" -Type "SUCCESS"
+            Write-Host "  [+] ç»•è¿‡æˆåŠŸï¼ç«¯å£ $portName å·²è¢«æ°¸ä¹…åˆ é™¤ã€‚" -ForegroundColor Green
         }
         catch {
-            Write-Log "ÒÆ³ı UNC ¶Ë¿ÚÊ§°Ü: $($_.Exception.Message)" -Type "ERROR"
-            Write-Host "  [-] ÒÆ³ı¶Ë¿ÚÊ§°Ü¡£È·±£ÊäÈëµÄÃû³ÆÓë¶Ë¿ÚÁĞ±íÖĞµÄ[ÍêÈ«Ò»ÖÂ]¡£" -ForegroundColor Red
+            Write-Log "ç§»é™¤ UNC ç«¯å£å¤±è´¥: $($_.Exception.Message)" -Type "ERROR"
+            Write-Host "  [-] ç§»é™¤ç«¯å£å¤±è´¥ã€‚ç¡®ä¿è¾“å…¥çš„åç§°ä¸ç«¯å£åˆ—è¡¨ä¸­çš„[å®Œå…¨ä¸€è‡´]ã€‚" -ForegroundColor Red
         }
     }
 }
@@ -2344,45 +2344,45 @@ function Remove-LocalPortUNC {
 function AllFix-Core {
     cls
     Write-Host "`n  ==================================================================================================="
-    Write-Host "         Ö´ĞĞÈ«×Ô¶¯ĞŞ¸´ (50 Ïî×Ô¶¯»¯ĞŞ¸´)"
+    Write-Host "         æ‰§è¡Œå…¨è‡ªåŠ¨ä¿®å¤ (50 é¡¹è‡ªåŠ¨åŒ–ä¿®å¤)"
     Write-Host "  ===================================================================================================`n"
-    Write-Log "ÔËĞĞÈ«×Ô¶¯ĞŞ¸´ (SILENT=$script:silentNuke)" -Type "INFO"
+    Write-Log "è¿è¡Œå…¨è‡ªåŠ¨ä¿®å¤ (SILENT=$script:silentNuke)" -Type "INFO"
 
-    Write-Host "  [*] [1/50] ¼ì²â²Ù×÷ÏµÍ³..." -ForegroundColor Cyan
+    Write-Host "  [*] [1/50] æ£€æµ‹æ“ä½œç³»ç»Ÿ..." -ForegroundColor Cyan
     Write-Host "  $script:productName Build $script:buildNumber"
 
-    Write-Host "  [*] [2/50] ±£»¤×¢²á±í (±¸·İ)... (²Ëµ¥ 64)" -ForegroundColor Cyan
+    Write-Host "  [*] [2/50] ä¿æŠ¤æ³¨å†Œè¡¨ (å¤‡ä»½)... (èœå• 64)" -ForegroundColor Cyan
     Backup-Registry
 
-    Write-Host "  [*] [3/50] Ë¢ĞÂ GPO »º´æ (ĞŞ¸Ä×¢²á±íÇ°)..." -ForegroundColor Cyan
+    Write-Host "  [*] [3/50] åˆ·æ–° GPO ç¼“å­˜ (ä¿®æ”¹æ³¨å†Œè¡¨å‰)..." -ForegroundColor Cyan
     try { $LASTEXITCODE = 0; gpupdate /force > $null 2>&1 } catch {}
 
-    Write-Host "  [*] [4/50] Éó²é RPC & DCOM... (²Ëµ¥ 32)" -ForegroundColor Cyan
+    Write-Host "  [*] [4/50] å®¡æŸ¥ RPC & DCOM... (èœå• 32)" -ForegroundColor Cyan
     Check-RPC
 
-    Write-Host "  [*] [5/50] ĞŞ²¹´íÎó 0x0000011b... (²Ëµ¥ 01)" -ForegroundColor Cyan
+    Write-Host "  [*] [5/50] ä¿®è¡¥é”™è¯¯ 0x0000011b... (èœå• 01)" -ForegroundColor Cyan
     Fix-RpcAuthn0x0000011b
 
-    Write-Host "  [*] [6/50] Éî¶ÈĞŞ¸´ 0x00000709 (¶à²ã RPC)... (²Ëµ¥ 02)" -ForegroundColor Cyan
+    Write-Host "  [*] [6/50] æ·±åº¦ä¿®å¤ 0x00000709 (å¤šå±‚ RPC)... (èœå• 02)" -ForegroundColor Cyan
     Fix-Deep0x00000709
 
-    Write-Host "  [*] [7/50] KB5089549 Çı¶¯³ÌĞò²ßÂÔ¼° HKCU È¨ÏŞĞŞ¸´..." -ForegroundColor Cyan
+    Write-Host "  [*] [7/50] KB5089549 é©±åŠ¨ç¨‹åºç­–ç•¥åŠ HKCU æƒé™ä¿®å¤..." -ForegroundColor Cyan
     Fix-CrossSignedDriverPolicy
     Fix-HKCU-PrinterKeyPerms
 
-    Write-Host "  [*] [8/50] ÈÆ¹ı´íÎó 0x00000bc4... (²Ëµ¥ 03)" -ForegroundColor Cyan
+    Write-Host "  [*] [8/50] ç»•è¿‡é”™è¯¯ 0x00000bc4... (èœå• 03)" -ForegroundColor Cyan
     Fix-Discovery0x00000bc4
 
-    Write-Host "  [*] [9/50] ĞŞ¸´´íÎó 0x00000040 (KeepConn)... (²Ëµ¥ 07)" -ForegroundColor Cyan
+    Write-Host "  [*] [9/50] ä¿®å¤é”™è¯¯ 0x00000040 (KeepConn)... (èœå• 07)" -ForegroundColor Cyan
     Fix-Network0x00000040
 
-    Write-Host "  [*] [10/50] ĞŞ¸´´íÎó 0x00000002 (CopyFilesPolicy)... (²Ëµ¥ 08)" -ForegroundColor Cyan
+    Write-Host "  [*] [10/50] ä¿®å¤é”™è¯¯ 0x00000002 (CopyFilesPolicy)... (èœå• 08)" -ForegroundColor Cyan
     Fix-DriverCopy0x00000002
 
-    Write-Host "  [*] [11/50] ĞŞ¸´´íÎó 0x0000007e (RPC Auth)... (²Ëµ¥ 09)" -ForegroundColor Cyan
+    Write-Host "  [*] [11/50] ä¿®å¤é”™è¯¯ 0x0000007e (RPC Auth)... (èœå• 09)" -ForegroundColor Cyan
     Fix-RpcBitness0x0000007e
 
-    Write-Host "  [*] [12/50] ×¢Èë DnsOnWire, StrictName & ÈÆ¹ı UAC... (²Ëµ¥ 57)" -ForegroundColor Cyan
+    Write-Host "  [*] [12/50] æ³¨å…¥ DnsOnWire, StrictName & ç»•è¿‡ UAC... (èœå• 57)" -ForegroundColor Cyan
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name DnsOnWire -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters" -Name DisableStrictNameChecking -Value 1 -Type DWord -Force -ErrorAction SilentlyContinue
@@ -2390,184 +2390,184 @@ function AllFix-Core {
     catch {}
     Fix-UACTokenFilter
 
-    Write-Host "  [*] [13/50] ½ûÓÃ SMB Ç©ÃûÇ¿ÖÆÒªÇó¼°Ë«ÏòÉí·İÑéÖ¤... (²Ëµ¥ 16)" -ForegroundColor Cyan
+    Write-Host "  [*] [13/50] ç¦ç”¨ SMB ç­¾åå¼ºåˆ¶è¦æ±‚åŠåŒå‘èº«ä»½éªŒè¯... (èœå• 16)" -ForegroundColor Cyan
     Fix-SMBSigning
 
-    Write-Host "  [*] [14/50] È·±£ SMB2/SMB3 ¼æÈİĞÔ¼°ÍøÂçÌá¹©ÉÌË³Ğò... (²Ëµ¥ 17 & 18)" -ForegroundColor Cyan
+    Write-Host "  [*] [14/50] ç¡®ä¿ SMB2/SMB3 å…¼å®¹æ€§åŠç½‘ç»œæä¾›å•†é¡ºåº... (èœå• 17 & 18)" -ForegroundColor Cyan
     Fix-ModernSMB
     Fix-ProviderOrder
 
-    Write-Host "  [*] [15/50] Ç¿ÖÆÊ¹ÓÃÃüÃû¹ÜµÀ¼° TCP... (²Ëµ¥ 13)" -ForegroundColor Cyan
+    Write-Host "  [*] [15/50] å¼ºåˆ¶ä½¿ç”¨å‘½åç®¡é“åŠ TCP... (èœå• 13)" -ForegroundColor Cyan
     Fix-NamedPipes
 
-    Write-Host "  [*] [16/50] ½ûÓÃ¿Í»§¶ËäÖÈ¾... (²Ëµ¥ 05)" -ForegroundColor Cyan
+    Write-Host "  [*] [16/50] ç¦ç”¨å®¢æˆ·ç«¯æ¸²æŸ“... (èœå• 05)" -ForegroundColor Cyan
     Fix-CSR
 
-    Write-Host "  [*] [17/50] ½ûÓÃÇı¶¯¸ôÀë... (²Ëµ¥ 40)" -ForegroundColor Cyan
+    Write-Host "  [*] [17/50] ç¦ç”¨é©±åŠ¨éš”ç¦»... (èœå• 40)" -ForegroundColor Cyan
     try {
         Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name IsolationPolicy -Value 0 -Type DWord -Force
     }
     catch {}
 
-    Write-Host "  [*] [18/50] Æô¶¯ÍøÂç·¢ÏÖ, mDNS, NetBIOS & WSD ·şÎñ... (²Ëµ¥ 20 & 04)" -ForegroundColor Cyan
+    Write-Host "  [*] [18/50] å¯åŠ¨ç½‘ç»œå‘ç°, mDNS, NetBIOS & WSD æœåŠ¡... (èœå• 20 & 04)" -ForegroundColor Cyan
     Fix-mDNS
     Fix-NetworkServices
 
-    Write-Host "  [*] [19/50] ÅäÖÃ·À»ğÇ½¼°¿ªÆô UDP Í¨µÀ... (²Ëµ¥ 14 & 21)" -ForegroundColor Cyan
+    Write-Host "  [*] [19/50] é…ç½®é˜²ç«å¢™åŠå¼€å¯ UDP é€šé“... (èœå• 14 & 21)" -ForegroundColor Cyan
     Open-Firewall
     Fix-WSDFirewall
 
-    Write-Host "  [*] [20/50] ¿ª·Å SMB ·Ã¿Í·ÃÎÊ (¿Í»§¶Ë¼°·şÎñ¶Ë)... (²Ëµ¥ 82)" -ForegroundColor Cyan
+    Write-Host "  [*] [20/50] å¼€æ”¾ SMB è®¿å®¢è®¿é—® (å®¢æˆ·ç«¯åŠæœåŠ¡ç«¯)... (èœå• 82)" -ForegroundColor Cyan
     Enable-SMBGuest
 
-    Write-Host "  [*] [21/50] ½ûÓÃÃÜÂë±£»¤µÄÍøÂç¹²Ïí... (²Ëµ¥ 12)" -ForegroundColor Cyan
+    Write-Host "  [*] [21/50] ç¦ç”¨å¯†ç ä¿æŠ¤çš„ç½‘ç»œå…±äº«... (èœå• 12)" -ForegroundColor Cyan
     Disable-PasswordSharing
 
-    Write-Host "  [*] [22/50] ½µ¼¶ LSA ±£»¤ & Ç¿ÖÆÊµÊ© NTLMv2... (²Ëµ¥ 54, 58 & 62)" -ForegroundColor Cyan
+    Write-Host "  [*] [22/50] é™çº§ LSA ä¿æŠ¤ & å¼ºåˆ¶å®æ–½ NTLMv2... (èœå• 54, 58 & 62)" -ForegroundColor Cyan
     Fix-LSAProtection
     Fix-NTLMv2
     Fix-CredentialGuard
 
-    Write-Host "  [*] [23/50] ÈÆ¹ıÖÇÄÜÓ¦ÓÃ¿ØÖÆ (SAC)... (²Ëµ¥ 55)" -ForegroundColor Cyan
+    Write-Host "  [*] [23/50] ç»•è¿‡æ™ºèƒ½åº”ç”¨æ§åˆ¶ (SAC)... (èœå• 55)" -ForegroundColor Cyan
     Fix-SAC
 
-    Write-Host "  [*] [24/50] ³õÊ¼»¯ IPP & Mopria ´òÓ¡¹²Ïí... (²Ëµ¥ 22)" -ForegroundColor Cyan
+    Write-Host "  [*] [24/50] åˆå§‹åŒ– IPP & Mopria æ‰“å°å…±äº«... (èœå• 22)" -ForegroundColor Cyan
     Fix-IPPSharing
 
-    Write-Host "  [*] [25/50] ½ûÓÃ WPP (ÔÊĞí´«Í³µÄÍøÂç´òÓ¡»ú)... (²Ëµ¥ 59)" -ForegroundColor Cyan
+    Write-Host "  [*] [25/50] ç¦ç”¨ WPP (å…è®¸ä¼ ç»Ÿçš„ç½‘ç»œæ‰“å°æœº)... (èœå• 59)" -ForegroundColor Cyan
     try {
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP" -Name Enabled -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
     }
     catch {}
 
-    Write-Host "  [*] [26/50] ĞŞ¸´ RDP & LPD Ğ­Òé... (²Ëµ¥ 52 & 24)" -ForegroundColor Cyan
+    Write-Host "  [*] [26/50] ä¿®å¤ RDP & LPD åè®®... (èœå• 52 & 24)" -ForegroundColor Cyan
     Fix-RDPPrinter
     Manage-LPR
 
-    Write-Host "  [*] [27/50] Ç¿ÖÆÍøÂçÉèÎª×¨ÓÃÄ£Ê½... (²Ëµ¥ 11)" -ForegroundColor Cyan
+    Write-Host "  [*] [27/50] å¼ºåˆ¶ç½‘ç»œè®¾ä¸ºä¸“ç”¨æ¨¡å¼... (èœå• 11)" -ForegroundColor Cyan
     Set-NetworkPrivate
 
-    Write-Host "  [*] [28/50] ½µ¼¶ĞéÄâÍøÂçÊÊÅäÆ÷ÓÅÏÈ¼¶ (Hyper-V)... (²Ëµ¥ 23)" -ForegroundColor Cyan
+    Write-Host "  [*] [28/50] é™çº§è™šæ‹Ÿç½‘ç»œé€‚é…å™¨ä¼˜å…ˆçº§ (Hyper-V)... (èœå• 23)" -ForegroundColor Cyan
     Fix-HyperVConflict
 
-    Write-Host "  [*] [29/50] Ë¢ĞÂ DNS & Winsock... (²Ëµ¥ 10)" -ForegroundColor Cyan
+    Write-Host "  [*] [29/50] åˆ·æ–° DNS & Winsock... (èœå• 10)" -ForegroundColor Cyan
     Reset-Network
 
-    Write-Host "  [*] [30/50] ÖÕÖ¹ºóÌ¨´òÓ¡³ÌĞò (Spooler)..." -ForegroundColor Cyan
+    Write-Host "  [*] [30/50] ç»ˆæ­¢åå°æ‰“å°ç¨‹åº (Spooler)..." -ForegroundColor Cyan
     Stop-Service spooler -Force -ErrorAction SilentlyContinue
 
-    Write-Host "  [*] [31/50] Ïò Spooler ×¢Èë×Ô¶¯ÖØÆô»Ö¸´... (²Ëµ¥ 34)" -ForegroundColor Cyan
+    Write-Host "  [*] [31/50] å‘ Spooler æ³¨å…¥è‡ªåŠ¨é‡å¯æ¢å¤... (èœå• 34)" -ForegroundColor Cyan
     Set-SpoolerRecovery
 
-    Write-Host "  [*] [32/50] Çå³ı Spooler ¸½¼ÓÒÀÀµÏî (±£Áô http & RPCSS)... (²Ëµ¥ 35)" -ForegroundColor Cyan
+    Write-Host "  [*] [32/50] æ¸…é™¤ Spooler é™„åŠ ä¾èµ–é¡¹ (ä¿ç•™ http & RPCSS)... (èœå• 35)" -ForegroundColor Cyan
     Reset-SpoolerDependency
 
-    Write-Host "  [*] [33/50] ÖØÖÃ PRINTERS ÎÄ¼ş¼ĞÈ¨ÏŞ... (²Ëµ¥ 06)" -ForegroundColor Cyan
+    Write-Host "  [*] [33/50] é‡ç½® PRINTERS æ–‡ä»¶å¤¹æƒé™... (èœå• 06)" -ForegroundColor Cyan
     Reset-SpoolerPerm
 
-    Write-Host "  [*] [34/50] Çå³ı³Â¾ÉµÄ´òÓ¡¶ÓÁĞ & Splwow64... (²Ëµ¥ 31)" -ForegroundColor Cyan
+    Write-Host "  [*] [34/50] æ¸…é™¤é™ˆæ—§çš„æ‰“å°é˜Ÿåˆ— & Splwow64... (èœå• 31)" -ForegroundColor Cyan
     Reset-Spooler
 
-    Write-Host "  [*] [35/50] ÈÆ¹ı AppContainer UWP/Edge »·»Ø¸ôÀë... (²Ëµ¥ 47)" -ForegroundColor Cyan
+    Write-Host "  [*] [35/50] ç»•è¿‡ AppContainer UWP/Edge ç¯å›éš”ç¦»... (èœå• 47)" -ForegroundColor Cyan
     Fix-UWPPrinting
 
-    Write-Host "  [*] [36/50] Ó¦ÓÃ¸ß¼¶µãºÍ´òÓ¡¼° PrintNightmare ÈÆ¹ı... (²Ëµ¥ 56)" -ForegroundColor Cyan
+    Write-Host "  [*] [36/50] åº”ç”¨é«˜çº§ç‚¹å’Œæ‰“å°åŠ PrintNightmare ç»•è¿‡... (èœå• 56)" -ForegroundColor Cyan
     Fix-AdvancedPointAndPrint
 
-    Write-Host "  [*] [37/50] ²¿Êğ Spooler ¿´ÃÅ¹·ÈÎÎñ... (²Ëµ¥ 36)" -ForegroundColor Cyan
+    Write-Host "  [*] [37/50] éƒ¨ç½² Spooler çœ‹é—¨ç‹—ä»»åŠ¡... (èœå• 36)" -ForegroundColor Cyan
     Set-SpoolerWatchdog
 
-    Write-Host "  [*] [38/50] ÖØĞÂÆô¶¯ BITS ·şÎñ... (²Ëµ¥ 68)" -ForegroundColor Cyan
+    Write-Host "  [*] [38/50] é‡æ–°å¯åŠ¨ BITS æœåŠ¡... (èœå• 68)" -ForegroundColor Cyan
     Manage-BITS
 
-    Write-Host "  [*] [39/50] ÖØÆôºóÌ¨´òÓ¡³ÌĞò (ÑéÖ¤)..." -ForegroundColor Cyan
+    Write-Host "  [*] [39/50] é‡å¯åå°æ‰“å°ç¨‹åº (éªŒè¯)..." -ForegroundColor Cyan
     if ((Get-Service spooler).Status -ne 'Running') { Start-Service spooler -ErrorAction SilentlyContinue }
-    Write-Host "  [+] Spooler ÒÑÑéÖ¤ÕıÔÚÔËĞĞ¡£" -ForegroundColor Green
+    Write-Host "  [+] Spooler å·²éªŒè¯æ­£åœ¨è¿è¡Œã€‚" -ForegroundColor Green
 
-    Write-Host "  [*] [40/50] Çå³ı Kerberos µÇÂ¼»º´æ..." -ForegroundColor Cyan
+    Write-Host "  [*] [40/50] æ¸…é™¤ Kerberos ç™»å½•ç¼“å­˜..." -ForegroundColor Cyan
     try { $LASTEXITCODE = 0; klist purge > $null 2>&1 } catch {}
 
-    Write-Host "  [*] [41/50] ÖØĞÂÆô¶¯ WdiSystemHost ·şÎñ..." -ForegroundColor Cyan
+    Write-Host "  [*] [41/50] é‡æ–°å¯åŠ¨ WdiSystemHost æœåŠ¡..." -ForegroundColor Cyan
     try { Restart-Service WdiSystemHost -Force -ErrorAction SilentlyContinue } catch {}
 
-    Write-Host "  [*] [42/50] ×¢²á mDNS (×é²¥)..." -ForegroundColor Cyan
+    Write-Host "  [*] [42/50] æ³¨å†Œ mDNS (ç»„æ’­)..." -ForegroundColor Cyan
     try { $LASTEXITCODE = 0; ipconfig /registerdns > $null 2>&1 } catch {}
 
-    Write-Host "  [*] [43/50] Éú³ÉÏµÍ³»¹Ô­µã... (²Ëµ¥ 66)" -ForegroundColor Cyan
+    Write-Host "  [*] [43/50] ç”Ÿæˆç³»ç»Ÿè¿˜åŸç‚¹... (èœå• 66)" -ForegroundColor Cyan
     Create-RestorePoint
 
-    Write-Host "  [*] [44/50] É¨Ãè V4 ´òÓ¡ÀàÇı¶¯... (²Ëµ¥ 41)" -ForegroundColor Cyan
+    Write-Host "  [*] [44/50] æ‰«æ V4 æ‰“å°ç±»é©±åŠ¨... (èœå• 41)" -ForegroundColor Cyan
     Fix-V4ClassDriver
 
-    Write-Host "  [*] [45/50] ¾ÈÔ®ÍøÂçÅäÖÃ (Ç¿ÖÆ×¨ÓÃ)... (²Ëµ¥ 28)" -ForegroundColor Cyan
+    Write-Host "  [*] [45/50] æ•‘æ´ç½‘ç»œé…ç½® (å¼ºåˆ¶ä¸“ç”¨)... (èœå• 28)" -ForegroundColor Cyan
     $profiles = Get-NetConnectionProfile -ErrorAction SilentlyContinue
     $profiles | Where-Object { $_.NetworkCategory -eq 'Public' } | Set-NetConnectionProfile -NetworkCategory Private -ErrorAction SilentlyContinue
 
-    Write-Host "  [*] [46/50] Ç¿ÖÆÇå³ı´òÓ¡¶ÓÁĞÎÄ¼ş... (²Ëµ¥ 37)" -ForegroundColor Cyan
+    Write-Host "  [*] [46/50] å¼ºåˆ¶æ¸…é™¤æ‰“å°é˜Ÿåˆ—æ–‡ä»¶... (èœå• 37)" -ForegroundColor Cyan
     Nuke-PrintQueue
 
-    Write-Host "  [*] [47/50] ÖØÖÃ Spooler ÒÀÀµÏî (×¢²á±í¼¶±ğ)... (²Ëµ¥ 38)" -ForegroundColor Cyan
+    Write-Host "  [*] [47/50] é‡ç½® Spooler ä¾èµ–é¡¹ (æ³¨å†Œè¡¨çº§åˆ«)... (èœå• 38)" -ForegroundColor Cyan
     Reset-SpoolerDependencyRegistry
 
-    Write-Host "  [*] [48/50] ×Ô¶¯ÇåÀí´òÓ¡»ú¹²ÏíÃû³Æ... (²Ëµ¥ 53)" -ForegroundColor Cyan
+    Write-Host "  [*] [48/50] è‡ªåŠ¨æ¸…ç†æ‰“å°æœºå…±äº«åç§°... (èœå• 53)" -ForegroundColor Cyan
     Sanitize-PrinterShareName
 
-    Write-Host "  [*] [49/50] ²¿ÊğÏµÍ³¸üĞÂºó×Ô¶¯Ó¦ÓÃÈÎÎñ..." -ForegroundColor Cyan
+    Write-Host "  [*] [49/50] éƒ¨ç½²ç³»ç»Ÿæ›´æ–°åè‡ªåŠ¨åº”ç”¨ä»»åŠ¡..." -ForegroundColor Cyan
     Set-PostPatchTuesdayTask
 
-    Write-Host "  [*] [50/50] ½âÎö´òÓ¡·şÎñÊÂ¼şÈÕÖ¾ & ×îÖÕ Spooler ÑéÖ¤... (²Ëµ¥ 78)" -ForegroundColor Cyan
+    Write-Host "  [*] [50/50] è§£ææ‰“å°æœåŠ¡äº‹ä»¶æ—¥å¿— & æœ€ç»ˆ Spooler éªŒè¯... (èœå• 78)" -ForegroundColor Cyan
     Parse-PrintEventLog
     if ((Get-Service spooler).Status -ne 'Running') { Start-Service spooler -ErrorAction SilentlyContinue }
-    Write-Host "  [+] Spooler ÒÑÑéÖ¤ÕıÔÚÔËĞĞ¡£" -ForegroundColor Green
+    Write-Host "  [+] Spooler å·²éªŒè¯æ­£åœ¨è¿è¡Œã€‚" -ForegroundColor Green
 
-    Write-Log "È«×Ô¶¯ĞŞ¸´½áÊø" -Type "SUCCESS"
+    Write-Log "å…¨è‡ªåŠ¨ä¿®å¤ç»“æŸ" -Type "SUCCESS"
 
     if ($script:silentNuke) {
         Write-Host "`n  ==================================================================================================="
-        Write-Host "    [+] ¾²Ä¬È«×Ô¶¯ĞŞ¸´Íê³É£¡½«ÔÚ 3 Ãëºó×Ô¶¯ÖØÆô..."
+        Write-Host "    [+] é™é»˜å…¨è‡ªåŠ¨ä¿®å¤å®Œæˆï¼å°†åœ¨ 3 ç§’åè‡ªåŠ¨é‡å¯..."
         Write-Host "  ===================================================================================================`n"
         Start-Sleep -Seconds 3
         Restart-Computer -Force
     }
 
     Write-Host "`n  ==================================================================================================="
-    Write-Host "  [!] ÓòÍøÂçÌáÊ¾: Èç¹ûÖ÷»úÒÑ¼ÓÈëÓò (AD)£¬ÇëÔÚ secpol.msc ÖĞ¼ì²é²¢È·ÈÏ'´ÓÍøÂç·ÃÎÊ´Ë¼ÆËã»ú'µÄÈ¨ÏŞ¡£" -ForegroundColor Yellow
-    Write-Host "  [!] ÈÔÈ»¾Ü¾ø·ÃÎÊ£¿ÌáÊ¾: Èç¹ûÁ¬½ÓÈÔÈ»Ê§°Ü£¬Çë³¢ÊÔÊ¹ÓÃÑ¡Ïî [60] »ò ÈÆ¹ı·½·¨ [86]¡£" -ForegroundColor Green
+    Write-Host "  [!] åŸŸç½‘ç»œæç¤º: å¦‚æœä¸»æœºå·²åŠ å…¥åŸŸ (AD)ï¼Œè¯·åœ¨ secpol.msc ä¸­æ£€æŸ¥å¹¶ç¡®è®¤'ä»ç½‘ç»œè®¿é—®æ­¤è®¡ç®—æœº'çš„æƒé™ã€‚" -ForegroundColor Yellow
+    Write-Host "  [!] ä»ç„¶æ‹’ç»è®¿é—®ï¼Ÿæç¤º: å¦‚æœè¿æ¥ä»ç„¶å¤±è´¥ï¼Œè¯·å°è¯•ä½¿ç”¨é€‰é¡¹ [60] æˆ– ç»•è¿‡æ–¹æ³• [86]ã€‚" -ForegroundColor Green
 
-    $checkError = Read-Host "   [?] ÊÇ·ñ²é¿´Ö´ĞĞ´íÎóÈÕÖ¾? (Y/N)"
+    $checkError = Read-Host "   [?] æ˜¯å¦æŸ¥çœ‹æ‰§è¡Œé”™è¯¯æ—¥å¿—? (Y/N)"
     if ($checkError -eq 'Y' -or $checkError -eq 'y') {
-        Write-Host "`n   --- ´íÎóÉ¨Ãè½á¹û ---" -ForegroundColor Cyan
+        Write-Host "`n   --- é”™è¯¯æ‰«æç»“æœ ---" -ForegroundColor Cyan
         $errors = Select-String -Path $script:logFile -Pattern " - ERROR - " -SimpleMatch
         if ($errors) {
             $errors.Line | ForEach-Object { Write-Host $_ -ForegroundColor Red }
         }
         else {
-            Write-Host "   [+] ÈÕÖ¾ÖĞÎ´·¢ÏÖÈÎºÎ´íÎó¡£" -ForegroundColor Green
+            Write-Host "   [+] æ—¥å¿—ä¸­æœªå‘ç°ä»»ä½•é”™è¯¯ã€‚" -ForegroundColor Green
         }
         Write-Host "   --------------------`n"
     }
 
-    $allFixRestart = Read-Host "   [?] ÊÇ·ñÁ¢¼´Ö´ĞĞÏµÍ³ÖØÆô? (Y/N)"
+    $allFixRestart = Read-Host "   [?] æ˜¯å¦ç«‹å³æ‰§è¡Œç³»ç»Ÿé‡å¯? (Y/N)"
     if ($allFixRestart -eq 'Y' -or $allFixRestart -eq 'y') {
-        Write-Host "  [*] ×¼±¸¾ÍĞ÷£¬ÏµÍ³½«ÔÚ 5 ÃëºóÖØÆô..." -ForegroundColor Cyan
+        Write-Host "  [*] å‡†å¤‡å°±ç»ªï¼Œç³»ç»Ÿå°†åœ¨ 5 ç§’åé‡å¯..." -ForegroundColor Cyan
         Restart-Computer -Force
     }
     else {
-        Write-Host "  [*] ÇëÊÖ¶¯ÖØÆô¼ÆËã»úÒÔÓ¦ÓÃËùÓĞ¸ü¸Ä¡£" -ForegroundColor Cyan
+        Write-Host "  [*] è¯·æ‰‹åŠ¨é‡å¯è®¡ç®—æœºä»¥åº”ç”¨æ‰€æœ‰æ›´æ”¹ã€‚" -ForegroundColor Cyan
     }
 }
 
 function Extreme-25H2 {
     cls
     Write-Host "`n  ==================================================================================================="
-    Write-Host "        Õë¶Ô WIN 11 25H2 / 24H2 / 26H2+ / ARM64 µÄ¼«ÏŞÄ£Ê½Â·¾¶"
+    Write-Host "        é’ˆå¯¹ WIN 11 25H2 / 24H2 / 26H2+ / ARM64 çš„æé™æ¨¡å¼è·¯å¾„"
     Write-Host "  ==================================================================================================="
-    Write-Host "  [*] ´ËÄ£Ê½ÎªÓµÓĞÑÏ¸ñ°²È«²ßÂÔµÄ Windows 11 ÏµÍ³Ó¦ÓÃÉî¶ÈĞŞ¸´¡£"
-    Write-Host "  [*] ÕıÔÚ×Ô¶¯Ö´ĞĞËùÓĞĞŞ¸´..." -ForegroundColor Cyan
+    Write-Host "  [*] æ­¤æ¨¡å¼ä¸ºæ‹¥æœ‰ä¸¥æ ¼å®‰å…¨ç­–ç•¥çš„ Windows 11 ç³»ç»Ÿåº”ç”¨æ·±åº¦ä¿®å¤ã€‚"
+    Write-Host "  [*] æ­£åœ¨è‡ªåŠ¨æ‰§è¡Œæ‰€æœ‰ä¿®å¤..." -ForegroundColor Cyan
 
-    Write-Log "Ö´ĞĞ¼«ÏŞĞŞ¸´Ä£Ê½ 25H2/26H2" -Type "INFO"
+    Write-Log "æ‰§è¡Œæé™ä¿®å¤æ¨¡å¼ 25H2/26H2" -Type "INFO"
 
-    Write-Host "  [*] ÕıÔÚË¢ĞÂ GPO »º´æ (Ó¦ÓÃĞŞ¸´Ç°)..." -ForegroundColor Cyan
+    Write-Host "  [*] æ­£åœ¨åˆ·æ–° GPO ç¼“å­˜ (åº”ç”¨ä¿®å¤å‰)..." -ForegroundColor Cyan
     try { $LASTEXITCODE = 0; gpupdate /force > $null 2>&1 } catch {}
 
     Fix-Deep0x00000709
@@ -2616,36 +2616,36 @@ function Extreme-25H2 {
     }
     catch {}
 
-    Write-Log "¼«ÏŞĞŞ¸´Â·¾¶Íê³É£¡" -Type "SUCCESS"
-    Write-Host "  [+] ¼«ÏŞ°²È«ÅäÖÃĞŞ¸ÄÍê±Ï¡£½¨ÒéÖØÆôÏµÍ³¡£" -ForegroundColor Green
+    Write-Log "æé™ä¿®å¤è·¯å¾„å®Œæˆï¼" -Type "SUCCESS"
+    Write-Host "  [+] æé™å®‰å…¨é…ç½®ä¿®æ”¹å®Œæ¯•ã€‚å»ºè®®é‡å¯ç³»ç»Ÿã€‚" -ForegroundColor Green
 
-    $extremeRestart = Read-Host "`n   [?] ÊÇ·ñÁ¢¼´Ö´ĞĞÏµÍ³ÖØÆô? (Y/N)"
+    $extremeRestart = Read-Host "`n   [?] æ˜¯å¦ç«‹å³æ‰§è¡Œç³»ç»Ÿé‡å¯? (Y/N)"
     if ($extremeRestart -eq 'Y' -or $extremeRestart -eq 'y') { Restart-Computer -Force }
 }
 
 function Restart-PC {
-    Write-Host "`n  [*] ÏµÍ³½«ÔÚ 5 ÃëºóÖØÆô..." -ForegroundColor Yellow
+    Write-Host "`n  [*] ç³»ç»Ÿå°†åœ¨ 5 ç§’åé‡å¯..." -ForegroundColor Yellow
     Start-Sleep -Seconds 5
     Restart-Computer -Force
 }
 
 function Detect-Win {
     Write-Host "`n  ======================================================================"
-    Write-Host "                 WINDOWS ÏµÍ³¼°¼Ü¹¹¼ì²â"
+    Write-Host "                 WINDOWS ç³»ç»ŸåŠæ¶æ„æ£€æµ‹"
     Write-Host "  ======================================================================"
-    Write-Host "  [+] ÏµÍ³°æ±¾ : $script:productName" -ForegroundColor Green
-    Write-Host "  [+] ÏµÍ³°æ±¾ºÅ (Build) : $script:buildNumber" -ForegroundColor Green
+    Write-Host "  [+] ç³»ç»Ÿç‰ˆæœ¬ : $script:productName" -ForegroundColor Green
+    Write-Host "  [+] ç³»ç»Ÿç‰ˆæœ¬å· (Build) : $script:buildNumber" -ForegroundColor Green
     if ($script:isARM64) {
-        Write-Host "  [+] ÏµÍ³¼Ü¹¹ : ARM64 (Snapdragon æçÁú / Apple M ÏµÁĞ ĞéÄâ»ú)" -ForegroundColor Yellow
+        Write-Host "  [+] ç³»ç»Ÿæ¶æ„ : ARM64 (Snapdragon éªé¾™ / Apple M ç³»åˆ— è™šæ‹Ÿæœº)" -ForegroundColor Yellow
     }
     else {
-        Write-Host "  [+] ÏµÍ³¼Ü¹¹ : AMD64 / x64" -ForegroundColor Cyan
+        Write-Host "  [+] ç³»ç»Ÿæ¶æ„ : AMD64 / x64" -ForegroundColor Cyan
     }
     if ($script:isServer) {
-        Write-Host "  [+] ÏµÍ³°æ±¾ : Windows Server Edition (·şÎñÆ÷°æ)" -ForegroundColor Yellow
+        Write-Host "  [+] ç³»ç»Ÿç‰ˆæœ¬ : Windows Server Edition (æœåŠ¡å™¨ç‰ˆ)" -ForegroundColor Yellow
     }
     else {
-        Write-Host "  [+] ÏµÍ³°æ±¾ : ¿Í»§¶Ë (Home/Pro/Enterprise ¼ÒÍ¥°æ/×¨Òµ°æ/ÆóÒµ°æ)" -ForegroundColor Cyan
+        Write-Host "  [+] ç³»ç»Ÿç‰ˆæœ¬ : å®¢æˆ·ç«¯ (Home/Pro/Enterprise å®¶åº­ç‰ˆ/ä¸“ä¸šç‰ˆ/ä¼ä¸šç‰ˆ)" -ForegroundColor Cyan
     }
 }
 
@@ -2653,144 +2653,144 @@ function Show-Help {
     param([string]$Topic = "")
 
     $helpData = @{
-        '1'  = @("ĞŞ²¹´íÎó 0x0000011b (RpcAuthnLevelPrivacy)", "½ûÓÃ RpcAuthnLevelPrivacyEnabled ×¢²á±íÏî£¬·ÀÖ¹ RPC Éí·İÑéÖ¤×èÖ¹¹²ÏíÁ¬½Ó¡£", "Windows 10/11 ÀÛ¼Æ¸üĞÂºó×î³£¼ûµÄ´íÎó¡£")
-        '2'  = @("Éî¶ÈĞŞ¸´ 0x00000709 (¶à²ã RPC & Kerberos)", "Ó¦ÓÃ¶à²ãĞŞ¸´£ºRPC ÃüÃû¹ÜµÀ¡¢ÈÆ¹ı Kerberos¡¢ÇåÀí HKCU ¼°¾É°æ¸²¸Ç²ßÂÔ¡£", "´¦ÀíÄÜÔÚ³£¹æĞŞ¸´ÖĞ´æ»îµÄÍç¹Ì Win 11 0x00000709 ´íÎó¡£±ØĞëÍ¬Ê±ÔÚÖ÷»úÉÏÔËĞĞ¡£")
-        '3'  = @("ÈÆ¹ı´íÎó 0x00000bc4 (ÕÒ²»µ½´òÓ¡»ú)", "Ç¿ÖÆ RPC Ê¹ÓÃÃüÃû¹ÜµÀĞ­ÒéÒÔ±ã·¢ÏÖ´òÓ¡»ú¡£", "ÍøÂç¿ÉÓÃ£¬µ« Windows ÈÔ±¨¸æ'ÕÒ²»µ½´òÓ¡»ú'¡£")
-        '4'  = @("ĞŞ¸´´íÎó 0x80070035 (×Ô¶¯ÅäÖÃÍøÂç·şÎñ)", "×Ô¶¯Æô¶¯²¢ÅäÖÃ fdPHost, FDResPub, SSDPSRV, upnphost µÈÍøÂç·şÎñ¡£", "Ä¿±ê¼ÆËã»úÔÚÍøÂçÖĞ²»ÏÔÊ¾£»ÌáÊ¾'ÕÒ²»µ½ÍøÂçÂ·¾¶'¡£")
-        '5'  = @("½ûÓÃ¿Í»§¶ËäÖÈ¾ (´íÎó 0x000006d1)", "ÔÚ×¢²á±íÖĞÆôÓÃ DisableClientSideRendering¡£", "ÓÉÓÚ¿Í»§¶ËÇı¶¯³ÌĞòäÖÈ¾ÎÊÌâµ¼ÖÂ´òÓ¡×÷ÒµÊ§°Ü¡£")
-        '6'  = @("ĞŞ¸´´íÎó 0x80070005 (ÖØÖÃ Spooler ACL)", "Ê¹ÓÃ icacls ½« Spool\Printers Ä¿Â¼µÄ ACL ÖØÖÃÎªÄ¬ÈÏÈ¨ÏŞ¡£", "´òÓ¡²Ù×÷ÆÚ¼ä³öÏÖ'¾Ü¾ø·ÃÎÊ'(0x80070005) ´íÎó¡£")
-        '7'  = @("ĞŞ¸´´íÎó 0x00000040 (ÍøÂç²»¿ÉÓÃ)", "ĞŞ¸´´òÓ¡´¦ÀíÆ÷ºÍ¶Ë¿ÚµÄ×¢²á±í½Úµã¡£", "·ÃÎÊ´òÓ¡»úÊ±ÌáÊ¾'ÍøÂç²»¿ÉÓÃ'¡£")
-        '8'  = @("ĞŞ¸´´íÎó 0x00000002 (CopyFilesPolicy)", "ÅäÖÃ CopyFilesPolicy ÒÔÔÊĞíÏµÍ³ÉãÈ¡Çı¶¯³ÌĞò¡£", "´ÓÖ÷»ú·şÎñÆ÷¿ËÂ¡´òÓ¡»úÇı¶¯³ÌĞòÊ±³ö´í¡£")
-        '9'  = @("ĞŞ¸´´íÎó 0x0000007e (RPC Î»Êı²»Æ¥Åä)", "Ç¿ÖÆ×¢²á±í¼æÈİ¿çÏµÍ³¼Ü¹¹µÄÇı¶¯³ÌĞò¡£", "32 Î»Óë 64 Î»¼Ü¹¹²»Æ¥Åäµ¼ÖÂµÄÎÊÌâ¡£")
-        '10' = @("È«ÃæÍøÂçÖØÖÃ (DNS, Winsock, NetBIOS)", "Ë¢ĞÂ DNS£¬ÊÍ·Å/Ğø¶© IP£¬ÖØÖÃ Winsock ºÍ NetBIOS¡£", "ÍøÂçÁ¬½Ó²»ÎÈ¶¨£¬¾­³£³¬Ê± (RTO)£¬»ò´æÔÚÑÏÖØÑÓ³Ù¡£")
-        '11' = @("Ç¿ÖÆÍøÂçÉèÎª×¨ÓÃÅäÖÃÎÄ¼ş", "½«ËùÓĞÍøÂçÁ¬½ÓÅäÖÃÎÄ¼ş¸²¸ÇÎª'×¨ÓÃ (Private)'×´Ì¬¡£", "ÓÉÓÚÍøÂçÅäÖÃÎÄ¼şÉèÖÃÎª'¹«ÓÃ'¶øµ¼ÖÂ¹²Ïí±»À¹½Ø¡£")
-        '12' = @("Ç¿ÖÆ½ûÓÃÊÜÃÜÂë±£»¤µÄ¹²Ïí", "ĞŞ¸Ä LSA ×¢²á±í£ºlimitblankpassworduse=0, everyoneincludesanonymous=1¡£", "Ã÷Ã÷Ã»ÉèÖÃÃÜÂëÈ´ÒÀÈ»µ¯³öÆ¾¾İÊäÈë¿ò¡£")
-        '13' = @("Í¨¹ıÃüÃû¹ÜµÀºÍ TCP ÆôÓÃ RPC", "Ç¿ÖÆ RPC Í¨ĞÅÍ¨¹ıÃüÃû¹ÜµÀºÍ TCP Ğ­Òé´«Êä¡£", "Òò RPC ¶ËµãÀ¹½Øµ¼ÖÂµÄ´òÓ¡»úÁ¬½Ó´íÎó¡£")
-        '14' = @("ÅäÖÃ·À»ğÇ½ÒÔÔÊĞíÎÄ¼şºÍ´òÓ¡»ú¹²Ïí", "ÔÚ·À»ğÇ½ÖĞÆôÓÃ'ÎÄ¼şºÍ´òÓ¡»ú¹²Ïí'ÒÔ¼°'ÍøÂç·¢ÏÖ'¹æÔò¡£", "Ö÷»úÔÚÍøÂçÖĞ²»¿É¼û£¬¹²Ïí±»ÑÏÖØ×è¶Ï¡£")
-        '15' = @("SMB 1.0 ´«Í³Ğ­Òé¹ÜÀí (¿ªÆô/¹Ø±Õ)", "¸ù¾İÓÃ»§ÊäÈëÆôÓÃ»ò½ûÓÃ SMB 1.0 Ğ­Òé¡£", "ĞèÒªÁ¬½Óµ½´«Í³Ó²¼ş (Win XP/7)¡£×¢Òâ: ÓĞÀÕË÷Èí¼ş·çÏÕ£¡")
-        '16' = @("½ûÓÃ SMB Ç©Ãû (ĞŞ¸´ Win 11 NAS ·ÃÎÊ)", "½ûÓÃ¿Í»§¶ËºÍ·şÎñÆ÷µÄ RequireSecuritySignature¡£", "ÔÚ Win 11 24H2+ ÏµÍ³ÖĞÎŞ·¨·ÃÎÊ NAS »ò¾É°æÖ÷»ú¡£")
-        '17' = @("Ç¿ÖÆÊ¹ÓÃÏÖ´ú SMB2/SMB3 ÍØÆË", "È·±£¼¤»î SMB2/SMB3£¬²¢ÏÔÊ½½ûÓÃ SMB1¡£", "¹ı¶Éµ½ÏÖ´ú°²È«Ğ­Òé¡£")
-        '18' = @("ÔÚÍøÂçÌá¹©ÉÌË³ĞòÖĞÓÅÏÈ´¦Àí SMB", "ÔÚÌá¹©ÉÌÁĞ±íÖĞÓÅÏÈ´¦Àí LanmanWorkstation¡£", "SMB Á¬½Ó´æÔÚ¼«¶ËÑÓ³Ù¡£")
-        '19' = @("½ûÓÃ IPv6 Ğ­ÒéÕ»", "Í¨¹ı×¢²á±íºÍ netsh ½Ó¿Ú½ûÓÃ IPv6¡£", "ÔÚ´¿ IPv4 ÍøÂçÖĞ IPv6 µ¼ÖÂµÄÍøÂçÂ·ÓÉÎÊÌâ¡£")
-        '20' = @("ÆôÓÃ mDNS & LLMNR (·¢ÏÖĞ­Òé)", "ÆôÓÃ×é²¥ DNS ºÍ LLMNR Ğ­Òé¡£", "ÎŞ·¨Í¨¹ıÖ÷»úÃû½âÎö·¢ÏÖ´òÓ¡»ú¡£")
-        '21' = @("ÅäÖÃ WSD ·À»ğÇ½¹æÔò (¶Ë¿Ú 3702)", "ÔÚ·À»ğÇ½ÖĞ¿ªÆô UDP ¶Ë¿Ú 3702 ¹© WSD ·¢ÏÖÊ¹ÓÃ¡£", "Web ·şÎñ·¢ÏÖ (WSD) ±»·À»ğÇ½ÆÁ±Î¡£")
-        '22' = @("ÆôÓÃ IPP & Mopria ¹²Ïí»ù´¡¹¦ÄÜ", "ÆôÓÃ Windows IPP ºÍ Mopria Foundation ¹¦ÄÜ¡£", "ÏÖ´ú´òÓ¡»úÊ¹ÓÃµÄ IPP Ğ­ÒéÖ§³Ö¡£")
-        '23' = @("½â¾ö Hyper-V/WSL ĞéÄâÍøÂç³åÍ»", "½ûÓÃĞéÄâÊÊÅäÆ÷ÉÏµÄ´òÓ¡»ú°ó¶¨¡£", "Hyper-V/WSL ĞéÄâ½»»»»úÆÆ»µÁË¾ÖÓòÍøÍØÆË¡£")
-        '24' = @("°²×°¾É°æ LPR/LPD Ğ­Òé", "ÆôÓÃ Windows LPR ¶Ë¿Ú¼àÊÓÆ÷ºÍ LPD ·şÎñ¹¦ÄÜ¡£", "ĞèÒªÍ¨¹ı´«Í³µÄ LPR (ĞĞÊ½´òÓ¡»úÔ¶³Ì) Ğ­Òé½øĞĞÁ¬½Ó¡£")
-        '25' = @("Ô¶³ÌÍøÂç´òÓ¡»ú·¢ÏÖ", "É¨Ãè²¢Ã¶¾ÙÄ¿±êÖ÷»úÉÏµÄËùÓĞ¹²Ïí´òÓ¡»ú¡£", "ÏëÖªµÀÄ¿±êÖ÷»ú¹²ÏíÁËÄÄĞ©Î´Öª´òÓ¡»ú¡£")
-        '26' = @("WSD µ½ ±ê×¼ TCP/IP ¶Ë¿Ú×ª»»Æ÷", "¼ì²â WSD ¶Ë¿Ú²¢½«´òÓ¡»úÇ¨ÒÆµ½ÎÈ¶¨µÄ±ê×¼ TCP/IP ¶Ë¿Ú¡£", "Òò WSD ·¢ÏÖÊ§°Üµ¼ÖÂ´òÓ¡»ú¼äĞªĞÔÏûÊ§»ò´¦ÓÚÍÑ»ú×´Ì¬¡£")
-        '27' = @("ÍøÂçÌ×½Ó×ÖÖØĞÂ³õÊ¼»¯ (Ñ¡ÔñĞÔÇåÀí)", "ÖØÆô SMB ¿Í»§¶Ë/·şÎñ¶Ë·şÎñ£¬²¢Çå³ı¿¨×¡µÄ 445/135 ¶Ë¿ÚÁ¬½Ó¡£", "ÔÚ¸ü¸Ä IP »òÊ¹ÓÃ VPN ºó£¬³Â¾ÉµÄÍøÂçÁ¬½Ó×èÖ¹ÁË´òÓ¡»ú·ÃÎÊ¡£")
-        '28' = @("¾ÈÔ®ÍøÂçÅäÖÃ (×Ô¶¯¿´ÃÅ¹·)", "Ç¿ÖÆËùÓĞ'¹«ÓÃ'ÍøÂç×ªÎª'×¨ÓÃ'£¬²¢¿ÉÑ¡Ôñ²¿ÊğÒ»¸ö¿´ÃÅ¹·ÈÎÎñ¡£", "ÖØÆôºóÍøÂçÅäÖÃÎÄ¼ş×ÜÊÇÖØÖÃ»Ø¹«ÓÃÄ£Ê½£¬´Ó¶øÆÁ±ÎÁË´òÓ¡»ú¹²Ïí¡£")
-        '29' = @("ÊÖ¶¯×¢Èë±ê×¼ TCP/IP ¶Ë¿Ú", "Í¨¹ı WMI ½Å±¾×¢Èë TCP/IP ¶Ë¿Ú¡£", "ĞèÒªÊÖ¶¯Ìí¼ÓÒ»¸ö IP ´òÓ¡»ú¶Ë¿Ú¡£")
-        '30' = @("Ç¿ÖÆ³õÊ¼»¯ WSD ´òÓ¡Éè±¸", "Îª Web ·şÎñ·¢ÏÖ³õÊ¼»¯ WSDPrintDevice ·şÎñ¡£", "ÏµÍ³Ê¼ÖÕÎŞ·¨¼ì²âµ½ WSD ÍøÂç´òÓ¡»ú¡£")
-        '31' = @("Ó²ÖØÖÃ´òÓ¡ºóÌ¨³ÌĞò (Çå³ı¶ÓÁĞ)", "Í£Ö¹ Spooler ·şÎñ£¬Ç¿ÖÆÉ¾³ı Spool\Printers ÖĞµÄ¶ÓÁĞÎÄ¼ş£¬È»ºóÖØÆô·şÎñ¡£", "´òÓ¡¶ÓÁĞ³¹µ×¶³½á£¬Spooler ½ø³Ì¿¨ËÀ¡£")
-        '32' = @("ÖØĞÂ³õÊ¼»¯ RPC & DCOM ·şÎñ", "ÑéÖ¤²¢ÖØĞÂÆô¶¯ RpcSs ºÍ DcomLaunch ·şÎñ¡£", "RPC »ò DCOM ·şÎñÒâÍâÖÕÖ¹/±ÀÀ££»ÌáÊ¾'RPC ·şÎñÆ÷²»¿ÉÓÃ'¡£")
-        '33' = @("Ô¶³ÌÄ¿±ê Spooler ÖØÆô", "Í¨¹ı PowerShell WinRM/DCOM Ô¶³ÌÖ´ĞĞ Spooler ÖØÖÃ¡£", "ÔÚÎŞ·¨ÎïÀí½Ó´¥µÄÇé¿öÏÂÔ¶³ÌÖØÖÃËÀ»úµÄ Spooler¡£ĞèÒªÄ¿±ê¹ÜÀíÔ±È¨ÏŞ¡£")
-        '34' = @("ÅäÖÃ Spooler ±ÀÀ£Ê±×Ô¶¯ÖØÆô", "Í¨¹ı sc.exe ÅäÖÃ»Ö¸´²Ù×÷£º·şÎñ±ÀÀ£Ê±×Ô¶¯ÖØÆô¡£", "Spooler ¸ß¶È²»ÎÈ¶¨£¬ĞèÒª×ÔÎÒĞŞ¸´»úÖÆ¡£")
-        '35' = @("Çå³ı³Â¾ÉµÄ Spooler ÒÀÀµÏî", "½« DependOnService µÄ Spooler ²ÎÊıÖØÖÃÎªÄ¬ÈÏ (RPCSS, http)¡£", "RPC ·şÎñÔËĞĞÕı³£µ« Spooler ÈÔ´¦ÓÚ·Ç»î¶¯×´Ì¬¡£")
-        '36' = @("²¿Êğ Spooler ¿´ÃÅ¹· (5·ÖÖÓÉó²é)", "²¿ÊğÒ»¸ö¼Æ»®ÈÎÎñ£¬Ã¿ 5 ·ÖÖÓÉó¼ÆÒ»´Î Spooler ×´Ì¬¡£", "ĞèÒªÈ·±£³ÖĞø¿ÉÓÃĞÔµÄ¸ßÕı³£ÔËĞĞÊ±¼ä´òÓ¡·şÎñÆ÷»·¾³¡£")
-        '37' = @("Ç¿ÖÆÇå³ı´òÓ¡¶ÓÁĞ (.shd/.spl)", "ÖÕÖ¹ËùÓĞÏà¹Ø´òÓ¡½ø³Ì²¢Çå³ıËğ»µµÄ .shd/.spl ºóÌ¨´¦ÀíÎÄ¼ş¡£", "±ê×¼µÄÈ¡Ïû·½·¨ÎŞ·¨³¹µ×Çå³ı¶ÓÁĞ¡£")
-        '38' = @("ÖØÖÃ Spooler ×¢²á±íÒÀÀµÏî", "Í¨¹ı HKLM Ö±½ÓĞŞ¸Ä×¢²á±í£¬½« Spooler µÄ DependOnService Éè»ØÔ­³§Ä¬ÈÏ (RPCSS, http)¡£", "¼´Ê¹ÖØÆôºó Spooler ÒÀÈ»ÎŞ·¨Æô¶¯¡£")
-        '39' = @("Çı¶¯³ÌĞò¹ÜÀí (´òÓ¡·şÎñÆ÷ÊôĞÔ)", "Æô¶¯'´òÓ¡·şÎñÆ÷ÊôĞÔ'GUI ½çÃæÒÔ¹ÜÀíÒÑ°²×°µÄÇı¶¯¡£", "´òÓ¡»úÊ¹ÓÃÁË´íÎóµÄÇı¶¯£¬»ò´æÔÚÖØ¸´µÄÇı¶¯³ÌĞòÊµÀı¡£")
-        '40' = @("½ûÓÃ´òÓ¡Çı¶¯¸ôÀë", "ÔÚ×¢²á±íÖĞ½ûÓÃ IsolationPolicy¡£", "ÌØ¶¨µÄÇı¶¯³ÌĞòµ¼ÖÂ Spooler ±ÀÀ£¡£")
-        '41' = @("Í¨ÓÃ´òÓ¡ÀàÇı¶¯ V4 ĞŞ¸´", "É¨Ãè V4 Çı¶¯ÊÇ·ñÓĞËğ»µµÄ PrintConfig.dll£¬²¢´¥·¢ DriverStore ÖØĞÂ×¢²á¡£", "V4 ´òÓ¡»úÍ»È»Í£Ö¹¹¤×÷»ò´òÓ¡³öÂÒÂë¡£")
-        '42' = @("ÇĞ»» PCL Óë PostScript Çı¶¯Ä£Ê½", "ÔÚ PCL ºÍ PostScript äÖÈ¾Ä£Ê½Ö®¼äÇĞ»»´òÓ¡»úµÄÇı¶¯¡£", "´òÓ¡»úÍÂ³ö³äÂúËæ»úÂÒÂëµÄÖ½ÕÅ¡£")
-        '43' = @("¹ÂÁ¢Çı¶¯³ÌĞòÇåÀí (pnputil)", "É¨Ãè DriverStore ²éÕÒ¹ÂÁ¢µÄ´òÓ¡»ú OEM INF °ü²¢Ç¿ÖÆÉ¾³ı¡£", "ÒòÎªÓë¾ÉµÄÒş²ØÇı¶¯³ÌĞò³åÍ»¶øÎŞ·¨°²×°ĞÂÇı¶¯¡£")
-        '44' = @("ÈÆ¹ı'Çı¶¯³ÌĞòµ±Ç°ÕıÔÚÊ¹ÓÃ'", "Ç¿ÖÆ½áÊø PrintIsolationHost, splwow64 µÈ½ø³ÌÒÔÊÍ·ÅÇı¶¯³ÌĞò¾ä±ú¡£", "Windows ¾Ü¾øÈÃÄãÉ¾³ıÄ³¸öÇı¶¯³ÌĞò¡£")
-        '45' = @("ÓÄÁé USB ¶Ë¿Ú & ¸±±¾Çå³ıÆ÷", "¼ì²â²¢É¾³ıÖØ¸´µÄ´òÓ¡»ú'¸±±¾'ÒÔ¼°ËÀÈ¥µÄ USB ¶Ë¿Ú¡£", "Äã½«´òÓ¡»ú²åÈëÁË²»Í¬µÄ USB ¶Ë¿Úµ¼ÖÂËü´´½¨ÁËÒ»¸öÓÄÁé¸±±¾¡£")
-        '46' = @("Ç¿ÖÆÉ¾³ıÓÄÁé´òÓ¡»ú", "Í¨¹ıÃüÁîĞĞ (printui) Ç¿ÖÆÉ¾³ı´òÓ¡»ú¡£", "ÓÄÁé´òÓ¡»ú»òÒÑËğ»µµÄ´òÓ¡»ú¾Ü¾øÍ¨¹ı±ê×¼·½·¨Ğ¶ÔØ¡£")
-        '47' = @("ĞŞ¸´ Microsoft Edge / UWP ´òÓ¡", "ÖØĞÂ×¢²á UWP ´òÓ¡×é¼ş²¢Éè¶¨»·»Ø»íÃâ¡£", "´Ó¼ÇÊÂ±¾´òÓ¡Õı³££¬µ«´Ó Edge/UWP Ó¦ÓÃ´òÓ¡Ê§°Ü¡£")
-        '48' = @("ÖØĞÂ°²×° Microsoft Print to PDF/XPS", "ÖØĞÂ³õÊ¼»¯ÏµÍ³×Ô´øµÄ Windows PDF & XPS ĞéÄâ´òÓ¡¹¦ÄÜ¡£", "×Ô´øµÄĞéÄâ´òÓ¡»ú¶ªÊ§»ò³öÏÖ´íÎó¡£")
-        '49' = @("ä¯ÀÀÆ÷´òÓ¡É³ºĞĞŞ¸´ (Chromium)", "Çå³ıä¯ÀÀÆ÷´òÓ¡»º´æ²¢ĞŞ¸´´òÓ¡¶Ô»°¿òµÄ»·»Ø»íÃâÎÊÌâ¡£", "´Ó Word ¿ÉÒÔ´òÓ¡£¬µ«´Ó Chrome ä¯ÀÀÆ÷ÎŞ·¨´òÓ¡¡£")
-        '50' = @("Ç¿ÖÆÉèÖÃÓÀ¾ÃÄ¬ÈÏ´òÓ¡»ú", "½ûÓÃ Windows ×Ô¶¯¹ÜÀí¹¦ÄÜ²¢Í¨¹ı WMI Ç¿ÖÆÉèÖÃÄ¬ÈÏ´òÓ¡»ú¡£", "Windows »á¸ù¾İÍøÂçÎ»ÖÃ¶¯Ì¬¸Ä±äÄ¬ÈÏ´òÓ¡»ú¡£")
-        '51' = @("Ç¿ÖÆÉèÖÃÄ¬ÈÏ´òÓ¡»ú (×¢²á±íÈÆ¹ı)", "ÈÆ¹ı Windows ×Ô¶¯¹ÜÀí£¬Ö±½ÓÍ¨¹ıĞŞ¸Ä HKCU ×¢²á±íÀ´ÉèÖÃÄ¬ÈÏ´òÓ¡»ú¡£", "ÎŞ·¨Í¨¹ı³£¹æµÄ Windows ÉèÖÃ½çÃæÉè¶¨Ä¬ÈÏ´òÓ¡»ú¡£")
-        '52' = @("ĞŞ¸´ RDP ´òÓ¡»úÖÕ¶Ë·şÎñ", "ÔÚ RDP ÖÕ¶Ë·şÎñ×¢²á±íÖĞÆôÓÃ´òÓ¡»úÖØ¶¨Ïò¡£", "Í¨¹ı RDP ÈÏÖ¤ºó£¬±¾µØ´òÓ¡»úÎŞ·¨Ó³Éäµ½Ô¶³Ì»á»°¡£")
-        '53' = @("×Ô¶¯ÇåÀí´òÓ¡»ú¹²ÏíÃû³Æ", "É¨Ãè¹²Ïí´òÓ¡»ú£¬½«¹²ÏíÃû³ÆÖĞµÄ·Ç·¨×Ö·ûÌæ»»ÎªÏÂ»®Ïß¡£", "ÓÉÓÚ¹²ÏíÃû³Æ¹ı³¤»òÌ«¸´ÔÓ£¬¿Í»§¶ËÎŞ·¨Á¬½Ó¡£")
-        '54' = @("½µ¼¶ LSA ±£»¤ (´«Í³ÈÏÖ¤)", "ÔÚ LSA ×¢²á±íÖĞ½ûÓÃ RunAsPPL¡£", "ÓÉÓÚ Win 11 ÑÏ¸ñµÄ LSA ±£»¤µ¼ÖÂ¹²ÏíµÇÂ¼Ê§°Ü¡£")
-        '55' = @("ÈÆ¹ıÖÇÄÜÓ¦ÓÃ¿ØÖÆ (SAC)", "½« VerifiedAndReputablePolicyState ÉèÖÃÎª Off¡£", "Win 11 SAC ÕıÔÚÖ÷¶¯À¹½ØÇı¶¯°²×°³ÌĞò¡£")
-        '56' = @("ÈÆ¹ı¸ß¼¶·şÎñÆ÷ÁĞ±í Point & Print (PrintNightmare ÈÆ¹ı)", "ÔÚ×¢²á±íÖĞ×¢Èë PrintNightmare Â©¶´ĞŞ¸´µÄÌáÈ¨ÈÆ¹ıÒÔ¼° ServerList Í¨Åä·û (*)¡£", "ÔÚÏÂÔØÇı¶¯Ê±Óöµ½'¼ì²é´òÓ¡»úÃû³Æ'»ò'¾Ü¾ø·ÃÎÊ'Ö®ÀàµÄ·ºÖ¸´íÎó¡£ÔÚ Win 11 Build 22621+ ÖĞ±ØĞëÖ´ĞĞ¡£")
-        '57' = @("ÈÆ¹ı UAC ¹ÜÀíÔ±ÍøÂç TokenFilter", "ÅäÖÃ LocalAccountTokenFilterPolicy = 1¡£", "ÓÉÓÚ UAC ¹ıÂËµ¼ÖÂÎŞ·¨¶Ô¹¤×÷×éÖ÷»ú½øĞĞÔ¶³Ì¹ÜÀí¡£")
-        '58' = @("Ç¿ÖÆ NTLMv2 ÏìÓ¦±ê×¼", "½« LmCompatibilityLevel ÑÏ¸ñÅäÖÃÎª NTLMv2 (¼¶±ğ 3)¡£", "µ±Õë¶Ô²»Í¬ÏµÍ³°æ±¾»òÍøÂç´æ´¢ (NAS) ½øĞĞÈÏÖ¤Ê±ÌáÊ¾'¾Ü¾ø·ÃÎÊ'¡£")
-        '59' = @("¹ÜÀí Windows ÊÜ±£»¤µÄ´òÓ¡ (WPP)", "½ûÓÃ Windows ÊÜ±£»¤µÄ´òÓ¡¹¦ÄÜ¡£", "¾ÉµÄ´òÓ¡»úÇı¶¯³ÌĞò²»¼æÈİ WPP ¸ôÀë¡£")
-        '60' = @("ÏòÆ¾¾İ¹ÜÀíÆ÷ÓÀ¾Ã×¢ÈëÆ¾¾İ", "½«ÓÃ»§Ãû/ÃÜÂëÖ±½Ó×¢Èëµ½ Windows Æ¾¾İ¹ÜÀíÆ÷ÖĞ¡£", "ÓÃÓÚÈÆ¹ıÃ¿´Î·ÃÎÊÊ±µÄÊÖ¶¯ÈÏÖ¤¡£")
-        '61' = @("Çå³ı Windows Æ¾¾İ¹ÜÀíÆ÷ÖĞµÄÊ§Ğ§Æ¾¾İ", "Í¨¹ı cmdkey ´ÓÆ¾¾İ¿âÖĞÇå³ıÎŞĞ§»ò¹ıÆÚµÄÆ¾¾İ¡£", "Ö÷»úµÄÃÜÂëÒÑ¸ü¸Ä£¬µ«±¾µØ»úÆ÷ÈÔ±£ÁôÁË¹ıÆÚµÄ»º´æ¡£")
-        '62' = @("ÈÆ¹ı Credential Guard (ÑÏ¸ñµÄ NTLM À¹½Ø)", "½ûÓÃ LsaCfgFlags Credential Guard ×¢²á±í½Úµã¡£", "ÔÚÆôÓÃÁË Credential Guard µÄÆóÒµ°æ/×¨Òµ°æ»·¾³ÖĞ¡£")
-        '63' = @("¿çÓÃ»§Æ¾¾İÓ³Éä", "Í¨¹ı¼ÓÔØ NTUSER.DAT ×¢²á±í£¬½«µÇÂ¼ RunOnce Æ¾¾İÈÎÎñ×¢Èëµ½±¾»úµÄ[ËùÓĞ]ÓÃ»§ÅäÖÃÎÄ¼şÖĞ¡£", "ÎªÒ»Ì¨ÓµÓĞ¶à¸ö±¾µØÓÃ»§µÄ¹²ÏíµçÄÔÅäÖÃÆ¾Ö¤¡£")
-        '64' = @("Ö´ĞĞÇ°×¢²á±í±¸·İ (Spooler ¼° ÍøÂç)", "½« Print, Printers Policy ºÍ LanmanWorkstation ×¢²á±íÊ÷µ¼³öµ½ C:\WindowsPrinterSharingFixBackup¡£", "Ç¿ÁÒ½¨ÒéÔÚÓ¦ÓÃÆäËûĞŞ¸´Ç°Ö´ĞĞ´Ë²Ù×÷¡£ÓÀÔ¶ÏÈÔËĞĞÕâ¸ö£¡")
-        '65' = @("´Ó±¸·İ»Ø¹ö×¢²á±í", "µ¼ÈëÀ´×Ô±¸·İÄ¿Â¼µÄ .reg ÎÄ¼ş¡£", "Èç¹ûÔÚÓ¦ÓÃĞŞ¸´ºóÇé¿ö±äµÃ¸üÔã¡£½öµ±Ö®Ç°Ö´ĞĞ¹ı [64] ±¸·İÊ±ÓĞĞ§¡£")
-        '66' = @("Éú³ÉÏµÍ³»¹Ô­µã (°²È«´ëÊ©)", "Éú³ÉÏµÍ³»¹Ô­µãÒÔ±¸Ö´ĞĞÍêÕûµÄ²Ù×÷ÏµÍ³»Ø¹ö¡£", "ÔÚÖ´ĞĞÖ÷ÒªµÄÏµÍ³¼¶¼Ü¹¹¸ü¸ÄÖ®Ç°¡£")
-        '67' = @("ÏµÍ³ÎÄ¼ş¼ì²é (SFC) Óë DISM »Ö¸´", "Ö´ĞĞ SFC /scannow ÒÔ¼° DISM RestoreHealth¡£", "¾­³£À¶ÆÁ (BSOD)¡¢Æµ·±µÄÒì³£´íÎó£¬»òÔÚÇåÀí¶ñÒâÈí¼şºóÖ´ĞĞ¡£´Ë¹ı³Ì¿ÉÄÜºÄÊ± 10-30 ·ÖÖÓ£¡")
-        '68' = @("ÖØÆô BITS (ºóÌ¨ÖÇÄÜ´«Êä·şÎñ)", "ÖØĞÂÆô¶¯ºóÌ¨ÖÇÄÜ´«Êä·şÎñ¡£", "Çı¶¯³ÌĞòÎŞ·¨×Ô¶¯Íê³ÉÏÂÔØ¡£")
-        '69' = @("Windows ¸üĞÂ¼°À¹½ØÆ÷¹ÜÀí", "Ìá¹©Ğ¶ÔØÏµÍ³¸üĞÂ¡¢ÔİÍ£¸üĞÂ¡¢ÓÀ¾Ã½ûÓÃ¸üĞÂ·şÎñ(ÒÔ·ÀĞŞ¸´±»»¹Ô­)»ò»Ö¸´¸üĞÂÄ¬ÈÏÉèÖÃµÄ¹¤¾ß¡£", "·ÀÖ¹ Windows ÖØĞÂ¿ªÆôÊÜÏŞĞ­Òé»òÔÙ´ÎÆÆ»µ´òÓ¡»ú¹²Ïí¡£")
-        '70' = @("Æô¶¯Ô­Éú Windows ÒÉÄÑ½â´ğ", "ÔËĞĞÔ­Éú Windows ´òÓ¡»úÒÉÄÑ½â´ğÏòµ¼ (msdt)¡£", "ÔÚ½øĞĞÊÖ¶¯¸ÉÔ¤Ç°µÄ³õ²½Õï¶Ï²½Öè¡£")
-        '71' = @("Ç¿ÖÆ´òÓ¡»úÁª»ú×´Ì¬", "Í¨¹ı WMI/CIM ½«´òÓ¡»úµÄ WorkOffline ×´Ì¬Ç¿ÖÆÉèÎª false¡£", "´òÓ¡»ú×´Ì¬¿¨ÔÚ'ÍÑ»ú'»ò´¦ÓÚ»ÒÏÔ²»¿ÉÓÃ×´Ì¬¡£")
-        '72' = @("Æô¶¯ Services.msc", "´ò¿ª Services.msc ·şÎñ¹ÜÀí¿ØÖÆÌ¨¡£", "ÊÖ¶¯¼ì²éºÍÑéÖ¤ Print Spooler µÄÔËĞĞ×´Ì¬¡£")
-        '73' = @("¼ì²â²Ù×÷ÏµÍ³°æ±¾¼°¼Ü¹¹", "ÏÔÊ¾²Ù×÷ÏµÍ³°æ±¾¡¢°æ±¾ºÅÒÔ¼°ÌØ¶¨µÄ½¨Òé¡£", "ÔÚÑ¡ÔñÌØ¶¨µÄĞŞ¸´·½°¸Ç°È·±£¼æÈİĞÔ¡£")
-        '74' = @("Ping & ¶Ë¿Ú 445/135 Õï¶Ï", "Í¨¹ı ICMP Ping ÒÔ¼°É¨Ãè SMB (445) ºÍ RPC (135) ¶Ë¿Ú×´Ì¬¡£", "²âÊÔÍøÂçÁ¬Í¨ĞÔºÍ·À»ğÇ½×´Ì¬µÄµÚÒ»²½¡£")
-        '75' = @("²é¿´Ö´ĞĞÈÕÖ¾", "Æô¶¯ÈÕÖ¾¹ÜÀí½çÃæ (¼ÇÊÂ±¾)¡£", "ÓÃÓÚĞŞ¸´ºóµÄ¼ì²éÓëÉó¼Æ¡£")
-        '76' = @("ÉóºË×î½ü 20 Ìõ´òÓ¡·şÎñ´íÎóÈÕÖ¾", "´ÓÏµÍ³ÊÂ¼şÈÕÖ¾ÖĞ½âÎö³ö×î½üµÄ 20 Ìõ´íÎóÊÂ¼ş¡£", "µ÷²éÒı·¢´òÓ¡ÎÊÌâµÄ¸ù±¾Ô­Òò¡£")
-        '77' = @("ÏµÍ³Õï¶ÏÉó²é", "Éó²é Spooler ×´Ì¬¡¢SMB ×´Ì¬¡¢·À»ğÇ½×´Ì¬¼°ÍøÂçÍØÆË¡£", "ÔÚ²¿ÊğÈÎºÎĞŞ¸´Ç°¼ì²éÏµÍ³µÄ×ÜÌå½¡¿µ×´¿ö¡£")
-        '78' = @("´òÓ¡·şÎñÊÂ¼şÈÕÖ¾½âÎöÆ÷ (Ç° 5 Ãû)", "½âÎö×î½üµÄ 5 Ìõ´íÎó/¾¯¸æÊÂ¼ş£¬²¢Ìá¹©×Ô¶¯»¯½â¾ö½¨Òé¡£", "Óöµ½ÉñÃØµÄ´òÓ¡ÎÊÌâÈ´²»ÖªµÀÃ÷ÏÔµÄ´íÎó´úÂë¡£")
-        '79' = @("Éú³É HTML Õï¶Ï±¨¸æ", "½«Ö´ĞĞÈÕÖ¾±àÒë³É»¥¶¯µÄ HTML ±¨¸æÎÄ¼ş¡£", "ÓÃÓÚ IT ÎÄµµ¼ÇÂ¼»òÏòÉÏ¼¶Ö÷¹Ü»ã±¨¡£")
-        '80' = @("¼ì²â GPO ¸ÉÔ¤ (×é²ßÂÔÉ¨Ãè)", "É¨Ãè×¢²á±íºÍ gpresult ÒÔÑ°ÕÒÓ°Ïì´òÓ¡»úµÄ×é²ßÂÔ¸²¸ÇÉèÖÃ¡£", "ĞŞ¸´·½°¸Ö»ÓĞ¶ÌÔİĞ§¹û£¬ÖØÆô»ò gpupdate ºó¾ÍÔÙ´ÎÊ§Ğ§¡£")
-        '81' = @("PrintBRM (±¸·İ/»Ö¸´Ç¨ÒÆ¹¤¾ß)", "Í¨¹ı PrintBrm.exe ¶Ô´òÓ¡»úÍØÆËÖ´ĞĞÍêÕûµÄ±¸·İ»ò»Ö¸´¡£", "½«´òÓ¡»ú²¿Êğµ½¶à¸ö¹¤×÷Õ¾£¬»òÇ¨ÒÆµ½ĞÂÓ²¼ş¡£")
-        '82' = @("ÆôÓÃ SMB ·Ã¿Í·ÃÎÊ²¢È¡ÏûÄäÃûÀ¹½Ø", "ÔÚ LanmanWorkstation ×¢²á±íÖĞÆôÓÃ AllowInsecureGuestAuth¡£", "ÊÊÓÃÓÚ¾ÖÓòÍø»·¾³ÖĞµÄÃâÃÜÂë¹²Ïí¡£")
-        '83' = @("¼«ÏŞÂ·¾¶ (Õë¶Ô WIN 11 24H2/25H2/26H2+ & ARM64)", "¼«¾ß¹¥»÷ĞÔµÄ×éºÏĞŞ¸´£ºĞŞ¸Ä DnsOnWire, ÑÏ¸ñÃû³Æ¼ì²é, NTLM¼¶±ğ, SMBÇ©Ãû, Çå¿ÕKerberosµÈ¡£", "±ê×¼ĞŞ¸´·½°¸ÔÚ×îĞÂµÄ Win 11 ÉÏ²»Æğ×÷ÓÃ¡£×¨Îª Build 26000 ÒÔÉÏµÄ°æ±¾¹¹½¨¡£")
-        '84' = @("Ö´ĞĞÈ«×Ô¶¯ĞŞ¸´ (50 Ïî×Ô¶¯»¯ĞŞ¸´)", "°´Ë³ĞòÒÀ´ÎÖ´ĞĞ 50 Ïî×Ô¶¯»¯ĞŞ¸´¡£", "Ö÷ÒªÍÆ¼ö²Ù×÷ ¡ª¡ª ½â¾ö¾ø´ó¶àÊı³£¹æÇé¿öµÄ×î¼ÑĞŞ¸´¡£Íê³Éºó[ÇëÖØÆôÏµÍ³]ÒÔ»ñµÃ×î¼ÑĞ§¹û¡£")
-        '85' = @("¾²Ä¬È«×Ô¶¯ĞŞ¸´²¢ÖØÆô (ÁãÌáÊ¾)", "¾²Ä¬Ö´ĞĞÈ«²¿ 50 Ïî²½Öè£¬Íê³Éºó×Ô¶¯ÖØÆô¡£", "ĞèÒªÁ¢¼´Ö´ĞĞÎŞÈËÖµÊØĞŞ¸´µÄ½ô¼±Çé¿ö¡£ÏµÍ³»á×Ô¶¯ÖØÆô£¡Ö´ĞĞÇ°Çë±£´æºÃËùÓĞÖØÒª¹¤×÷£¡")
-        '86' = @("½«±¾µØ¶Ë¿ÚÓ³Éäµ½ UNC Â·¾¶ (ÈÆ¹ı 0x00000709)", "³¢ÊÔ±ê×¼µÄ¶Ë¿Ú´´½¨£¬Èç¹û±»À¹½Ø£¬Ôò»ØÍËµ½Í¨¹ıÖ±½ÓĞ´Èë×¢²á±íÀ´ÈÆ¹ıÏŞÖÆµÄ·½·¨¡£", "µ±±ê×¼¹²ÏíÁ¬½ÓÊ§°ÜÇÒÏµÍ³³¹µ×·âËøÁË 'Add-PrinterPort' ÃüÁîÊ±¡£")
-        '87' = @("ÒÆ³ıÒÑ×¢ÈëµÄ±¾µØ¶Ë¿Ú (UNC)", "³¢ÊÔ±ê×¼µÄ¶Ë¿ÚÒÆ³ı£¬Èç¹û±»À¹½Ø£¬Ôò»ØÍËµ½Í¨¹ıÇå³ı×¢²á±íÀ´Ç¿ĞĞÉ¾³ı¡£", "µ±Ö®Ç°Ó³ÉäµÄ¶Ë¿Ú²»ÔÙĞèÒª£¬»òÅäÖÃ´íÎóĞèÒªÖØĞÂĞŞ¸ÄÊ±¡£")
-        '88' = @("ÖØÆôÏµÍ³", "Á¢¼´ÖØÆôÏµÍ³¡£", "ÔÚÓ¦ÓÃÈÎºÎÖØ´óĞŞ¸´ºóÓ¦Ê¼ÖÕÖ´ĞĞ´Ë²Ù×÷¡£")
-        '89' = @("ÍË³ö½Å±¾", "ÍË³ö±¾¹¤¾ß¡£", "¹ÊÕÏÅÅ³ıÍê³ÉºóÑ¡Ôñ¡£")
+        '1'  = @("ä¿®è¡¥é”™è¯¯ 0x0000011b (RpcAuthnLevelPrivacy)", "ç¦ç”¨ RpcAuthnLevelPrivacyEnabled æ³¨å†Œè¡¨é¡¹ï¼Œé˜²æ­¢ RPC èº«ä»½éªŒè¯é˜»æ­¢å…±äº«è¿æ¥ã€‚", "Windows 10/11 ç´¯è®¡æ›´æ–°åæœ€å¸¸è§çš„é”™è¯¯ã€‚")
+        '2'  = @("æ·±åº¦ä¿®å¤ 0x00000709 (å¤šå±‚ RPC & Kerberos)", "åº”ç”¨å¤šå±‚ä¿®å¤ï¼šRPC å‘½åç®¡é“ã€ç»•è¿‡ Kerberosã€æ¸…ç† HKCU åŠæ—§ç‰ˆè¦†ç›–ç­–ç•¥ã€‚", "å¤„ç†èƒ½åœ¨å¸¸è§„ä¿®å¤ä¸­å­˜æ´»çš„é¡½å›º Win 11 0x00000709 é”™è¯¯ã€‚å¿…é¡»åŒæ—¶åœ¨ä¸»æœºä¸Šè¿è¡Œã€‚")
+        '3'  = @("ç»•è¿‡é”™è¯¯ 0x00000bc4 (æ‰¾ä¸åˆ°æ‰“å°æœº)", "å¼ºåˆ¶ RPC ä½¿ç”¨å‘½åç®¡é“åè®®ä»¥ä¾¿å‘ç°æ‰“å°æœºã€‚", "ç½‘ç»œå¯ç”¨ï¼Œä½† Windows ä»æŠ¥å‘Š'æ‰¾ä¸åˆ°æ‰“å°æœº'ã€‚")
+        '4'  = @("ä¿®å¤é”™è¯¯ 0x80070035 (è‡ªåŠ¨é…ç½®ç½‘ç»œæœåŠ¡)", "è‡ªåŠ¨å¯åŠ¨å¹¶é…ç½® fdPHost, FDResPub, SSDPSRV, upnphost ç­‰ç½‘ç»œæœåŠ¡ã€‚", "ç›®æ ‡è®¡ç®—æœºåœ¨ç½‘ç»œä¸­ä¸æ˜¾ç¤ºï¼›æç¤º'æ‰¾ä¸åˆ°ç½‘ç»œè·¯å¾„'ã€‚")
+        '5'  = @("ç¦ç”¨å®¢æˆ·ç«¯æ¸²æŸ“ (é”™è¯¯ 0x000006d1)", "åœ¨æ³¨å†Œè¡¨ä¸­å¯ç”¨ DisableClientSideRenderingã€‚", "ç”±äºå®¢æˆ·ç«¯é©±åŠ¨ç¨‹åºæ¸²æŸ“é—®é¢˜å¯¼è‡´æ‰“å°ä½œä¸šå¤±è´¥ã€‚")
+        '6'  = @("ä¿®å¤é”™è¯¯ 0x80070005 (é‡ç½® Spooler ACL)", "ä½¿ç”¨ icacls å°† Spool\Printers ç›®å½•çš„ ACL é‡ç½®ä¸ºé»˜è®¤æƒé™ã€‚", "æ‰“å°æ“ä½œæœŸé—´å‡ºç°'æ‹’ç»è®¿é—®'(0x80070005) é”™è¯¯ã€‚")
+        '7'  = @("ä¿®å¤é”™è¯¯ 0x00000040 (ç½‘ç»œä¸å¯ç”¨)", "ä¿®å¤æ‰“å°å¤„ç†å™¨å’Œç«¯å£çš„æ³¨å†Œè¡¨èŠ‚ç‚¹ã€‚", "è®¿é—®æ‰“å°æœºæ—¶æç¤º'ç½‘ç»œä¸å¯ç”¨'ã€‚")
+        '8'  = @("ä¿®å¤é”™è¯¯ 0x00000002 (CopyFilesPolicy)", "é…ç½® CopyFilesPolicy ä»¥å…è®¸ç³»ç»Ÿæ‘„å–é©±åŠ¨ç¨‹åºã€‚", "ä»ä¸»æœºæœåŠ¡å™¨å…‹éš†æ‰“å°æœºé©±åŠ¨ç¨‹åºæ—¶å‡ºé”™ã€‚")
+        '9'  = @("ä¿®å¤é”™è¯¯ 0x0000007e (RPC ä½æ•°ä¸åŒ¹é…)", "å¼ºåˆ¶æ³¨å†Œè¡¨å…¼å®¹è·¨ç³»ç»Ÿæ¶æ„çš„é©±åŠ¨ç¨‹åºã€‚", "32 ä½ä¸ 64 ä½æ¶æ„ä¸åŒ¹é…å¯¼è‡´çš„é—®é¢˜ã€‚")
+        '10' = @("å…¨é¢ç½‘ç»œé‡ç½® (DNS, Winsock, NetBIOS)", "åˆ·æ–° DNSï¼Œé‡Šæ”¾/ç»­è®¢ IPï¼Œé‡ç½® Winsock å’Œ NetBIOSã€‚", "ç½‘ç»œè¿æ¥ä¸ç¨³å®šï¼Œç»å¸¸è¶…æ—¶ (RTO)ï¼Œæˆ–å­˜åœ¨ä¸¥é‡å»¶è¿Ÿã€‚")
+        '11' = @("å¼ºåˆ¶ç½‘ç»œè®¾ä¸ºä¸“ç”¨é…ç½®æ–‡ä»¶", "å°†æ‰€æœ‰ç½‘ç»œè¿æ¥é…ç½®æ–‡ä»¶è¦†ç›–ä¸º'ä¸“ç”¨ (Private)'çŠ¶æ€ã€‚", "ç”±äºç½‘ç»œé…ç½®æ–‡ä»¶è®¾ç½®ä¸º'å…¬ç”¨'è€Œå¯¼è‡´å…±äº«è¢«æ‹¦æˆªã€‚")
+        '12' = @("å¼ºåˆ¶ç¦ç”¨å—å¯†ç ä¿æŠ¤çš„å…±äº«", "ä¿®æ”¹ LSA æ³¨å†Œè¡¨ï¼šlimitblankpassworduse=0, everyoneincludesanonymous=1ã€‚", "æ˜æ˜æ²¡è®¾ç½®å¯†ç å´ä¾ç„¶å¼¹å‡ºå‡­æ®è¾“å…¥æ¡†ã€‚")
+        '13' = @("é€šè¿‡å‘½åç®¡é“å’Œ TCP å¯ç”¨ RPC", "å¼ºåˆ¶ RPC é€šä¿¡é€šè¿‡å‘½åç®¡é“å’Œ TCP åè®®ä¼ è¾“ã€‚", "å›  RPC ç«¯ç‚¹æ‹¦æˆªå¯¼è‡´çš„æ‰“å°æœºè¿æ¥é”™è¯¯ã€‚")
+        '14' = @("é…ç½®é˜²ç«å¢™ä»¥å…è®¸æ–‡ä»¶å’Œæ‰“å°æœºå…±äº«", "åœ¨é˜²ç«å¢™ä¸­å¯ç”¨'æ–‡ä»¶å’Œæ‰“å°æœºå…±äº«'ä»¥åŠ'ç½‘ç»œå‘ç°'è§„åˆ™ã€‚", "ä¸»æœºåœ¨ç½‘ç»œä¸­ä¸å¯è§ï¼Œå…±äº«è¢«ä¸¥é‡é˜»æ–­ã€‚")
+        '15' = @("SMB 1.0 ä¼ ç»Ÿåè®®ç®¡ç† (å¼€å¯/å…³é—­)", "æ ¹æ®ç”¨æˆ·è¾“å…¥å¯ç”¨æˆ–ç¦ç”¨ SMB 1.0 åè®®ã€‚", "éœ€è¦è¿æ¥åˆ°ä¼ ç»Ÿç¡¬ä»¶ (Win XP/7)ã€‚æ³¨æ„: æœ‰å‹’ç´¢è½¯ä»¶é£é™©ï¼")
+        '16' = @("ç¦ç”¨ SMB ç­¾å (ä¿®å¤ Win 11 NAS è®¿é—®)", "ç¦ç”¨å®¢æˆ·ç«¯å’ŒæœåŠ¡å™¨çš„ RequireSecuritySignatureã€‚", "åœ¨ Win 11 24H2+ ç³»ç»Ÿä¸­æ— æ³•è®¿é—® NAS æˆ–æ—§ç‰ˆä¸»æœºã€‚")
+        '17' = @("å¼ºåˆ¶ä½¿ç”¨ç°ä»£ SMB2/SMB3 æ‹“æ‰‘", "ç¡®ä¿æ¿€æ´» SMB2/SMB3ï¼Œå¹¶æ˜¾å¼ç¦ç”¨ SMB1ã€‚", "è¿‡æ¸¡åˆ°ç°ä»£å®‰å…¨åè®®ã€‚")
+        '18' = @("åœ¨ç½‘ç»œæä¾›å•†é¡ºåºä¸­ä¼˜å…ˆå¤„ç† SMB", "åœ¨æä¾›å•†åˆ—è¡¨ä¸­ä¼˜å…ˆå¤„ç† LanmanWorkstationã€‚", "SMB è¿æ¥å­˜åœ¨æç«¯å»¶è¿Ÿã€‚")
+        '19' = @("ç¦ç”¨ IPv6 åè®®æ ˆ", "é€šè¿‡æ³¨å†Œè¡¨å’Œ netsh æ¥å£ç¦ç”¨ IPv6ã€‚", "åœ¨çº¯ IPv4 ç½‘ç»œä¸­ IPv6 å¯¼è‡´çš„ç½‘ç»œè·¯ç”±é—®é¢˜ã€‚")
+        '20' = @("å¯ç”¨ mDNS & LLMNR (å‘ç°åè®®)", "å¯ç”¨ç»„æ’­ DNS å’Œ LLMNR åè®®ã€‚", "æ— æ³•é€šè¿‡ä¸»æœºåè§£æå‘ç°æ‰“å°æœºã€‚")
+        '21' = @("é…ç½® WSD é˜²ç«å¢™è§„åˆ™ (ç«¯å£ 3702)", "åœ¨é˜²ç«å¢™ä¸­å¼€å¯ UDP ç«¯å£ 3702 ä¾› WSD å‘ç°ä½¿ç”¨ã€‚", "Web æœåŠ¡å‘ç° (WSD) è¢«é˜²ç«å¢™å±è”½ã€‚")
+        '22' = @("å¯ç”¨ IPP & Mopria å…±äº«åŸºç¡€åŠŸèƒ½", "å¯ç”¨ Windows IPP å’Œ Mopria Foundation åŠŸèƒ½ã€‚", "ç°ä»£æ‰“å°æœºä½¿ç”¨çš„ IPP åè®®æ”¯æŒã€‚")
+        '23' = @("è§£å†³ Hyper-V/WSL è™šæ‹Ÿç½‘ç»œå†²çª", "ç¦ç”¨è™šæ‹Ÿé€‚é…å™¨ä¸Šçš„æ‰“å°æœºç»‘å®šã€‚", "Hyper-V/WSL è™šæ‹Ÿäº¤æ¢æœºç ´åäº†å±€åŸŸç½‘æ‹“æ‰‘ã€‚")
+        '24' = @("å®‰è£…æ—§ç‰ˆ LPR/LPD åè®®", "å¯ç”¨ Windows LPR ç«¯å£ç›‘è§†å™¨å’Œ LPD æœåŠ¡åŠŸèƒ½ã€‚", "éœ€è¦é€šè¿‡ä¼ ç»Ÿçš„ LPR (è¡Œå¼æ‰“å°æœºè¿œç¨‹) åè®®è¿›è¡Œè¿æ¥ã€‚")
+        '25' = @("è¿œç¨‹ç½‘ç»œæ‰“å°æœºå‘ç°", "æ‰«æå¹¶æšä¸¾ç›®æ ‡ä¸»æœºä¸Šçš„æ‰€æœ‰å…±äº«æ‰“å°æœºã€‚", "æƒ³çŸ¥é“ç›®æ ‡ä¸»æœºå…±äº«äº†å“ªäº›æœªçŸ¥æ‰“å°æœºã€‚")
+        '26' = @("WSD åˆ° æ ‡å‡† TCP/IP ç«¯å£è½¬æ¢å™¨", "æ£€æµ‹ WSD ç«¯å£å¹¶å°†æ‰“å°æœºè¿ç§»åˆ°ç¨³å®šçš„æ ‡å‡† TCP/IP ç«¯å£ã€‚", "å›  WSD å‘ç°å¤±è´¥å¯¼è‡´æ‰“å°æœºé—´æ­‡æ€§æ¶ˆå¤±æˆ–å¤„äºè„±æœºçŠ¶æ€ã€‚")
+        '27' = @("ç½‘ç»œå¥—æ¥å­—é‡æ–°åˆå§‹åŒ– (é€‰æ‹©æ€§æ¸…ç†)", "é‡å¯ SMB å®¢æˆ·ç«¯/æœåŠ¡ç«¯æœåŠ¡ï¼Œå¹¶æ¸…é™¤å¡ä½çš„ 445/135 ç«¯å£è¿æ¥ã€‚", "åœ¨æ›´æ”¹ IP æˆ–ä½¿ç”¨ VPN åï¼Œé™ˆæ—§çš„ç½‘ç»œè¿æ¥é˜»æ­¢äº†æ‰“å°æœºè®¿é—®ã€‚")
+        '28' = @("æ•‘æ´ç½‘ç»œé…ç½® (è‡ªåŠ¨çœ‹é—¨ç‹—)", "å¼ºåˆ¶æ‰€æœ‰'å…¬ç”¨'ç½‘ç»œè½¬ä¸º'ä¸“ç”¨'ï¼Œå¹¶å¯é€‰æ‹©éƒ¨ç½²ä¸€ä¸ªçœ‹é—¨ç‹—ä»»åŠ¡ã€‚", "é‡å¯åç½‘ç»œé…ç½®æ–‡ä»¶æ€»æ˜¯é‡ç½®å›å…¬ç”¨æ¨¡å¼ï¼Œä»è€Œå±è”½äº†æ‰“å°æœºå…±äº«ã€‚")
+        '29' = @("æ‰‹åŠ¨æ³¨å…¥æ ‡å‡† TCP/IP ç«¯å£", "é€šè¿‡ WMI è„šæœ¬æ³¨å…¥ TCP/IP ç«¯å£ã€‚", "éœ€è¦æ‰‹åŠ¨æ·»åŠ ä¸€ä¸ª IP æ‰“å°æœºç«¯å£ã€‚")
+        '30' = @("å¼ºåˆ¶åˆå§‹åŒ– WSD æ‰“å°è®¾å¤‡", "ä¸º Web æœåŠ¡å‘ç°åˆå§‹åŒ– WSDPrintDevice æœåŠ¡ã€‚", "ç³»ç»Ÿå§‹ç»ˆæ— æ³•æ£€æµ‹åˆ° WSD ç½‘ç»œæ‰“å°æœºã€‚")
+        '31' = @("ç¡¬é‡ç½®æ‰“å°åå°ç¨‹åº (æ¸…é™¤é˜Ÿåˆ—)", "åœæ­¢ Spooler æœåŠ¡ï¼Œå¼ºåˆ¶åˆ é™¤ Spool\Printers ä¸­çš„é˜Ÿåˆ—æ–‡ä»¶ï¼Œç„¶åé‡å¯æœåŠ¡ã€‚", "æ‰“å°é˜Ÿåˆ—å½»åº•å†»ç»“ï¼ŒSpooler è¿›ç¨‹å¡æ­»ã€‚")
+        '32' = @("é‡æ–°åˆå§‹åŒ– RPC & DCOM æœåŠ¡", "éªŒè¯å¹¶é‡æ–°å¯åŠ¨ RpcSs å’Œ DcomLaunch æœåŠ¡ã€‚", "RPC æˆ– DCOM æœåŠ¡æ„å¤–ç»ˆæ­¢/å´©æºƒï¼›æç¤º'RPC æœåŠ¡å™¨ä¸å¯ç”¨'ã€‚")
+        '33' = @("è¿œç¨‹ç›®æ ‡ Spooler é‡å¯", "é€šè¿‡ PowerShell WinRM/DCOM è¿œç¨‹æ‰§è¡Œ Spooler é‡ç½®ã€‚", "åœ¨æ— æ³•ç‰©ç†æ¥è§¦çš„æƒ…å†µä¸‹è¿œç¨‹é‡ç½®æ­»æœºçš„ Spoolerã€‚éœ€è¦ç›®æ ‡ç®¡ç†å‘˜æƒé™ã€‚")
+        '34' = @("é…ç½® Spooler å´©æºƒæ—¶è‡ªåŠ¨é‡å¯", "é€šè¿‡ sc.exe é…ç½®æ¢å¤æ“ä½œï¼šæœåŠ¡å´©æºƒæ—¶è‡ªåŠ¨é‡å¯ã€‚", "Spooler é«˜åº¦ä¸ç¨³å®šï¼Œéœ€è¦è‡ªæˆ‘ä¿®å¤æœºåˆ¶ã€‚")
+        '35' = @("æ¸…é™¤é™ˆæ—§çš„ Spooler ä¾èµ–é¡¹", "å°† DependOnService çš„ Spooler å‚æ•°é‡ç½®ä¸ºé»˜è®¤ (RPCSS, http)ã€‚", "RPC æœåŠ¡è¿è¡Œæ­£å¸¸ä½† Spooler ä»å¤„äºéæ´»åŠ¨çŠ¶æ€ã€‚")
+        '36' = @("éƒ¨ç½² Spooler çœ‹é—¨ç‹— (5åˆ†é’Ÿå®¡æŸ¥)", "éƒ¨ç½²ä¸€ä¸ªè®¡åˆ’ä»»åŠ¡ï¼Œæ¯ 5 åˆ†é’Ÿå®¡è®¡ä¸€æ¬¡ Spooler çŠ¶æ€ã€‚", "éœ€è¦ç¡®ä¿æŒç»­å¯ç”¨æ€§çš„é«˜æ­£å¸¸è¿è¡Œæ—¶é—´æ‰“å°æœåŠ¡å™¨ç¯å¢ƒã€‚")
+        '37' = @("å¼ºåˆ¶æ¸…é™¤æ‰“å°é˜Ÿåˆ— (.shd/.spl)", "ç»ˆæ­¢æ‰€æœ‰ç›¸å…³æ‰“å°è¿›ç¨‹å¹¶æ¸…é™¤æŸåçš„ .shd/.spl åå°å¤„ç†æ–‡ä»¶ã€‚", "æ ‡å‡†çš„å–æ¶ˆæ–¹æ³•æ— æ³•å½»åº•æ¸…é™¤é˜Ÿåˆ—ã€‚")
+        '38' = @("é‡ç½® Spooler æ³¨å†Œè¡¨ä¾èµ–é¡¹", "é€šè¿‡ HKLM ç›´æ¥ä¿®æ”¹æ³¨å†Œè¡¨ï¼Œå°† Spooler çš„ DependOnService è®¾å›åŸå‚é»˜è®¤ (RPCSS, http)ã€‚", "å³ä½¿é‡å¯å Spooler ä¾ç„¶æ— æ³•å¯åŠ¨ã€‚")
+        '39' = @("é©±åŠ¨ç¨‹åºç®¡ç† (æ‰“å°æœåŠ¡å™¨å±æ€§)", "å¯åŠ¨'æ‰“å°æœåŠ¡å™¨å±æ€§'GUI ç•Œé¢ä»¥ç®¡ç†å·²å®‰è£…çš„é©±åŠ¨ã€‚", "æ‰“å°æœºä½¿ç”¨äº†é”™è¯¯çš„é©±åŠ¨ï¼Œæˆ–å­˜åœ¨é‡å¤çš„é©±åŠ¨ç¨‹åºå®ä¾‹ã€‚")
+        '40' = @("ç¦ç”¨æ‰“å°é©±åŠ¨éš”ç¦»", "åœ¨æ³¨å†Œè¡¨ä¸­ç¦ç”¨ IsolationPolicyã€‚", "ç‰¹å®šçš„é©±åŠ¨ç¨‹åºå¯¼è‡´ Spooler å´©æºƒã€‚")
+        '41' = @("é€šç”¨æ‰“å°ç±»é©±åŠ¨ V4 ä¿®å¤", "æ‰«æ V4 é©±åŠ¨æ˜¯å¦æœ‰æŸåçš„ PrintConfig.dllï¼Œå¹¶è§¦å‘ DriverStore é‡æ–°æ³¨å†Œã€‚", "V4 æ‰“å°æœºçªç„¶åœæ­¢å·¥ä½œæˆ–æ‰“å°å‡ºä¹±ç ã€‚")
+        '42' = @("åˆ‡æ¢ PCL ä¸ PostScript é©±åŠ¨æ¨¡å¼", "åœ¨ PCL å’Œ PostScript æ¸²æŸ“æ¨¡å¼ä¹‹é—´åˆ‡æ¢æ‰“å°æœºçš„é©±åŠ¨ã€‚", "æ‰“å°æœºåå‡ºå……æ»¡éšæœºä¹±ç çš„çº¸å¼ ã€‚")
+        '43' = @("å­¤ç«‹é©±åŠ¨ç¨‹åºæ¸…ç† (pnputil)", "æ‰«æ DriverStore æŸ¥æ‰¾å­¤ç«‹çš„æ‰“å°æœº OEM INF åŒ…å¹¶å¼ºåˆ¶åˆ é™¤ã€‚", "å› ä¸ºä¸æ—§çš„éšè—é©±åŠ¨ç¨‹åºå†²çªè€Œæ— æ³•å®‰è£…æ–°é©±åŠ¨ã€‚")
+        '44' = @("ç»•è¿‡'é©±åŠ¨ç¨‹åºå½“å‰æ­£åœ¨ä½¿ç”¨'", "å¼ºåˆ¶ç»“æŸ PrintIsolationHost, splwow64 ç­‰è¿›ç¨‹ä»¥é‡Šæ”¾é©±åŠ¨ç¨‹åºå¥æŸ„ã€‚", "Windows æ‹’ç»è®©ä½ åˆ é™¤æŸä¸ªé©±åŠ¨ç¨‹åºã€‚")
+        '45' = @("å¹½çµ USB ç«¯å£ & å‰¯æœ¬æ¸…é™¤å™¨", "æ£€æµ‹å¹¶åˆ é™¤é‡å¤çš„æ‰“å°æœº'å‰¯æœ¬'ä»¥åŠæ­»å»çš„ USB ç«¯å£ã€‚", "ä½ å°†æ‰“å°æœºæ’å…¥äº†ä¸åŒçš„ USB ç«¯å£å¯¼è‡´å®ƒåˆ›å»ºäº†ä¸€ä¸ªå¹½çµå‰¯æœ¬ã€‚")
+        '46' = @("å¼ºåˆ¶åˆ é™¤å¹½çµæ‰“å°æœº", "é€šè¿‡å‘½ä»¤è¡Œ (printui) å¼ºåˆ¶åˆ é™¤æ‰“å°æœºã€‚", "å¹½çµæ‰“å°æœºæˆ–å·²æŸåçš„æ‰“å°æœºæ‹’ç»é€šè¿‡æ ‡å‡†æ–¹æ³•å¸è½½ã€‚")
+        '47' = @("ä¿®å¤ Microsoft Edge / UWP æ‰“å°", "é‡æ–°æ³¨å†Œ UWP æ‰“å°ç»„ä»¶å¹¶è®¾å®šç¯å›è±å…ã€‚", "ä»è®°äº‹æœ¬æ‰“å°æ­£å¸¸ï¼Œä½†ä» Edge/UWP åº”ç”¨æ‰“å°å¤±è´¥ã€‚")
+        '48' = @("é‡æ–°å®‰è£… Microsoft Print to PDF/XPS", "é‡æ–°åˆå§‹åŒ–ç³»ç»Ÿè‡ªå¸¦çš„ Windows PDF & XPS è™šæ‹Ÿæ‰“å°åŠŸèƒ½ã€‚", "è‡ªå¸¦çš„è™šæ‹Ÿæ‰“å°æœºä¸¢å¤±æˆ–å‡ºç°é”™è¯¯ã€‚")
+        '49' = @("æµè§ˆå™¨æ‰“å°æ²™ç›’ä¿®å¤ (Chromium)", "æ¸…é™¤æµè§ˆå™¨æ‰“å°ç¼“å­˜å¹¶ä¿®å¤æ‰“å°å¯¹è¯æ¡†çš„ç¯å›è±å…é—®é¢˜ã€‚", "ä» Word å¯ä»¥æ‰“å°ï¼Œä½†ä» Chrome æµè§ˆå™¨æ— æ³•æ‰“å°ã€‚")
+        '50' = @("å¼ºåˆ¶è®¾ç½®æ°¸ä¹…é»˜è®¤æ‰“å°æœº", "ç¦ç”¨ Windows è‡ªåŠ¨ç®¡ç†åŠŸèƒ½å¹¶é€šè¿‡ WMI å¼ºåˆ¶è®¾ç½®é»˜è®¤æ‰“å°æœºã€‚", "Windows ä¼šæ ¹æ®ç½‘ç»œä½ç½®åŠ¨æ€æ”¹å˜é»˜è®¤æ‰“å°æœºã€‚")
+        '51' = @("å¼ºåˆ¶è®¾ç½®é»˜è®¤æ‰“å°æœº (æ³¨å†Œè¡¨ç»•è¿‡)", "ç»•è¿‡ Windows è‡ªåŠ¨ç®¡ç†ï¼Œç›´æ¥é€šè¿‡ä¿®æ”¹ HKCU æ³¨å†Œè¡¨æ¥è®¾ç½®é»˜è®¤æ‰“å°æœºã€‚", "æ— æ³•é€šè¿‡å¸¸è§„çš„ Windows è®¾ç½®ç•Œé¢è®¾å®šé»˜è®¤æ‰“å°æœºã€‚")
+        '52' = @("ä¿®å¤ RDP æ‰“å°æœºç»ˆç«¯æœåŠ¡", "åœ¨ RDP ç»ˆç«¯æœåŠ¡æ³¨å†Œè¡¨ä¸­å¯ç”¨æ‰“å°æœºé‡å®šå‘ã€‚", "é€šè¿‡ RDP è®¤è¯åï¼Œæœ¬åœ°æ‰“å°æœºæ— æ³•æ˜ å°„åˆ°è¿œç¨‹ä¼šè¯ã€‚")
+        '53' = @("è‡ªåŠ¨æ¸…ç†æ‰“å°æœºå…±äº«åç§°", "æ‰«æå…±äº«æ‰“å°æœºï¼Œå°†å…±äº«åç§°ä¸­çš„éæ³•å­—ç¬¦æ›¿æ¢ä¸ºä¸‹åˆ’çº¿ã€‚", "ç”±äºå…±äº«åç§°è¿‡é•¿æˆ–å¤ªå¤æ‚ï¼Œå®¢æˆ·ç«¯æ— æ³•è¿æ¥ã€‚")
+        '54' = @("é™çº§ LSA ä¿æŠ¤ (ä¼ ç»Ÿè®¤è¯)", "åœ¨ LSA æ³¨å†Œè¡¨ä¸­ç¦ç”¨ RunAsPPLã€‚", "ç”±äº Win 11 ä¸¥æ ¼çš„ LSA ä¿æŠ¤å¯¼è‡´å…±äº«ç™»å½•å¤±è´¥ã€‚")
+        '55' = @("ç»•è¿‡æ™ºèƒ½åº”ç”¨æ§åˆ¶ (SAC)", "å°† VerifiedAndReputablePolicyState è®¾ç½®ä¸º Offã€‚", "Win 11 SAC æ­£åœ¨ä¸»åŠ¨æ‹¦æˆªé©±åŠ¨å®‰è£…ç¨‹åºã€‚")
+        '56' = @("ç»•è¿‡é«˜çº§æœåŠ¡å™¨åˆ—è¡¨ Point & Print (PrintNightmare ç»•è¿‡)", "åœ¨æ³¨å†Œè¡¨ä¸­æ³¨å…¥ PrintNightmare æ¼æ´ä¿®å¤çš„ææƒç»•è¿‡ä»¥åŠ ServerList é€šé…ç¬¦ (*)ã€‚", "åœ¨ä¸‹è½½é©±åŠ¨æ—¶é‡åˆ°'æ£€æŸ¥æ‰“å°æœºåç§°'æˆ–'æ‹’ç»è®¿é—®'ä¹‹ç±»çš„æ³›æŒ‡é”™è¯¯ã€‚åœ¨ Win 11 Build 22621+ ä¸­å¿…é¡»æ‰§è¡Œã€‚")
+        '57' = @("ç»•è¿‡ UAC ç®¡ç†å‘˜ç½‘ç»œ TokenFilter", "é…ç½® LocalAccountTokenFilterPolicy = 1ã€‚", "ç”±äº UAC è¿‡æ»¤å¯¼è‡´æ— æ³•å¯¹å·¥ä½œç»„ä¸»æœºè¿›è¡Œè¿œç¨‹ç®¡ç†ã€‚")
+        '58' = @("å¼ºåˆ¶ NTLMv2 å“åº”æ ‡å‡†", "å°† LmCompatibilityLevel ä¸¥æ ¼é…ç½®ä¸º NTLMv2 (çº§åˆ« 3)ã€‚", "å½“é’ˆå¯¹ä¸åŒç³»ç»Ÿç‰ˆæœ¬æˆ–ç½‘ç»œå­˜å‚¨ (NAS) è¿›è¡Œè®¤è¯æ—¶æç¤º'æ‹’ç»è®¿é—®'ã€‚")
+        '59' = @("ç®¡ç† Windows å—ä¿æŠ¤çš„æ‰“å° (WPP)", "ç¦ç”¨ Windows å—ä¿æŠ¤çš„æ‰“å°åŠŸèƒ½ã€‚", "æ—§çš„æ‰“å°æœºé©±åŠ¨ç¨‹åºä¸å…¼å®¹ WPP éš”ç¦»ã€‚")
+        '60' = @("å‘å‡­æ®ç®¡ç†å™¨æ°¸ä¹…æ³¨å…¥å‡­æ®", "å°†ç”¨æˆ·å/å¯†ç ç›´æ¥æ³¨å…¥åˆ° Windows å‡­æ®ç®¡ç†å™¨ä¸­ã€‚", "ç”¨äºç»•è¿‡æ¯æ¬¡è®¿é—®æ—¶çš„æ‰‹åŠ¨è®¤è¯ã€‚")
+        '61' = @("æ¸…é™¤ Windows å‡­æ®ç®¡ç†å™¨ä¸­çš„å¤±æ•ˆå‡­æ®", "é€šè¿‡ cmdkey ä»å‡­æ®åº“ä¸­æ¸…é™¤æ— æ•ˆæˆ–è¿‡æœŸçš„å‡­æ®ã€‚", "ä¸»æœºçš„å¯†ç å·²æ›´æ”¹ï¼Œä½†æœ¬åœ°æœºå™¨ä»ä¿ç•™äº†è¿‡æœŸçš„ç¼“å­˜ã€‚")
+        '62' = @("ç»•è¿‡ Credential Guard (ä¸¥æ ¼çš„ NTLM æ‹¦æˆª)", "ç¦ç”¨ LsaCfgFlags Credential Guard æ³¨å†Œè¡¨èŠ‚ç‚¹ã€‚", "åœ¨å¯ç”¨äº† Credential Guard çš„ä¼ä¸šç‰ˆ/ä¸“ä¸šç‰ˆç¯å¢ƒä¸­ã€‚")
+        '63' = @("è·¨ç”¨æˆ·å‡­æ®æ˜ å°„", "é€šè¿‡åŠ è½½ NTUSER.DAT æ³¨å†Œè¡¨ï¼Œå°†ç™»å½• RunOnce å‡­æ®ä»»åŠ¡æ³¨å…¥åˆ°æœ¬æœºçš„[æ‰€æœ‰]ç”¨æˆ·é…ç½®æ–‡ä»¶ä¸­ã€‚", "ä¸ºä¸€å°æ‹¥æœ‰å¤šä¸ªæœ¬åœ°ç”¨æˆ·çš„å…±äº«ç”µè„‘é…ç½®å‡­è¯ã€‚")
+        '64' = @("æ‰§è¡Œå‰æ³¨å†Œè¡¨å¤‡ä»½ (Spooler åŠ ç½‘ç»œ)", "å°† Print, Printers Policy å’Œ LanmanWorkstation æ³¨å†Œè¡¨æ ‘å¯¼å‡ºåˆ° C:\WindowsPrinterSharingFixBackupã€‚", "å¼ºçƒˆå»ºè®®åœ¨åº”ç”¨å…¶ä»–ä¿®å¤å‰æ‰§è¡Œæ­¤æ“ä½œã€‚æ°¸è¿œå…ˆè¿è¡Œè¿™ä¸ªï¼")
+        '65' = @("ä»å¤‡ä»½å›æ»šæ³¨å†Œè¡¨", "å¯¼å…¥æ¥è‡ªå¤‡ä»½ç›®å½•çš„ .reg æ–‡ä»¶ã€‚", "å¦‚æœåœ¨åº”ç”¨ä¿®å¤åæƒ…å†µå˜å¾—æ›´ç³Ÿã€‚ä»…å½“ä¹‹å‰æ‰§è¡Œè¿‡ [64] å¤‡ä»½æ—¶æœ‰æ•ˆã€‚")
+        '66' = @("ç”Ÿæˆç³»ç»Ÿè¿˜åŸç‚¹ (å®‰å…¨æªæ–½)", "ç”Ÿæˆç³»ç»Ÿè¿˜åŸç‚¹ä»¥å¤‡æ‰§è¡Œå®Œæ•´çš„æ“ä½œç³»ç»Ÿå›æ»šã€‚", "åœ¨æ‰§è¡Œä¸»è¦çš„ç³»ç»Ÿçº§æ¶æ„æ›´æ”¹ä¹‹å‰ã€‚")
+        '67' = @("ç³»ç»Ÿæ–‡ä»¶æ£€æŸ¥ (SFC) ä¸ DISM æ¢å¤", "æ‰§è¡Œ SFC /scannow ä»¥åŠ DISM RestoreHealthã€‚", "ç»å¸¸è“å± (BSOD)ã€é¢‘ç¹çš„å¼‚å¸¸é”™è¯¯ï¼Œæˆ–åœ¨æ¸…ç†æ¶æ„è½¯ä»¶åæ‰§è¡Œã€‚æ­¤è¿‡ç¨‹å¯èƒ½è€—æ—¶ 10-30 åˆ†é’Ÿï¼")
+        '68' = @("é‡å¯ BITS (åå°æ™ºèƒ½ä¼ è¾“æœåŠ¡)", "é‡æ–°å¯åŠ¨åå°æ™ºèƒ½ä¼ è¾“æœåŠ¡ã€‚", "é©±åŠ¨ç¨‹åºæ— æ³•è‡ªåŠ¨å®Œæˆä¸‹è½½ã€‚")
+        '69' = @("Windows æ›´æ–°åŠæ‹¦æˆªå™¨ç®¡ç†", "æä¾›å¸è½½ç³»ç»Ÿæ›´æ–°ã€æš‚åœæ›´æ–°ã€æ°¸ä¹…ç¦ç”¨æ›´æ–°æœåŠ¡(ä»¥é˜²ä¿®å¤è¢«è¿˜åŸ)æˆ–æ¢å¤æ›´æ–°é»˜è®¤è®¾ç½®çš„å·¥å…·ã€‚", "é˜²æ­¢ Windows é‡æ–°å¼€å¯å—é™åè®®æˆ–å†æ¬¡ç ´åæ‰“å°æœºå…±äº«ã€‚")
+        '70' = @("å¯åŠ¨åŸç”Ÿ Windows ç–‘éš¾è§£ç­”", "è¿è¡ŒåŸç”Ÿ Windows æ‰“å°æœºç–‘éš¾è§£ç­”å‘å¯¼ (msdt)ã€‚", "åœ¨è¿›è¡Œæ‰‹åŠ¨å¹²é¢„å‰çš„åˆæ­¥è¯Šæ–­æ­¥éª¤ã€‚")
+        '71' = @("å¼ºåˆ¶æ‰“å°æœºè”æœºçŠ¶æ€", "é€šè¿‡ WMI/CIM å°†æ‰“å°æœºçš„ WorkOffline çŠ¶æ€å¼ºåˆ¶è®¾ä¸º falseã€‚", "æ‰“å°æœºçŠ¶æ€å¡åœ¨'è„±æœº'æˆ–å¤„äºç°æ˜¾ä¸å¯ç”¨çŠ¶æ€ã€‚")
+        '72' = @("å¯åŠ¨ Services.msc", "æ‰“å¼€ Services.msc æœåŠ¡ç®¡ç†æ§åˆ¶å°ã€‚", "æ‰‹åŠ¨æ£€æŸ¥å’ŒéªŒè¯ Print Spooler çš„è¿è¡ŒçŠ¶æ€ã€‚")
+        '73' = @("æ£€æµ‹æ“ä½œç³»ç»Ÿç‰ˆæœ¬åŠæ¶æ„", "æ˜¾ç¤ºæ“ä½œç³»ç»Ÿç‰ˆæœ¬ã€ç‰ˆæœ¬å·ä»¥åŠç‰¹å®šçš„å»ºè®®ã€‚", "åœ¨é€‰æ‹©ç‰¹å®šçš„ä¿®å¤æ–¹æ¡ˆå‰ç¡®ä¿å…¼å®¹æ€§ã€‚")
+        '74' = @("Ping & ç«¯å£ 445/135 è¯Šæ–­", "é€šè¿‡ ICMP Ping ä»¥åŠæ‰«æ SMB (445) å’Œ RPC (135) ç«¯å£çŠ¶æ€ã€‚", "æµ‹è¯•ç½‘ç»œè¿é€šæ€§å’Œé˜²ç«å¢™çŠ¶æ€çš„ç¬¬ä¸€æ­¥ã€‚")
+        '75' = @("æŸ¥çœ‹æ‰§è¡Œæ—¥å¿—", "å¯åŠ¨æ—¥å¿—ç®¡ç†ç•Œé¢ (è®°äº‹æœ¬)ã€‚", "ç”¨äºä¿®å¤åçš„æ£€æŸ¥ä¸å®¡è®¡ã€‚")
+        '76' = @("å®¡æ ¸æœ€è¿‘ 20 æ¡æ‰“å°æœåŠ¡é”™è¯¯æ—¥å¿—", "ä»ç³»ç»Ÿäº‹ä»¶æ—¥å¿—ä¸­è§£æå‡ºæœ€è¿‘çš„ 20 æ¡é”™è¯¯äº‹ä»¶ã€‚", "è°ƒæŸ¥å¼•å‘æ‰“å°é—®é¢˜çš„æ ¹æœ¬åŸå› ã€‚")
+        '77' = @("ç³»ç»Ÿè¯Šæ–­å®¡æŸ¥", "å®¡æŸ¥ Spooler çŠ¶æ€ã€SMB çŠ¶æ€ã€é˜²ç«å¢™çŠ¶æ€åŠç½‘ç»œæ‹“æ‰‘ã€‚", "åœ¨éƒ¨ç½²ä»»ä½•ä¿®å¤å‰æ£€æŸ¥ç³»ç»Ÿçš„æ€»ä½“å¥åº·çŠ¶å†µã€‚")
+        '78' = @("æ‰“å°æœåŠ¡äº‹ä»¶æ—¥å¿—è§£æå™¨ (å‰ 5 å)", "è§£ææœ€è¿‘çš„ 5 æ¡é”™è¯¯/è­¦å‘Šäº‹ä»¶ï¼Œå¹¶æä¾›è‡ªåŠ¨åŒ–è§£å†³å»ºè®®ã€‚", "é‡åˆ°ç¥ç§˜çš„æ‰“å°é—®é¢˜å´ä¸çŸ¥é“æ˜æ˜¾çš„é”™è¯¯ä»£ç ã€‚")
+        '79' = @("ç”Ÿæˆ HTML è¯Šæ–­æŠ¥å‘Š", "å°†æ‰§è¡Œæ—¥å¿—ç¼–è¯‘æˆäº’åŠ¨çš„ HTML æŠ¥å‘Šæ–‡ä»¶ã€‚", "ç”¨äº IT æ–‡æ¡£è®°å½•æˆ–å‘ä¸Šçº§ä¸»ç®¡æ±‡æŠ¥ã€‚")
+        '80' = @("æ£€æµ‹ GPO å¹²é¢„ (ç»„ç­–ç•¥æ‰«æ)", "æ‰«ææ³¨å†Œè¡¨å’Œ gpresult ä»¥å¯»æ‰¾å½±å“æ‰“å°æœºçš„ç»„ç­–ç•¥è¦†ç›–è®¾ç½®ã€‚", "ä¿®å¤æ–¹æ¡ˆåªæœ‰çŸ­æš‚æ•ˆæœï¼Œé‡å¯æˆ– gpupdate åå°±å†æ¬¡å¤±æ•ˆã€‚")
+        '81' = @("PrintBRM (å¤‡ä»½/æ¢å¤è¿ç§»å·¥å…·)", "é€šè¿‡ PrintBrm.exe å¯¹æ‰“å°æœºæ‹“æ‰‘æ‰§è¡Œå®Œæ•´çš„å¤‡ä»½æˆ–æ¢å¤ã€‚", "å°†æ‰“å°æœºéƒ¨ç½²åˆ°å¤šä¸ªå·¥ä½œç«™ï¼Œæˆ–è¿ç§»åˆ°æ–°ç¡¬ä»¶ã€‚")
+        '82' = @("å¯ç”¨ SMB è®¿å®¢è®¿é—®å¹¶å–æ¶ˆåŒ¿åæ‹¦æˆª", "åœ¨ LanmanWorkstation æ³¨å†Œè¡¨ä¸­å¯ç”¨ AllowInsecureGuestAuthã€‚", "é€‚ç”¨äºå±€åŸŸç½‘ç¯å¢ƒä¸­çš„å…å¯†ç å…±äº«ã€‚")
+        '83' = @("æé™è·¯å¾„ (é’ˆå¯¹ WIN 11 24H2/25H2/26H2+ & ARM64)", "æå…·æ”»å‡»æ€§çš„ç»„åˆä¿®å¤ï¼šä¿®æ”¹ DnsOnWire, ä¸¥æ ¼åç§°æ£€æŸ¥, NTLMçº§åˆ«, SMBç­¾å, æ¸…ç©ºKerberosç­‰ã€‚", "æ ‡å‡†ä¿®å¤æ–¹æ¡ˆåœ¨æœ€æ–°çš„ Win 11 ä¸Šä¸èµ·ä½œç”¨ã€‚ä¸“ä¸º Build 26000 ä»¥ä¸Šçš„ç‰ˆæœ¬æ„å»ºã€‚")
+        '84' = @("æ‰§è¡Œå…¨è‡ªåŠ¨ä¿®å¤ (50 é¡¹è‡ªåŠ¨åŒ–ä¿®å¤)", "æŒ‰é¡ºåºä¾æ¬¡æ‰§è¡Œ 50 é¡¹è‡ªåŠ¨åŒ–ä¿®å¤ã€‚", "ä¸»è¦æ¨èæ“ä½œ â€”â€” è§£å†³ç»å¤§å¤šæ•°å¸¸è§„æƒ…å†µçš„æœ€ä½³ä¿®å¤ã€‚å®Œæˆå[è¯·é‡å¯ç³»ç»Ÿ]ä»¥è·å¾—æœ€ä½³æ•ˆæœã€‚")
+        '85' = @("é™é»˜å…¨è‡ªåŠ¨ä¿®å¤å¹¶é‡å¯ (é›¶æç¤º)", "é™é»˜æ‰§è¡Œå…¨éƒ¨ 50 é¡¹æ­¥éª¤ï¼Œå®Œæˆåè‡ªåŠ¨é‡å¯ã€‚", "éœ€è¦ç«‹å³æ‰§è¡Œæ— äººå€¼å®ˆä¿®å¤çš„ç´§æ€¥æƒ…å†µã€‚ç³»ç»Ÿä¼šè‡ªåŠ¨é‡å¯ï¼æ‰§è¡Œå‰è¯·ä¿å­˜å¥½æ‰€æœ‰é‡è¦å·¥ä½œï¼")
+        '86' = @("å°†æœ¬åœ°ç«¯å£æ˜ å°„åˆ° UNC è·¯å¾„ (ç»•è¿‡ 0x00000709)", "å°è¯•æ ‡å‡†çš„ç«¯å£åˆ›å»ºï¼Œå¦‚æœè¢«æ‹¦æˆªï¼Œåˆ™å›é€€åˆ°é€šè¿‡ç›´æ¥å†™å…¥æ³¨å†Œè¡¨æ¥ç»•è¿‡é™åˆ¶çš„æ–¹æ³•ã€‚", "å½“æ ‡å‡†å…±äº«è¿æ¥å¤±è´¥ä¸”ç³»ç»Ÿå½»åº•å°é”äº† 'Add-PrinterPort' å‘½ä»¤æ—¶ã€‚")
+        '87' = @("ç§»é™¤å·²æ³¨å…¥çš„æœ¬åœ°ç«¯å£ (UNC)", "å°è¯•æ ‡å‡†çš„ç«¯å£ç§»é™¤ï¼Œå¦‚æœè¢«æ‹¦æˆªï¼Œåˆ™å›é€€åˆ°é€šè¿‡æ¸…é™¤æ³¨å†Œè¡¨æ¥å¼ºè¡Œåˆ é™¤ã€‚", "å½“ä¹‹å‰æ˜ å°„çš„ç«¯å£ä¸å†éœ€è¦ï¼Œæˆ–é…ç½®é”™è¯¯éœ€è¦é‡æ–°ä¿®æ”¹æ—¶ã€‚")
+        '88' = @("é‡å¯ç³»ç»Ÿ", "ç«‹å³é‡å¯ç³»ç»Ÿã€‚", "åœ¨åº”ç”¨ä»»ä½•é‡å¤§ä¿®å¤ååº”å§‹ç»ˆæ‰§è¡Œæ­¤æ“ä½œã€‚")
+        '89' = @("é€€å‡ºè„šæœ¬", "é€€å‡ºæœ¬å·¥å…·ã€‚", "æ•…éšœæ’é™¤å®Œæˆåé€‰æ‹©ã€‚")
     }
 
     if ($Topic -eq "" -or $Topic.ToLower() -eq "menu" -or $Topic.ToLower() -eq "help") {
         cls
         Write-Host ""
         Write-Host "  ======================================================================================" -ForegroundColor Cyan
-        Write-Host "      ÓÃ»§Ö¸ÄÏ: Windows ´òÓ¡»ú¹²ÏíĞŞ¸´¹¤¾ß (ºº»¯°æ) - @KHAIRUDINFAHMI" -ForegroundColor Green
+        Write-Host "      ç”¨æˆ·æŒ‡å—: Windows æ‰“å°æœºå…±äº«ä¿®å¤å·¥å…· (æ±‰åŒ–ç‰ˆ) - @KHAIRUDINFAHMI" -ForegroundColor Green
         Write-Host "  ======================================================================================" -ForegroundColor Cyan
         Write-Host ""
-        Write-Host "  Ê¹ÓÃ·½·¨:" -ForegroundColor Yellow
-        Write-Host "    - ÊäÈë¹¦ÄÜ±àºÅ (1-89) È»ºó°´ ENTER ¼ü"
-        Write-Host "    - ÊäÈë '7' »ò '07' ¾ù¿ÉÊ¶±ğ"
-        Write-Host "    - ÊäÈë '?' ÏÔÊ¾´ËÖ¸ÄÏ"
-        Write-Host "    - ÊäÈë '? 7' ÏÔÊ¾¹¦ÄÜ 7 µÄÏêÏ¸ËµÃ÷"
-        Write-Host "    - ÊäÈë '? all' ´ò¿ªÍêÕûµÄ HTML ËµÃ÷ÎÄµµ (Èç¹û¿ÉÓÃ)"
+        Write-Host "  ä½¿ç”¨æ–¹æ³•:" -ForegroundColor Yellow
+        Write-Host "    - è¾“å…¥åŠŸèƒ½ç¼–å· (1-89) ç„¶åæŒ‰ ENTER é”®"
+        Write-Host "    - è¾“å…¥ '7' æˆ– '07' å‡å¯è¯†åˆ«"
+        Write-Host "    - è¾“å…¥ '?' æ˜¾ç¤ºæ­¤æŒ‡å—"
+        Write-Host "    - è¾“å…¥ '? 7' æ˜¾ç¤ºåŠŸèƒ½ 7 çš„è¯¦ç»†è¯´æ˜"
+        Write-Host "    - è¾“å…¥ '? all' æ‰“å¼€å®Œæ•´çš„ HTML è¯´æ˜æ–‡æ¡£ (å¦‚æœå¯ç”¨)"
         Write-Host ""
-        Write-Host "  ĞÂÊÖ¹¤×÷Á÷ (ÍÆ¼öµÄ±ê×¼Ö´ĞĞ²½Öè):" -ForegroundColor Yellow
-        Write-Host "    1. Ö´ĞĞ [64] ±¸·İ×¢²á±í (Ç¿ÖÆ½¨Òé)" -ForegroundColor White
-        Write-Host "    2. Ö´ĞĞ [84] È«×Ô¶¯ĞŞ¸´ (Ö´ĞĞ 50 ²½×Ô¶¯»¯ĞŞ¸´)" -ForegroundColor White
-        Write-Host "    3. ÖØÆôÏµÍ³" -ForegroundColor White
-        Write-Host "    4. ÑéÖ¤´òÓ¡»ú¹²Ïí·ÃÎÊÊÇ·ñ»Ö¸´" -ForegroundColor White
+        Write-Host "  æ–°æ‰‹å·¥ä½œæµ (æ¨èçš„æ ‡å‡†æ‰§è¡Œæ­¥éª¤):" -ForegroundColor Yellow
+        Write-Host "    1. æ‰§è¡Œ [64] å¤‡ä»½æ³¨å†Œè¡¨ (å¼ºåˆ¶å»ºè®®)" -ForegroundColor White
+        Write-Host "    2. æ‰§è¡Œ [84] å…¨è‡ªåŠ¨ä¿®å¤ (æ‰§è¡Œ 50 æ­¥è‡ªåŠ¨åŒ–ä¿®å¤)" -ForegroundColor White
+        Write-Host "    3. é‡å¯ç³»ç»Ÿ" -ForegroundColor White
+        Write-Host "    4. éªŒè¯æ‰“å°æœºå…±äº«è®¿é—®æ˜¯å¦æ¢å¤" -ForegroundColor White
         Write-Host ""
-        Write-Host "  WIN 11 24H2+ ¹¤×÷Á÷ (ÏµÍ³°æ±¾ 26000+):" -ForegroundColor Yellow
-        Write-Host "    1. Ö´ĞĞ [64] ±¸·İ×¢²á±í" -ForegroundColor White
-        Write-Host "    2. Ö´ĞĞ [83] ¼«ÏŞÂ·¾¶" -ForegroundColor White
-        Write-Host "    3. ÖØÆôÏµÍ³" -ForegroundColor White
+        Write-Host "  WIN 11 24H2+ å·¥ä½œæµ (ç³»ç»Ÿç‰ˆæœ¬ 26000+):" -ForegroundColor Yellow
+        Write-Host "    1. æ‰§è¡Œ [64] å¤‡ä»½æ³¨å†Œè¡¨" -ForegroundColor White
+        Write-Host "    2. æ‰§è¡Œ [83] æé™è·¯å¾„" -ForegroundColor White
+        Write-Host "    3. é‡å¯ç³»ç»Ÿ" -ForegroundColor White
         Write-Host ""
-        Write-Host "  ½ô¼±´¦Àí (¿ìËÙ×Ô¶¯»¯):" -ForegroundColor Yellow
-        Write-Host "    - Ö´ĞĞ [85] ¾²Ä¬È«×Ô¶¯ĞŞ¸´ (¾¯¸æ: Íê³Éºó»á×Ô¶¯ÖØÆôÏµÍ³£¡)" -ForegroundColor White
+        Write-Host "  ç´§æ€¥å¤„ç† (å¿«é€Ÿè‡ªåŠ¨åŒ–):" -ForegroundColor Yellow
+        Write-Host "    - æ‰§è¡Œ [85] é™é»˜å…¨è‡ªåŠ¨ä¿®å¤ (è­¦å‘Š: å®Œæˆåä¼šè‡ªåŠ¨é‡å¯ç³»ç»Ÿï¼)" -ForegroundColor White
         Write-Host ""
-        Write-Host "  ¹¦ÄÜÀà±ğ·ÖÀà:" -ForegroundColor Yellow
-        Write-Host "    [01-09] ´íÎó´úÂëĞŞ¸´ (0x0000011b, 0x00000709, 0x00000bc4, 0x00000035, 0x000006d1, µÈ)" -ForegroundColor Cyan
-        Write-Host "    [10-30] ÍøÂç & ¹²ÏíÅäÖÃ (DNS, SMB, ·À»ğÇ½, WSD, IPP)" -ForegroundColor Cyan
-        Write-Host "    [31-38] Spooler ¹ÜÀí (ÖØÖÃ, RPC, »Ö¸´, ¿´ÃÅ¹·, Çå³ı)" -ForegroundColor Cyan
-        Write-Host "    [39-53] Çı¶¯ & ´òÓ¡ (¸ôÀë, V4, PCL, ÓÄÁé¶Ë¿Ú, PDF, RDP)" -ForegroundColor Cyan
-        Write-Host "    [54-59] °²È« & ²ßÂÔ (LSA, SAC, UAC, NTLMv2, WPP)" -ForegroundColor Cyan
-        Write-Host "    [60-69] Æ¾Ö¤ & ÏµÍ³ (Æ¾Ö¤¿â, ±¸·İ, SFC, BITS, KB¸üĞÂ)" -ForegroundColor Cyan
-        Write-Host "    [70-81] Õï¶Ï & ÊµÓÃ¹¤¾ß (ÒÉÄÑ½â´ğ, ÈÕÖ¾, GPO×é²ßÂÔ, BRM)" -ForegroundColor Green
-        Write-Host "    [82-89] ÌØÊâ²Ù×÷ (¼«ÏŞÄ£Ê½, È«×Ô¶¯ĞŞ¸´, ±¾µØ UNC, ¾²Ä¬ĞŞ¸´)" -ForegroundColor Green
+        Write-Host "  åŠŸèƒ½ç±»åˆ«åˆ†ç±»:" -ForegroundColor Yellow
+        Write-Host "    [01-09] é”™è¯¯ä»£ç ä¿®å¤ (0x0000011b, 0x00000709, 0x00000bc4, 0x00000035, 0x000006d1, ç­‰)" -ForegroundColor Cyan
+        Write-Host "    [10-30] ç½‘ç»œ & å…±äº«é…ç½® (DNS, SMB, é˜²ç«å¢™, WSD, IPP)" -ForegroundColor Cyan
+        Write-Host "    [31-38] Spooler ç®¡ç† (é‡ç½®, RPC, æ¢å¤, çœ‹é—¨ç‹—, æ¸…é™¤)" -ForegroundColor Cyan
+        Write-Host "    [39-53] é©±åŠ¨ & æ‰“å° (éš”ç¦», V4, PCL, å¹½çµç«¯å£, PDF, RDP)" -ForegroundColor Cyan
+        Write-Host "    [54-59] å®‰å…¨ & ç­–ç•¥ (LSA, SAC, UAC, NTLMv2, WPP)" -ForegroundColor Cyan
+        Write-Host "    [60-69] å‡­è¯ & ç³»ç»Ÿ (å‡­è¯åº“, å¤‡ä»½, SFC, BITS, KBæ›´æ–°)" -ForegroundColor Cyan
+        Write-Host "    [70-81] è¯Šæ–­ & å®ç”¨å·¥å…· (ç–‘éš¾è§£ç­”, æ—¥å¿—, GPOç»„ç­–ç•¥, BRM)" -ForegroundColor Green
+        Write-Host "    [82-89] ç‰¹æ®Šæ“ä½œ (æé™æ¨¡å¼, å…¨è‡ªåŠ¨ä¿®å¤, æœ¬åœ° UNC, é™é»˜ä¿®å¤)" -ForegroundColor Green
 
         Write-Host ""
-        Write-Host "  ¿ìËÙ¹ÊÕÏÅÅ³ıÌáÊ¾:" -ForegroundColor Yellow
-        Write-Host "    - ²»¶Ïµ¯³öÊäÈëÃÜÂëµÄÌáÊ¾¿ò?     -> Ö´ĞĞ [12], [60], [82]" -ForegroundColor White
-        Write-Host "    - '¾Ü¾ø·ÃÎÊ' (×ÜÊÇÎŞ·¨½â¾ö)?    -> Ê¹ÓÃ [60] Ç¿ĞĞ×¢ÈëÄ¿±ê IP ºÍÆ¾¾İ" -ForegroundColor White
-        Write-Host "    - ·ºÖ¸µÄ '¼ì²é´òÓ¡»úÃû³Æ' ´íÎó? -> Ö´ĞĞ [56] »ò [86]" -ForegroundColor White
-        Write-Host "    - ´òÓ¡»ú¿ª×Åµ«ÏÔÊ¾'ÍÑ»ú'?       -> Ö´ĞĞ [71]" -ForegroundColor White
-        Write-Host "    - ¾ÖÓòÍøÀïÕÒ²»µ½Ä¿±êÖ÷»ú?       -> Ö´ĞĞ [04], [11], [14]" -ForegroundColor White
-        Write-Host "    - Edge/UWP Ó¦ÓÃÎŞ·¨´òÓ¡?        -> Ö´ĞĞ [47]" -ForegroundColor White
-        Write-Host "    - ÔõÑù³·ÏúËùÓĞµÄ¸Ä¶¯?           -> Ö´ĞĞ [65]" -ForegroundColor White
+        Write-Host "  å¿«é€Ÿæ•…éšœæ’é™¤æç¤º:" -ForegroundColor Yellow
+        Write-Host "    - ä¸æ–­å¼¹å‡ºè¾“å…¥å¯†ç çš„æç¤ºæ¡†?     -> æ‰§è¡Œ [12], [60], [82]" -ForegroundColor White
+        Write-Host "    - 'æ‹’ç»è®¿é—®' (æ€»æ˜¯æ— æ³•è§£å†³)?    -> ä½¿ç”¨ [60] å¼ºè¡Œæ³¨å…¥ç›®æ ‡ IP å’Œå‡­æ®" -ForegroundColor White
+        Write-Host "    - æ³›æŒ‡çš„ 'æ£€æŸ¥æ‰“å°æœºåç§°' é”™è¯¯? -> æ‰§è¡Œ [56] æˆ– [86]" -ForegroundColor White
+        Write-Host "    - æ‰“å°æœºå¼€ç€ä½†æ˜¾ç¤º'è„±æœº'?       -> æ‰§è¡Œ [71]" -ForegroundColor White
+        Write-Host "    - å±€åŸŸç½‘é‡Œæ‰¾ä¸åˆ°ç›®æ ‡ä¸»æœº?       -> æ‰§è¡Œ [04], [11], [14]" -ForegroundColor White
+        Write-Host "    - Edge/UWP åº”ç”¨æ— æ³•æ‰“å°?        -> æ‰§è¡Œ [47]" -ForegroundColor White
+        Write-Host "    - æ€æ ·æ’¤é”€æ‰€æœ‰çš„æ”¹åŠ¨?           -> æ‰§è¡Œ [65]" -ForegroundColor White
         Write-Host ""
         Write-Host "  ======================================================================================" -ForegroundColor Cyan
     }
@@ -2827,13 +2827,13 @@ function Show-Help {
             catch {}
         }
         if ($docPath -and (Test-Path $docPath)) {
-            Write-Host "  [*] ÕıÔÚ´ò¿ªÍêÕûµÄ HTML °ïÖúÎÄµµ..." -ForegroundColor Cyan
+            Write-Host "  [*] æ­£åœ¨æ‰“å¼€å®Œæ•´çš„ HTML å¸®åŠ©æ–‡æ¡£..." -ForegroundColor Cyan
             $fileUrl = "file:///" + $docPath.Replace("\", "/") + "?all"
             Start-Process $fileUrl
         }
         else {
-            Write-Host "  [-] ÔÚ°²×°Ä¿Â¼ÖĞÎ´ÕÒµ½ documentation.html ÎÄ¼ş¡£" -ForegroundColor Red
-            Write-Host "  [!] ÇëÊ¹ÓÃ '?' ²é¿´¼òÒªÖ¸ÄÏ£¬»òÊ¹ÓÃ '? <Êı×Ö>' »ñÈ¡¹¦ÄÜÏê½â¡£" -ForegroundColor Yellow
+            Write-Host "  [-] åœ¨å®‰è£…ç›®å½•ä¸­æœªæ‰¾åˆ° documentation.html æ–‡ä»¶ã€‚" -ForegroundColor Red
+            Write-Host "  [!] è¯·ä½¿ç”¨ '?' æŸ¥çœ‹ç®€è¦æŒ‡å—ï¼Œæˆ–ä½¿ç”¨ '? <æ•°å­—>' è·å–åŠŸèƒ½è¯¦è§£ã€‚" -ForegroundColor Yellow
         }
     }
     else {
@@ -2842,21 +2842,21 @@ function Show-Help {
             $h = $helpData[$num]
             Write-Host ""
             Write-Host "  ======================================================================================" -ForegroundColor Cyan
-            Write-Host "      °ïÖú: ¹¦ÄÜÄ£¿é [$Topic]" -ForegroundColor Green
+            Write-Host "      å¸®åŠ©: åŠŸèƒ½æ¨¡å— [$Topic]" -ForegroundColor Green
             Write-Host "  ======================================================================================" -ForegroundColor Cyan
             Write-Host ""
-            Write-Host "  Ãû³Æ     : $($h[0])" -ForegroundColor Yellow
+            Write-Host "  åç§°     : $($h[0])" -ForegroundColor Yellow
             Write-Host ""
-            Write-Host "  ¹¦ÄÜ¼ò½é : $($h[1])" -ForegroundColor White
+            Write-Host "  åŠŸèƒ½ç®€ä»‹ : $($h[1])" -ForegroundColor White
             Write-Host ""
             if ($h[2] -ne "") {
-                Write-Host "  ÊÊÓÃ³¡¾° : $($h[2])" -ForegroundColor Cyan
+                Write-Host "  é€‚ç”¨åœºæ™¯ : $($h[2])" -ForegroundColor Cyan
             }
             Write-Host ""
             Write-Host "  ======================================================================================" -ForegroundColor Cyan
         }
         else {
-            Write-Host "  [-] ÕÒ²»µ½¹¦ÄÜ±àºÅ '$Topic'¡£ÇëÊäÈë 1-89¡£" -ForegroundColor Red
+            Write-Host "  [-] æ‰¾ä¸åˆ°åŠŸèƒ½ç¼–å· '$Topic'ã€‚è¯·è¾“å…¥ 1-89ã€‚" -ForegroundColor Red
         }
     }
 }
@@ -2868,20 +2868,20 @@ function Show-Menu {
     elseif ([Environment]::Is64BitOperatingSystem) { $winName += " 64BIT" }
     else { $winName += " 32BIT" }
 
-    Write-Host " ÓÃ»§ (USER): " -NoNewline
+    Write-Host " ç”¨æˆ· (USER): " -NoNewline
     Write-Host "$env:USERNAME " -ForegroundColor Green -NoNewline
-    Write-Host "| ¼ÆËã»úÃû (COMPUTERNAME): " -NoNewline
+    Write-Host "| è®¡ç®—æœºå (COMPUTERNAME): " -NoNewline
     Write-Host "$env:COMPUTERNAME " -ForegroundColor Green -NoNewline
-    Write-Host "| ÏµÍ³ (OS): " -NoNewline
+    Write-Host "| ç³»ç»Ÿ (OS): " -NoNewline
     Write-Host "$winName " -ForegroundColor Blue -NoNewline
-    Write-Host "| Windows ´òÓ¡»ú¹²ÏíĞŞ¸´¹¤¾ß v2.3.2" -ForegroundColor Green
+    Write-Host "| Windows æ‰“å°æœºå…±äº«ä¿®å¤å·¥å…· v2.3.2" -ForegroundColor Green
 
-    Write-Host " Ê±Çø: " -NoNewline
+    Write-Host " æ—¶åŒº: " -NoNewline
     Write-Host "$(Get-TimeZone | Select-Object -ExpandProperty Id) | $(Get-Date -Format 'HH.mm.ss')" -ForegroundColor Red
-    Write-Host " Ô­×÷Õß: @KHAIRUDINFAHMI (2026) | ºº»¯" -ForegroundColor Magenta
+    Write-Host " åŸä½œè€…: @KHAIRUDINFAHMI (2026) | æ±‰åŒ–" -ForegroundColor Magenta
     Write-Host ("=" * 175) -ForegroundColor DarkGray
 
-    # ³¢ÊÔµ÷Õû¿ØÖÆÌ¨¿í¶È£¨ÈçÊ§°ÜÔòºöÂÔ£©
+    # å°è¯•è°ƒæ•´æ§åˆ¶å°å®½åº¦ï¼ˆå¦‚å¤±è´¥åˆ™å¿½ç•¥ï¼‰
     try {
         $rawUI = $Host.UI.RawUI
         $bufSize = $rawUI.BufferSize
@@ -2896,11 +2896,11 @@ function Show-Menu {
         }
     } catch {}
 
-    # ---- ¸¨Öúº¯Êı£º¼ÆËã×Ö·û´®ÔÚ¿ØÖÆÌ¨ÖĞµÄÏÔÊ¾¿í¶È£¨È«½Ç=2£¬°ë½Ç=1£© ----
+    # ---- è¾…åŠ©å‡½æ•°ï¼šè®¡ç®—å­—ç¬¦ä¸²åœ¨æ§åˆ¶å°ä¸­çš„æ˜¾ç¤ºå®½åº¦ï¼ˆå…¨è§’=2ï¼ŒåŠè§’=1ï¼‰ ----
     function Get-DisplayWidth([string]$s) {
         $w = 0
         foreach ($c in $s.ToCharArray()) {
-            # Unicode Àà±ğÖĞ£¬ÖĞ/ÈÕ/º«µÈÊôÓÚ OtherLetter »ò OtherScript
+            # Unicode ç±»åˆ«ä¸­ï¼Œä¸­/æ—¥/éŸ©ç­‰å±äº OtherLetter æˆ– OtherScript
             if ([char]::GetUnicodeCategory($c) -in @('OtherLetter', 'OtherScript')) {
                 $w += 2
             } else {
@@ -2910,11 +2910,11 @@ function Show-Menu {
         return $w
     }
 
-    # ---- Ìî³äº¯Êı£º½«×Ö·û´®Ìî³äÖÁÖ¸¶¨ÏÔÊ¾¿í¶È£¨ÓÒ²à²¹¿Õ¸ñ£© ----
+    # ---- å¡«å……å‡½æ•°ï¼šå°†å­—ç¬¦ä¸²å¡«å……è‡³æŒ‡å®šæ˜¾ç¤ºå®½åº¦ï¼ˆå³ä¾§è¡¥ç©ºæ ¼ï¼‰ ----
     function PadRightDisplay([string]$s, [int]$targetWidth) {
         $cur = Get-DisplayWidth $s
         if ($cur -ge $targetWidth) {
-            # Èô³¬¿íÔò½Ø¶Ï²¢¼ÓÊ¡ÂÔºÅ£¨¾¡Á¿±£ÁôÇ°²¿£©
+            # è‹¥è¶…å®½åˆ™æˆªæ–­å¹¶åŠ çœç•¥å·ï¼ˆå°½é‡ä¿ç•™å‰éƒ¨ï¼‰
             $truncated = ''
             $w = 0
             foreach ($c in $s.ToCharArray()) {
@@ -2923,138 +2923,138 @@ function Show-Menu {
                 $truncated += $c
                 $w += $cw
             }
-            if ($truncated.Length -lt $s.Length) { $truncated += '¡­' }
+            if ($truncated.Length -lt $s.Length) { $truncated += 'â€¦' }
             return $truncated
         }
         return $s + (' ' * ($targetWidth - $cur))
     }
 
-    # ¶¨ÒåÈıÁĞÄÚÈİ£¨ÓëÔ­À´Ò»ÖÂ£©
+    # å®šä¹‰ä¸‰åˆ—å†…å®¹ï¼ˆä¸åŸæ¥ä¸€è‡´ï¼‰
     $col1 = @(
-        "[01] ĞŞ²¹´íÎó 0x0000011b (RpcAuthnLevelPrivacy)",
-        "[02] Éî¶ÈĞŞ¸´ 0x00000709 (¶à²ã RPC & Kerberos)",
-        "[03] ÈÆ¹ı´íÎó 0x00000bc4 (ÕÒ²»µ½´òÓ¡»ú)",
-        "[04] ĞŞ¸´´íÎó 0x80070035 (×Ô¶¯ÅäÖÃÍøÂç·şÎñ)",
-        "[05] ½ûÓÃ¿Í»§¶ËäÖÈ¾ (´íÎó 0x000006d1)",
-        "[06] ĞŞ¸´´íÎó 0x80070005 (ÖØÖÃ Spooler ACL)",
-        "[07] ĞŞ¸´´íÎó 0x00000040 (ÍøÂç²»¿ÉÓÃ)",
-        "[08] ĞŞ¸´´íÎó 0x00000002 (CopyFilesPolicy)",
-        "[09] ĞŞ¸´´íÎó 0x0000007e (RPC Î»Êı²»Æ¥Åä)",
-        "[10] È«ÃæÍøÂçÖØÖÃ (DNS, Winsock, NetBIOS)",
-        "[11] Ç¿ÖÆÍøÂçÉèÎª×¨ÓÃÅäÖÃÎÄ¼ş (Private)",
-        "[12] Ç¿ÖÆ½ûÓÃÊÜÃÜÂë±£»¤µÄ¹²Ïí",
-        "[13] Í¨¹ıÃüÃû¹ÜµÀºÍ TCP ÆôÓÃ RPC",
-        "[14] ÅäÖÃ·À»ğÇ½ÔÊĞíÎÄ¼şºÍ´òÓ¡»ú¹²Ïí",
-        "[15] SMB 1.0 ´«Í³Ğ­Òé¹ÜÀí (¿ªÆô/¹Ø±Õ)",
-        "[16] ½ûÓÃ SMB Ç©Ãû (ĞŞ¸´ Win 11 NAS ·ÃÎÊ)",
-        "[17] Ç¿ÖÆÊ¹ÓÃÏÖ´ú SMB2/SMB3 ÍØÆË",
-        "[18] ÔÚÍøÂçÌá¹©ÉÌË³ĞòÖĞÓÅÏÈ´¦Àí SMB",
-        "[19] ½ûÓÃ IPv6 Ğ­ÒéÕ»",
-        "[20] ÆôÓÃ mDNS & LLMNR (·¢ÏÖĞ­Òé)",
-        "[21] ÅäÖÃ WSD ·À»ğÇ½¹æÔò (¿ª·Å¶Ë¿Ú 3702)",
-        "[22] ÆôÓÃ IPP & Mopria ¹²Ïí»ù´¡¹¦ÄÜ",
-        "[23] ½â¾ö Hyper-V/WSL ĞéÄâÍøÂç³åÍ»",
-        "[24] °²×°¾É°æ LPR/LPD Ğ­Òé",
-        "[25] Ô¶³ÌÍøÂç´òÓ¡»ú·¢ÏÖ",
-        "[26] WSD µ½ ±ê×¼ TCP/IP ¶Ë¿Ú×ª»»Æ÷",
-        "[27] ÍøÂçÌ×½Ó×ÖÖØĞÂ³õÊ¼»¯ (Ñ¡ÔñĞÔÇåÀí)",
-        "[28] ¾ÈÔ®ÍøÂçÅäÖÃ (×Ô¶¯¿´ÃÅ¹·)",
-        "[29] ÊÖ¶¯×¢Èë±ê×¼ TCP/IP ¶Ë¿Ú",
-        "[30] Ç¿ÖÆ³õÊ¼»¯ WSD ´òÓ¡Éè±¸"
+        "[01] ä¿®è¡¥é”™è¯¯ 0x0000011b (RpcAuthnLevelPrivacy)",
+        "[02] æ·±åº¦ä¿®å¤ 0x00000709 (å¤šå±‚ RPC & Kerberos)",
+        "[03] ç»•è¿‡é”™è¯¯ 0x00000bc4 (æ‰¾ä¸åˆ°æ‰“å°æœº)",
+        "[04] ä¿®å¤é”™è¯¯ 0x80070035 (è‡ªåŠ¨é…ç½®ç½‘ç»œæœåŠ¡)",
+        "[05] ç¦ç”¨å®¢æˆ·ç«¯æ¸²æŸ“ (é”™è¯¯ 0x000006d1)",
+        "[06] ä¿®å¤é”™è¯¯ 0x80070005 (é‡ç½® Spooler ACL)",
+        "[07] ä¿®å¤é”™è¯¯ 0x00000040 (ç½‘ç»œä¸å¯ç”¨)",
+        "[08] ä¿®å¤é”™è¯¯ 0x00000002 (CopyFilesPolicy)",
+        "[09] ä¿®å¤é”™è¯¯ 0x0000007e (RPC ä½æ•°ä¸åŒ¹é…)",
+        "[10] å…¨é¢ç½‘ç»œé‡ç½® (DNS, Winsock, NetBIOS)",
+        "[11] å¼ºåˆ¶ç½‘ç»œè®¾ä¸ºä¸“ç”¨é…ç½®æ–‡ä»¶ (Private)",
+        "[12] å¼ºåˆ¶ç¦ç”¨å—å¯†ç ä¿æŠ¤çš„å…±äº«",
+        "[13] é€šè¿‡å‘½åç®¡é“å’Œ TCP å¯ç”¨ RPC",
+        "[14] é…ç½®é˜²ç«å¢™å…è®¸æ–‡ä»¶å’Œæ‰“å°æœºå…±äº«",
+        "[15] SMB 1.0 ä¼ ç»Ÿåè®®ç®¡ç† (å¼€å¯/å…³é—­)",
+        "[16] ç¦ç”¨ SMB ç­¾å (ä¿®å¤ Win 11 NAS è®¿é—®)",
+        "[17] å¼ºåˆ¶ä½¿ç”¨ç°ä»£ SMB2/SMB3 æ‹“æ‰‘",
+        "[18] åœ¨ç½‘ç»œæä¾›å•†é¡ºåºä¸­ä¼˜å…ˆå¤„ç† SMB",
+        "[19] ç¦ç”¨ IPv6 åè®®æ ˆ",
+        "[20] å¯ç”¨ mDNS & LLMNR (å‘ç°åè®®)",
+        "[21] é…ç½® WSD é˜²ç«å¢™è§„åˆ™ (å¼€æ”¾ç«¯å£ 3702)",
+        "[22] å¯ç”¨ IPP & Mopria å…±äº«åŸºç¡€åŠŸèƒ½",
+        "[23] è§£å†³ Hyper-V/WSL è™šæ‹Ÿç½‘ç»œå†²çª",
+        "[24] å®‰è£…æ—§ç‰ˆ LPR/LPD åè®®",
+        "[25] è¿œç¨‹ç½‘ç»œæ‰“å°æœºå‘ç°",
+        "[26] WSD åˆ° æ ‡å‡† TCP/IP ç«¯å£è½¬æ¢å™¨",
+        "[27] ç½‘ç»œå¥—æ¥å­—é‡æ–°åˆå§‹åŒ– (é€‰æ‹©æ€§æ¸…ç†)",
+        "[28] æ•‘æ´ç½‘ç»œé…ç½® (è‡ªåŠ¨çœ‹é—¨ç‹—)",
+        "[29] æ‰‹åŠ¨æ³¨å…¥æ ‡å‡† TCP/IP ç«¯å£",
+        "[30] å¼ºåˆ¶åˆå§‹åŒ– WSD æ‰“å°è®¾å¤‡"
     )
 
     $col2 = @(
-        "[31] Ó²ÖØÖÃ´òÓ¡ºóÌ¨³ÌĞò (Çå³ı¶ÓÁĞ)",
-        "[32] ÖØĞÂ³õÊ¼»¯ RPC & DCOM ·şÎñ",
-        "[33] Ô¶³ÌÄ¿±ê»úÆ÷ Spooler ÖØÆô",
-        "[34] ÅäÖÃ Spooler ±ÀÀ£Ê±×Ô¶¯ÖØÆô",
-        "[35] Çå³ı³Â¾ÉµÄ Spooler ÒÀÀµÏî",
-        "[36] ²¿Êğ Spooler ¿´ÃÅ¹· (Ã¿5·ÖÖÓÉó²é)",
-        "[37] Ç¿ÖÆÇå³ı´òÓ¡¶ÓÁĞ (.shd/.spl)",
-        "[38] Spooler ×¢²á±íÒÀÀµÏîÖØÖÃ",
-        "[39] Çı¶¯³ÌĞò¹ÜÀí (´òÓ¡·şÎñÆ÷ÊôĞÔ)",
-        "[40] ½ûÓÃ´òÓ¡»úÇı¶¯¸ôÀë",
-        "[41] Í¨ÓÃ´òÓ¡ÀàÇı¶¯ V4 ĞŞ¸´",
-        "[42] ÇĞ»» PCL Óë PostScript Çı¶¯Ä£Ê½",
-        "[43] ¹ÂÁ¢Çı¶¯³ÌĞòÇåÀí (pnputil)",
-        "[44] ÈÆ¹ı 'Çı¶¯³ÌĞòµ±Ç°ÕıÔÚÊ¹ÓÃ'",
-        "[45] ÓÄÁé USB ¶Ë¿Ú & ¸±±¾Çå³ıÆ÷",
-        "[46] Ç¿ÖÆÉ¾³ıÓÄÁé´òÓ¡»ú",
-        "[47] ĞŞ¸´ Microsoft Edge / UWP Ó¦ÓÃ´òÓ¡",
-        "[48] ÖØĞÂ°²×° Microsoft Print to PDF/XPS",
-        "[49] ä¯ÀÀÆ÷´òÓ¡É³ºĞĞŞ¸´ (Chromium)",
-        "[50] Ç¿ÖÆÉèÖÃÓÀ¾ÃÄ¬ÈÏ´òÓ¡»ú",
-        "[51] Ç¿ÖÆÉèÖÃÄ¬ÈÏ´òÓ¡»ú (×¢²á±íÈÆ¹ı)",
-        "[52] ĞŞ¸´ RDP ´òÓ¡»úÖÕ¶Ë·şÎñ",
-        "[53] ×Ô¶¯ÇåÀí´òÓ¡»ú¹²ÏíÃû³ÆÖĞ·Ç·¨×Ö·û",
-        "[54] ½µ¼¶ LSA ±£»¤ (´«Í³ÈÏÖ¤)",
-        "[55] ÈÆ¹ıÖÇÄÜÓ¦ÓÃ¿ØÖÆ (SAC)",
-        "[56] ÈÆ¹ı¸ß¼¶ ServerList Point & Print",
-        "[57] ÈÆ¹ı UAC ¹ÜÀíÔ±ÍøÂç TokenFilter",
-        "[58] Ç¿ÖÆ NTLMv2 ÏìÓ¦±ê×¼ºÏ¹æ",
-        "[59] ¹ÜÀí Windows ÊÜ±£»¤µÄ´òÓ¡ (WPP)"
+        "[31] ç¡¬é‡ç½®æ‰“å°åå°ç¨‹åº (æ¸…é™¤é˜Ÿåˆ—)",
+        "[32] é‡æ–°åˆå§‹åŒ– RPC & DCOM æœåŠ¡",
+        "[33] è¿œç¨‹ç›®æ ‡æœºå™¨ Spooler é‡å¯",
+        "[34] é…ç½® Spooler å´©æºƒæ—¶è‡ªåŠ¨é‡å¯",
+        "[35] æ¸…é™¤é™ˆæ—§çš„ Spooler ä¾èµ–é¡¹",
+        "[36] éƒ¨ç½² Spooler çœ‹é—¨ç‹— (æ¯5åˆ†é’Ÿå®¡æŸ¥)",
+        "[37] å¼ºåˆ¶æ¸…é™¤æ‰“å°é˜Ÿåˆ— (.shd/.spl)",
+        "[38] Spooler æ³¨å†Œè¡¨ä¾èµ–é¡¹é‡ç½®",
+        "[39] é©±åŠ¨ç¨‹åºç®¡ç† (æ‰“å°æœåŠ¡å™¨å±æ€§)",
+        "[40] ç¦ç”¨æ‰“å°æœºé©±åŠ¨éš”ç¦»",
+        "[41] é€šç”¨æ‰“å°ç±»é©±åŠ¨ V4 ä¿®å¤",
+        "[42] åˆ‡æ¢ PCL ä¸ PostScript é©±åŠ¨æ¨¡å¼",
+        "[43] å­¤ç«‹é©±åŠ¨ç¨‹åºæ¸…ç† (pnputil)",
+        "[44] ç»•è¿‡ 'é©±åŠ¨ç¨‹åºå½“å‰æ­£åœ¨ä½¿ç”¨'",
+        "[45] å¹½çµ USB ç«¯å£ & å‰¯æœ¬æ¸…é™¤å™¨",
+        "[46] å¼ºåˆ¶åˆ é™¤å¹½çµæ‰“å°æœº",
+        "[47] ä¿®å¤ Microsoft Edge / UWP åº”ç”¨æ‰“å°",
+        "[48] é‡æ–°å®‰è£… Microsoft Print to PDF/XPS",
+        "[49] æµè§ˆå™¨æ‰“å°æ²™ç›’ä¿®å¤ (Chromium)",
+        "[50] å¼ºåˆ¶è®¾ç½®æ°¸ä¹…é»˜è®¤æ‰“å°æœº",
+        "[51] å¼ºåˆ¶è®¾ç½®é»˜è®¤æ‰“å°æœº (æ³¨å†Œè¡¨ç»•è¿‡)",
+        "[52] ä¿®å¤ RDP æ‰“å°æœºç»ˆç«¯æœåŠ¡",
+        "[53] è‡ªåŠ¨æ¸…ç†æ‰“å°æœºå…±äº«åç§°ä¸­éæ³•å­—ç¬¦",
+        "[54] é™çº§ LSA ä¿æŠ¤ (ä¼ ç»Ÿè®¤è¯)",
+        "[55] ç»•è¿‡æ™ºèƒ½åº”ç”¨æ§åˆ¶ (SAC)",
+        "[56] ç»•è¿‡é«˜çº§ ServerList Point & Print",
+        "[57] ç»•è¿‡ UAC ç®¡ç†å‘˜ç½‘ç»œ TokenFilter",
+        "[58] å¼ºåˆ¶ NTLMv2 å“åº”æ ‡å‡†åˆè§„",
+        "[59] ç®¡ç† Windows å—ä¿æŠ¤çš„æ‰“å° (WPP)"
     )
 
     $col3 = @(
-        "[60] ½«Æ¾¾İÓÀ¾Ã×¢Èë Windows Æ¾¾İ¿â",
-        "[61] ´ÓÆ¾¾İ¿âÖĞÇå³ıÊ§Ğ§/¹ıÆÚÆ¾¾İ",
-        "[62] ÈÆ¹ı Credential Guard (ÑÏ¸ñµÄ NTLM)",
-        "[63] ¿çÓÃ»§Æ¾¾İÓ³Éä (¸øËùÓĞÓÃ»§×¢Èë)",
-        "[64] Ö´ĞĞÇ°±¸·İ×¢²á±í (ÖØÒª)",
-        "[65] ´Ó±¸·İ»Ø¹ö×¢²á±í",
-        "[66] Éú³ÉÏµÍ³»¹Ô­µã (°²È«´ëÊ©)",
-        "[67] ÏµÍ³ÎÄ¼ş¼ì²é (SFC) Óë DISM »Ö¸´",
-        "[68] ÖØÆô BITS (ºóÌ¨ÖÇÄÜ´«Êä·şÎñ)",
-        "[69] Windows ¸üĞÂ¼°À¹½ØÆ÷¹ÜÀí",
-        "[70] Æô¶¯Ô­Éú Windows ÒÉÄÑ½â´ğ",
-        "[71] Ç¿ÖÆ´òÓ¡»úÉèÎªÁª»ú×´Ì¬",
-        "[72] Æô¶¯ Services.msc (·şÎñ¹ÜÀí)",
-        "[73] ¼ì²â²Ù×÷ÏµÍ³°æ±¾¼°ÏµÍ³¼Ü¹¹",
-        "[74] Ping & ¶Ë¿Ú 445/135 Õï¶Ï",
-        "[75] ²é¿´Ö´ĞĞÈÕÖ¾",
-        "[76] ÉóºË×î½ü 20 Ìõ´òÓ¡·şÎñ´íÎóÈÕÖ¾",
-        "[77] Õï¶Ï²¢Éó²éÏµÍ³ÕûÌå×´Ì¬",
-        "[78] ´òÓ¡·şÎñÊÂ¼şÈÕÖ¾½âÎöÆ÷ (Ç° 5 Ãû)",
-        "[79] Éú³É HTML Õï¶Ï±¨¸æ",
-        "[80] ¼ì²â GPO ×é²ßÂÔ¸ÉÔ¤ (²ßÂÔÉ¨Ãè)",
-        "[81] PrintBRM (±¸·İ/»Ö¸´Ç¨ÒÆ¹¤¾ß)",
-        "[82] ÆôÓÃ SMB ·Ã¿Í·ÃÎÊ²¢È¡ÏûÄäÃûÀ¹½Ø",
-        "[83] ¼«ÏŞÂ·¾¶ (Õë¶Ô WIN 11 24H2/25H2/26H2+)",
-        "[84] È«×Ô¶¯ĞŞ¸´ (Ö´ĞĞ 50 Ïî×Ô¶¯»¯ĞŞ¸´)",
-        "[85] ¾²Ä¬È«×Ô¶¯ĞŞ¸´²¢ÖØÆô (ÁãÌáÊ¾)",
-        "[86] ½«±¾µØ¶Ë¿ÚÓ³Éäµ½ UNC Â·¾¶ (ÖÕ¼«ÈÆ¹ı)",
-        "[87] ÒÆ³ıÒÑ×¢ÈëµÄ±¾µØ UNC ¶Ë¿Ú",
-        "[88] ÖØÆôÏµÍ³",
-        "[89] ÍË³ö½Å±¾"
+        "[60] å°†å‡­æ®æ°¸ä¹…æ³¨å…¥ Windows å‡­æ®åº“",
+        "[61] ä»å‡­æ®åº“ä¸­æ¸…é™¤å¤±æ•ˆ/è¿‡æœŸå‡­æ®",
+        "[62] ç»•è¿‡ Credential Guard (ä¸¥æ ¼çš„ NTLM)",
+        "[63] è·¨ç”¨æˆ·å‡­æ®æ˜ å°„ (ç»™æ‰€æœ‰ç”¨æˆ·æ³¨å…¥)",
+        "[64] æ‰§è¡Œå‰å¤‡ä»½æ³¨å†Œè¡¨ (é‡è¦)",
+        "[65] ä»å¤‡ä»½å›æ»šæ³¨å†Œè¡¨",
+        "[66] ç”Ÿæˆç³»ç»Ÿè¿˜åŸç‚¹ (å®‰å…¨æªæ–½)",
+        "[67] ç³»ç»Ÿæ–‡ä»¶æ£€æŸ¥ (SFC) ä¸ DISM æ¢å¤",
+        "[68] é‡å¯ BITS (åå°æ™ºèƒ½ä¼ è¾“æœåŠ¡)",
+        "[69] Windows æ›´æ–°åŠæ‹¦æˆªå™¨ç®¡ç†",
+        "[70] å¯åŠ¨åŸç”Ÿ Windows ç–‘éš¾è§£ç­”",
+        "[71] å¼ºåˆ¶æ‰“å°æœºè®¾ä¸ºè”æœºçŠ¶æ€",
+        "[72] å¯åŠ¨ Services.msc (æœåŠ¡ç®¡ç†)",
+        "[73] æ£€æµ‹æ“ä½œç³»ç»Ÿç‰ˆæœ¬åŠç³»ç»Ÿæ¶æ„",
+        "[74] Ping & ç«¯å£ 445/135 è¯Šæ–­",
+        "[75] æŸ¥çœ‹æ‰§è¡Œæ—¥å¿—",
+        "[76] å®¡æ ¸æœ€è¿‘ 20 æ¡æ‰“å°æœåŠ¡é”™è¯¯æ—¥å¿—",
+        "[77] è¯Šæ–­å¹¶å®¡æŸ¥ç³»ç»Ÿæ•´ä½“çŠ¶æ€",
+        "[78] æ‰“å°æœåŠ¡äº‹ä»¶æ—¥å¿—è§£æå™¨ (å‰ 5 å)",
+        "[79] ç”Ÿæˆ HTML è¯Šæ–­æŠ¥å‘Š",
+        "[80] æ£€æµ‹ GPO ç»„ç­–ç•¥å¹²é¢„ (ç­–ç•¥æ‰«æ)",
+        "[81] PrintBRM (å¤‡ä»½/æ¢å¤è¿ç§»å·¥å…·)",
+        "[82] å¯ç”¨ SMB è®¿å®¢è®¿é—®å¹¶å–æ¶ˆåŒ¿åæ‹¦æˆª",
+        "[83] æé™è·¯å¾„ (é’ˆå¯¹ WIN 11 24H2/25H2/26H2+)",
+        "[84] å…¨è‡ªåŠ¨ä¿®å¤ (æ‰§è¡Œ 50 é¡¹è‡ªåŠ¨åŒ–ä¿®å¤)",
+        "[85] é™é»˜å…¨è‡ªåŠ¨ä¿®å¤å¹¶é‡å¯ (é›¶æç¤º)",
+        "[86] å°†æœ¬åœ°ç«¯å£æ˜ å°„åˆ° UNC è·¯å¾„ (ç»ˆæç»•è¿‡)",
+        "[87] ç§»é™¤å·²æ³¨å…¥çš„æœ¬åœ° UNC ç«¯å£",
+        "[88] é‡å¯ç³»ç»Ÿ",
+        "[89] é€€å‡ºè„šæœ¬"
     )
 
-    # ¹Ì¶¨ÈıÁĞµÄÄ¿±êÏÔÊ¾¿í¶È£¨¿É¸ù¾İÊµ¼ÊÎ¢µ÷£©
+    # å›ºå®šä¸‰åˆ—çš„ç›®æ ‡æ˜¾ç¤ºå®½åº¦ï¼ˆå¯æ ¹æ®å®é™…å¾®è°ƒï¼‰
     $cw1 = 62
     $cw2 = 55
     $cw3 = 58
     $totalW = $cw1 + $cw2 + $cw3
 
-    # Êä³öÈıÁĞ±íÍ·
-    Write-Host (" ºËĞÄĞŞ¸´ & ÍøÂç·şÎñ".PadRight($cw1)) -ForegroundColor Cyan -NoNewline
-    Write-Host (" SPOOLER(ºóÌ¨³ÌĞò), Çı¶¯ & ²ßÂÔ".PadRight($cw2)) -ForegroundColor Cyan -NoNewline
-    Write-Host " Õï¶Ï & ×Ô¶¯»¯²Ù×÷" -ForegroundColor Cyan
+    # è¾“å‡ºä¸‰åˆ—è¡¨å¤´
+    Write-Host (" æ ¸å¿ƒä¿®å¤ & ç½‘ç»œæœåŠ¡".PadRight($cw1)) -ForegroundColor Cyan -NoNewline
+    Write-Host (" SPOOLER(åå°ç¨‹åº), é©±åŠ¨ & ç­–ç•¥".PadRight($cw2)) -ForegroundColor Cyan -NoNewline
+    Write-Host " è¯Šæ–­ & è‡ªåŠ¨åŒ–æ“ä½œ" -ForegroundColor Cyan
 
     $maxRows = 30
     for ($i = 0; $i -lt $maxRows; $i++) {
         $line = ""
 
-        # µÚÒ»ÁĞ
+        # ç¬¬ä¸€åˆ—
         if ($i -lt $col1.Count) {
             $item = $col1[$i]
-            # ½« [XX] È¾³ÉÂÌÉ«£¬Ê£Óà²¿·ÖÈ¾³ÉÂÌÉ«£¨Ô­Ñù±£³Ö£©
-            # Îª¼ò»¯£¬ÎÒÃÇÖ±½ÓÌî³äÕû¸ö×Ö·û´®²¢Í³Ò»ÑÕÉ«£¨ºóÃæ¿ÉÒÔÓÃÕıÔò£¬µ«ÕâÀïÍ³Ò»ÂÌÉ«£©
+            # å°† [XX] æŸ“æˆç»¿è‰²ï¼Œå‰©ä½™éƒ¨åˆ†æŸ“æˆç»¿è‰²ï¼ˆåŸæ ·ä¿æŒï¼‰
+            # ä¸ºç®€åŒ–ï¼Œæˆ‘ä»¬ç›´æ¥å¡«å……æ•´ä¸ªå­—ç¬¦ä¸²å¹¶ç»Ÿä¸€é¢œè‰²ï¼ˆåé¢å¯ä»¥ç”¨æ­£åˆ™ï¼Œä½†è¿™é‡Œç»Ÿä¸€ç»¿è‰²ï¼‰
             $line += PadRightDisplay $item $cw1
         } else {
             $line += (' ' * $cw1)
         }
-        $line += " "  # ÁĞ¼ä¿Õ¸ñ
+        $line += " "  # åˆ—é—´ç©ºæ ¼
 
-        # µÚ¶şÁĞ
+        # ç¬¬äºŒåˆ—
         if ($i -lt $col2.Count) {
             $item = $col2[$i]
             $line += PadRightDisplay $item $cw2
@@ -3063,17 +3063,17 @@ function Show-Menu {
         }
         $line += " "
 
-        # µÚÈıÁĞ
+        # ç¬¬ä¸‰åˆ—
         if ($i -lt $col3.Count) {
             $item = $col3[$i]
-            # ÌØÊâ±ê¼Ç [83],[84],[85] ÓÃºìÉ«
+            # ç‰¹æ®Šæ ‡è®° [83],[84],[85] ç”¨çº¢è‰²
             if ($item -match '^(\[83\]|\[84\]|\[85\])') {
-                # ²ğ·ÖÎª±àºÅºÍÊ£ÓàÄÚÈİ·Ö±ğ×ÅÉ«
+                # æ‹†åˆ†ä¸ºç¼–å·å’Œå‰©ä½™å†…å®¹åˆ†åˆ«ç€è‰²
                 $match = [regex]::Match($item, '^(\[\d+\])(.*)')
                 if ($match.Success) {
                     $num = $match.Groups[1].Value
                     $rest = $match.Groups[2].Value
-                    # ÏÈÌî³äÕûÌå£¬ÔÙ²ğ¿ª×ÅÉ«½Ï¸´ÔÓ£¬Îª¼ò±ãÈÔÕûÌåÂÌÉ«£¬µ«¾¯¸æĞĞµ¥¶ÀºìÉ«´¦Àí£¨ÏÂ±ßµÄµ×²¿ÌáÊ¾ÒÑµ¥¶À±êºì£©
+                    # å…ˆå¡«å……æ•´ä½“ï¼Œå†æ‹†å¼€ç€è‰²è¾ƒå¤æ‚ï¼Œä¸ºç®€ä¾¿ä»æ•´ä½“ç»¿è‰²ï¼Œä½†è­¦å‘Šè¡Œå•ç‹¬çº¢è‰²å¤„ç†ï¼ˆä¸‹è¾¹çš„åº•éƒ¨æç¤ºå·²å•ç‹¬æ ‡çº¢ï¼‰
                     $line += PadRightDisplay $item $cw3
                 } else {
                     $line += PadRightDisplay $item $cw3
@@ -3085,21 +3085,21 @@ function Show-Menu {
             $line += (' ' * $cw3)
         }
 
-        # Êä³öÕûĞĞ£¨Í³Ò»ÂÌÉ«£¬µ«µÚÈıÁĞÌØÊâ±àºÅÎÒÃÇ±£ÁôÔÚÑ­»·ÖĞ´¦ÀíÑÕÉ«£¬µ«ÕâÀïÍ³Ò»Êä³öÂÌÉ«£©
+        # è¾“å‡ºæ•´è¡Œï¼ˆç»Ÿä¸€ç»¿è‰²ï¼Œä½†ç¬¬ä¸‰åˆ—ç‰¹æ®Šç¼–å·æˆ‘ä»¬ä¿ç•™åœ¨å¾ªç¯ä¸­å¤„ç†é¢œè‰²ï¼Œä½†è¿™é‡Œç»Ÿä¸€è¾“å‡ºç»¿è‰²ï¼‰
         Write-Host $line -ForegroundColor Green
     }
 
     Write-Host ("-" * $totalW) -ForegroundColor Red
-    $noteLine1 = " :   ÌáÊ¾: ".PadRight($totalW - 2) + ":"
-    $noteLine2 = " :   [84] È«×Ô¶¯ĞŞ¸´(50²½) | [83] Win11 ¼«ÏŞÂ·¾¶ | [85] ¾²Ä¬È«×Ô¶¯ĞŞ¸´²¢ÖØÆô ".PadRight($totalW - 2) + ":"
-    $noteLine3 = " :   [?] °ïÖú | [? 7] ÏêÇé | [? all] HTML | Èç¹ûÌáÊ¾'¼ì²é´òÓ¡»úÃû³Æ'´íÎó£¬ÇëÊ¹ÓÃÑ¡Ïî [86] ".PadRight($totalW - 2) + ":"
+    $noteLine1 = " :   æç¤º: ".PadRight($totalW - 2) + ":"
+    $noteLine2 = " :   [84] å…¨è‡ªåŠ¨ä¿®å¤(50æ­¥) | [83] Win11 æé™è·¯å¾„ | [85] é™é»˜å…¨è‡ªåŠ¨ä¿®å¤å¹¶é‡å¯ ".PadRight($totalW - 2) + ":"
+    $noteLine3 = " :   [?] å¸®åŠ© | [? 7] è¯¦æƒ… | [? all] HTML | å¦‚æœæç¤º'æ£€æŸ¥æ‰“å°æœºåç§°'é”™è¯¯ï¼Œè¯·ä½¿ç”¨é€‰é¡¹ [86] ".PadRight($totalW - 2) + ":"
 
     Write-Host $noteLine1 -ForegroundColor Red
     Write-Host $noteLine2 -ForegroundColor Red
     Write-Host $noteLine3 -ForegroundColor Green
     Write-Host ("-" * $totalW) -ForegroundColor Red
     Write-Host ""
-    Write-Host "ÊäÈëÑ¡Ïî±àºÅ: " -NoNewline
+    Write-Host "è¾“å…¥é€‰é¡¹ç¼–å·: " -NoNewline
 }
 
 if ($script:silentNuke) {
@@ -3115,7 +3115,7 @@ do {
     if ($choice -match '^\?(.*)$' -or $choice -match '^help\s*(.*)$') {
         $helpTopic = $Matches[1].Trim()
         Show-Help -Topic $helpTopic
-        Write-Host "`n  [>] Çë°´ ENTER ¼ü·µ»ØÖ÷²Ëµ¥..." -ForegroundColor Yellow
+        Write-Host "`n  [>] è¯·æŒ‰ ENTER é”®è¿”å›ä¸»èœå•..." -ForegroundColor Yellow
         Read-Host | Out-Null
         continue
     }
@@ -3125,7 +3125,7 @@ do {
     if ($choice -match '^\d+$') {
         Clear-Host
         Write-Host "================================================================================" -ForegroundColor Cyan
-        Write-Host "  ÕıÔÚÖ´ĞĞÄ£¿é [$choice]" -ForegroundColor Yellow
+        Write-Host "  æ­£åœ¨æ‰§è¡Œæ¨¡å— [$choice]" -ForegroundColor Yellow
         Write-Host "================================================================================" -ForegroundColor Cyan
         Write-Host ""
     }
@@ -3160,7 +3160,7 @@ do {
         '27' { Reset-NetworkSockets }
         '28' { Rescue-NetworkProfile }
         '29' { Manage-TCPPort }
-        '30' { Start-Service WSDPrintDevice -ErrorAction SilentlyContinue; Write-Host "  [+] WSD ·¢ÏÖ¹¦ÄÜÒÑÆôÓÃ" -ForegroundColor Green }
+        '30' { Start-Service WSDPrintDevice -ErrorAction SilentlyContinue; Write-Host "  [+] WSD å‘ç°åŠŸèƒ½å·²å¯ç”¨" -ForegroundColor Green }
         '31' { Reset-Spooler }
         '32' { Check-RPC }
         '33' { Remote-SpoolerReset }
@@ -3170,7 +3170,7 @@ do {
         '37' { Nuke-PrintQueue }
         '38' { Reset-SpoolerDependencyRegistry }
         '39' { Manage-Drivers }
-        '40' { Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name IsolationPolicy -Value 0 -Type DWord -Force; Write-Host "  [+] Çı¶¯¸ôÀëÒÑ½ûÓÃ" -ForegroundColor Green }
+        '40' { Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Print" -Name IsolationPolicy -Value 0 -Type DWord -Force; Write-Host "  [+] é©±åŠ¨éš”ç¦»å·²ç¦ç”¨" -ForegroundColor Green }
         '41' { Fix-V4ClassDriver }
         '42' { Switch-DriverMode }
         '43' { Sweep-OrphanedDrivers }
@@ -3219,13 +3219,13 @@ do {
         '86' { Map-LocalPortUNC }
         '87' { Remove-LocalPortUNC }
         '88' { Restart-PC }
-        '89' { Write-Log "¹¤¾ßÒÑÍË³ö¡£" -Type "INFO"; exit }
+        '89' { Write-Log "å·¥å…·å·²é€€å‡ºã€‚" -Type "INFO"; exit }
 
-        default { Write-Host "`n  [-] Ñ¡ÔñÎŞĞ§¡£ÇëÊäÈë 1 - 89 Ö®¼äµÄÊı×Ö¡£" -ForegroundColor Red }
+        default { Write-Host "`n  [-] é€‰æ‹©æ— æ•ˆã€‚è¯·è¾“å…¥ 1 - 89 ä¹‹é—´çš„æ•°å­—ã€‚" -ForegroundColor Red }
     }
 
     if ($choice -ne '89' -and $choice -ne '88' -and $choice -ne '85') {
-        Write-Host "`n  [>] Çë°´ ENTER ¼ü·µ»ØÖ÷²Ëµ¥..." -ForegroundColor Yellow
+        Write-Host "`n  [>] è¯·æŒ‰ ENTER é”®è¿”å›ä¸»èœå•..." -ForegroundColor Yellow
         Read-Host | Out-Null
     }
 } while ($true)
