@@ -1,4 +1,4 @@
-# Windows Printer Sharing Fix
+# Windows Printer Sharing Fix （汉化）
 
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011%20%7C%20Server-0078D6?logo=windows&logoColor=white)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?logo=powershell&logoColor=white)
